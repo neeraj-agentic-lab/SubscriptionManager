@@ -83,7 +83,7 @@ deploy_worker() {
             --memory="$MEMORY" \
             --max-retries=3 \
             --task-timeout=3600 \
-            --add-cloudsql-instances="${GCP_PROJECT_ID}:${GCP_REGION}:${GCP_DB_INSTANCE_NAME}" \
+            --set-cloudsql-instances="${GCP_PROJECT_ID}:${GCP_REGION}:${GCP_DB_INSTANCE_NAME}" \
             --set-env-vars="DATABASE_URL=${DB_URL}" \
             --set-env-vars="DATABASE_USER=${GCP_DB_USER}" \
             --set-env-vars="SPRING_PROFILES_ACTIVE=${ENVIRONMENT:-production}" \
@@ -99,7 +99,7 @@ deploy_worker() {
             --memory="$MEMORY" \
             --max-retries=3 \
             --task-timeout=3600 \
-            --add-cloudsql-instances="${GCP_PROJECT_ID}:${GCP_REGION}:${GCP_DB_INSTANCE_NAME}" \
+            --set-cloudsql-instances="${GCP_PROJECT_ID}:${GCP_REGION}:${GCP_DB_INSTANCE_NAME}" \
             --set-env-vars="DATABASE_URL=${DB_URL}" \
             --set-env-vars="DATABASE_USER=${GCP_DB_USER}" \
             --set-env-vars="SPRING_PROFILES_ACTIVE=${ENVIRONMENT:-production}" \
