@@ -1,12 +1,8 @@
 #!/bin/bash
 # Common Docker build logic
 
-set -e
-
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/helpers.sh"
-
-export_common_vars
+# Note: This script is meant to be sourced, not executed directly
+# helpers.sh should already be sourced before this script
 
 build_docker_image() {
     local component=$1  # api or worker
