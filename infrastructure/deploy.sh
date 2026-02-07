@@ -47,6 +47,10 @@ main() {
     section "Step 2: Secrets Setup"
     "$SCRIPT_DIR/$TARGET_CLOUD/setup-secrets.sh"
     
+    # Wait for IAM permissions to propagate
+    log "Waiting for IAM permissions to propagate..."
+    sleep 10
+    
     # Step 6: Run migrations
     if [ "$RUN_MIGRATIONS" = "true" ]; then
         section "Step 3: Database Migrations"
