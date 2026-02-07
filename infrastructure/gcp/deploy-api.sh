@@ -17,21 +17,34 @@ deploy_api() {
     IMAGE_TAG="${ENVIRONMENT:-latest}"
     build_docker_image "api" "$IMAGE_TAG"
     
-    # Tag for GCR
+    # Tag for Artifact Registry
     LOCAL_IMAGE="subscription-api:$IMAGE_TAG"
-    REMOTE_IMAGE="${GCP_API_IMAGE}:${IMAGE_TAG}"
+    AR_LOCATION="${GCP_REGION}"
+    AR_REPO="subscription-manager"
+    REMOTE_IMAGE="${AR_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${AR_REPO}/subscription-api:${IMAGE_TAG}"
     
-    log "Tagging image for GCR..."
+    log "Tagging image for Artifact Registry..."
     docker tag "$LOCAL_IMAGE" "$REMOTE_IMAGE"
     
-    # Configure Docker for GCR
-    log "Configuring Docker authentication..."
-    gcloud auth configure-docker --quiet
+    # Create Artifact Registry repository if it doesn't exist
+    log "Ensuring Artifact Registry repository exists..."
+    gcloud artifacts repositories describe "$AR_REPO" \
+        --location="$AR_LOCATION" \
+        --project="$GCP_PROJECT_ID" &>/dev/null || \
+    gcloud artifacts repositories create "$AR_REPO" \
+        --repository-format=docker \
+        --location="$AR_LOCATION" \
+        --project="$GCP_PROJECT_ID" \
+        --description="Docker images for Subscription Manager"
     
-    # Push to GCR
-    log "Pushing image to GCR..."
+    # Configure Docker for Artifact Registry
+    log "Configuring Docker authentication..."
+    gcloud auth configure-docker "${AR_LOCATION}-docker.pkg.dev" --quiet
+    
+    # Push to Artifact Registry
+    log "Pushing image to Artifact Registry..."
     docker push "$REMOTE_IMAGE"
-    success "Image pushed to GCR"
+    success "Image pushed to Artifact Registry"
     
     # Map compute size to Cloud Run CPU/memory
     case ${API_SIZE:-small} in
