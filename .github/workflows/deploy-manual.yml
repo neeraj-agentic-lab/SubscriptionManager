@@ -82,6 +82,12 @@ jobs:
           distribution: 'temurin'
           cache: 'gradle'
       
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+          yq --version
+      
       - name: Display configuration
         run: |
           echo "### 📋 Deployment Configuration" >> $GITHUB_STEP_SUMMARY
@@ -128,16 +134,21 @@ jobs:
         if: inputs.setup_database == true
         run: ./infrastructure/${{ inputs.target_cloud }}/setup-database.sh
         env:
-          DATABASE_TIER: ${{ inputs.database_tier }}
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+          DB_TIER: ${{ inputs.database_tier }}
+          ENVIRONMENT: ${{ inputs.environment }}
       
       - name: Run migrations
         if: inputs.run_migrations == true
         run: ./infrastructure/${{ inputs.target_cloud }}/run-migrations.sh
+        env:
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
       
       - name: Deploy API
         if: inputs.deploy_api == true
         run: ./infrastructure/${{ inputs.target_cloud }}/deploy-api.sh
         env:
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
           COMPUTE_SIZE: ${{ inputs.api_compute_size }}
           ENVIRONMENT: ${{ inputs.environment }}
       
@@ -145,6 +156,7 @@ jobs:
         if: inputs.deploy_worker == true
         run: ./infrastructure/${{ inputs.target_cloud }}/deploy-worker.sh
         env:
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
           ENVIRONMENT: ${{ inputs.environment }}
       
       - name: Deployment summary

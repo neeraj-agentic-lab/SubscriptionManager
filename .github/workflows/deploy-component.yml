@@ -47,6 +47,12 @@ jobs:
           distribution: 'temurin'
           cache: 'gradle'
       
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+          yq --version
+      
       - name: Authenticate to Google Cloud
         if: inputs.target_cloud == 'gcp'
         uses: google-github-actions/auth@v2

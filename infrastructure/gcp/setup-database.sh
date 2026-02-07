@@ -5,6 +5,12 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/../common/helpers.sh"
+
+# Set defaults if not provided via environment
+export DB_TIER="${DB_TIER:-small}"
+export DB_STORAGE_GB="${DB_STORAGE_GB:-10}"
+export DB_BACKUP_RETENTION="${DB_BACKUP_RETENTION:-7}"
+
 source "$SCRIPT_DIR/config.sh"
 
 setup_cloud_sql() {
