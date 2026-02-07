@@ -1,12 +1,8 @@
 #!/bin/bash
 # Validate deployment-config.yaml
 
-set -e
-
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/helpers.sh"
-
-export_common_vars
+# Note: This script is meant to be sourced, not executed directly
+# helpers.sh should already be sourced before this script
 
 validate_deployment_config() {
     section "Validating Deployment Configuration"
