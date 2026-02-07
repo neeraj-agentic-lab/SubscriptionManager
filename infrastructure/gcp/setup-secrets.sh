@@ -45,9 +45,12 @@ setup_secrets() {
     
     # Grant Cloud Run default service account access to secrets
     # Cloud Run uses the Compute Engine default service account
-    COMPUTE_SA="${GCP_PROJECT_ID}-compute@developer.gserviceaccount.com"
+    # Get project number (not project ID) for the service account
+    PROJECT_NUMBER=$(gcloud projects describe "$GCP_PROJECT_ID" --format='value(projectNumber)')
+    COMPUTE_SA="${PROJECT_NUMBER}-compute@developer.gserviceaccount.com"
     
     log "Granting Cloud Run (Compute Engine) service account access to secrets..."
+    log "Service account: $COMPUTE_SA"
     gcloud secrets add-iam-policy-binding "$GCP_DB_PASSWORD_SECRET" \
         --project="$GCP_PROJECT_ID" \
         --member="serviceAccount:${COMPUTE_SA}" \
