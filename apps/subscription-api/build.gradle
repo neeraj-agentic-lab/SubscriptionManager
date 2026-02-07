@@ -36,6 +36,9 @@ dependencies {
     // Flyway for database migrations (managed by Spring Boot BOM)
     runtimeOnly 'org.flywaydb:flyway-core'
     
+    // Cloud SQL Socket Factory for GCP deployment
+    runtimeOnly 'com.google.cloud.sql:postgres-socket-factory:1.15.0'
+    
     // Testing dependencies
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.boot:spring-boot-testcontainers'
