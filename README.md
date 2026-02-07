@@ -957,35 +957,543 @@ app:
   environment: production
 
 database:
+  name: subscription-db
+  user: subscription-app
   tier: small  # small | medium | large
   storage_gb: 10
 
 api:
+  name: subscription-api
   compute:
     size: small
     min_instances: 1
     max_instances: 10
+
+worker:
+  name: subscription-worker
+  compute:
+    size: small
+  schedule: "0 */1 * * *"  # Every hour
 ```
 
-### Deployment Options
+---
 
-#### Option 1: Automatic (GitHub Actions)
+## 📦 Google Cloud Platform (GCP) Deployment
 
-1. Edit `deployment-config.yaml`
-2. Push to GitHub
-3. Automatic deployment via GitHub Actions
+### Prerequisites
 
-#### Option 2: Manual (GitHub UI)
+- Google Cloud account with billing enabled
+- `gcloud` CLI installed ([Install Guide](https://cloud.google.com/sdk/docs/install))
+- GitHub repository forked/cloned
+- Basic understanding of GCP services
 
-1. Go to **Actions** → **Manual Deploy (UI)**
-2. Select cloud, environment, and options
-3. Click **Run workflow**
+---
 
-#### Option 3: Local Deployment
+### Step 1: Create GCP Project
 
 ```bash
+# Set your project ID (must be globally unique)
+export PROJECT_ID="subscription-manager-prod"
+
+# Create project
+gcloud projects create $PROJECT_ID --name="Subscription Manager"
+
+# Set as active project
+gcloud config set project $PROJECT_ID
+
+# Link billing account (required)
+gcloud billing accounts list
+gcloud billing projects link $PROJECT_ID --billing-account=YOUR_BILLING_ACCOUNT_ID
+```
+
+---
+
+### Step 2: Enable Required APIs
+
+**⚠️ IMPORTANT:** Enable all APIs before deployment to avoid errors.
+
+```bash
+# Enable all necessary GCP APIs (run this command once)
+gcloud services enable \
+  run.googleapis.com \
+  sql-component.googleapis.com \
+  sqladmin.googleapis.com \
+  secretmanager.googleapis.com \
+  artifactregistry.googleapis.com \
+  cloudscheduler.googleapis.com \
+  cloudresourcemanager.googleapis.com \
+  compute.googleapis.com \
+  servicenetworking.googleapis.com
+```
+
+**Required APIs:**
+
+| API | Service Name | Purpose | Critical |
+|-----|--------------|---------|----------|
+| Cloud Run | `run.googleapis.com` | API & Worker containers | ✅ Required |
+| Cloud SQL Admin | `sqladmin.googleapis.com` | Database management | ✅ Required |
+| Cloud SQL | `sql-component.googleapis.com` | Database operations | ✅ Required |
+| Secret Manager | `secretmanager.googleapis.com` | Credentials storage | ✅ Required |
+| **Artifact Registry** | `artifactregistry.googleapis.com` | **Docker image storage** | ✅ **Required** |
+| Cloud Scheduler | `cloudscheduler.googleapis.com` | Worker job scheduling | ✅ Required |
+| **Cloud Resource Manager** | `cloudresourcemanager.googleapis.com` | **Project metadata access** | ✅ **Required** |
+| Compute Engine | `compute.googleapis.com` | Networking | Recommended |
+| Service Networking | `servicenetworking.googleapis.com` | VPC (if using private IP) | Optional |
+
+**⏱️ Note:** After enabling APIs, wait 2-3 minutes for changes to propagate before running deployment.
+
+---
+
+### Step 3: Create Service Account
+
+```bash
+# Create service account for GitHub Actions
+gcloud iam service-accounts create github-deployer \
+  --display-name="GitHub Actions Deployer" \
+  --description="Service account for automated deployments"
+
+# Get service account email
+export SA_EMAIL="github-deployer@${PROJECT_ID}.iam.gserviceaccount.com"
+
+# Grant necessary IAM roles
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+  --member="serviceAccount:${SA_EMAIL}" \
+  --role="roles/run.admin"
+
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+  --member="serviceAccount:${SA_EMAIL}" \
+  --role="roles/cloudsql.admin"
+
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+  --member="serviceAccount:${SA_EMAIL}" \
+  --role="roles/secretmanager.admin"
+
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+  --member="serviceAccount:${SA_EMAIL}" \
+  --role="roles/artifactregistry.admin"
+
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+  --member="serviceAccount:${SA_EMAIL}" \
+  --role="roles/cloudscheduler.admin"
+
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+  --member="serviceAccount:${SA_EMAIL}" \
+  --role="roles/iam.serviceAccountUser"
+
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+  --member="serviceAccount:${SA_EMAIL}" \
+  --role="roles/storage.admin"
+
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+  --member="serviceAccount:${SA_EMAIL}" \
+  --role="roles/serviceusage.admin"
+```
+
+**Required Roles:**
+- ✅ Cloud Run Admin - Deploy and manage Cloud Run services
+- ✅ Cloud SQL Admin - Manage database instances
+- ✅ Secret Manager Admin - Manage secrets
+- ✅ Artifact Registry Admin - Push Docker images
+- ✅ Cloud Scheduler Admin - Schedule worker jobs
+- ✅ Service Account User - Act as service accounts
+- ✅ Storage Admin - Manage storage buckets
+- ✅ Service Usage Admin - Enable required APIs automatically
+
+---
+
+### Step 4: Generate Service Account Key
+
+```bash
+# Create and download JSON key
+gcloud iam service-accounts keys create ~/gcp-github-key.json \
+  --iam-account=$SA_EMAIL
+
+# Display the key (copy this for GitHub Secrets)
+cat ~/gcp-github-key.json
+```
+
+⚠️ **Security Note:** Keep this key secure! Delete it from your local machine after adding to GitHub Secrets.
+
+---
+
+### Step 5: Configure GitHub Secrets
+
+1. Go to your GitHub repository: **Settings** → **Secrets and variables** → **Actions**
+2. Click **New repository secret**
+3. Add the following secrets:
+
+| Secret Name | Value | Description |
+|-------------|-------|-------------|
+| `GCP_SA_KEY` | Contents of `~/gcp-github-key.json` | Service account JSON key (entire file) |
+| `GCP_PROJECT_ID` | Your project ID (e.g., `subscription-manager-prod`) | GCP project identifier |
+
+**How to add:**
+- **Name:** `GCP_SA_KEY`
+- **Secret:** Paste the entire JSON content from the key file
+- Click **Add secret**
+
+Repeat for `GCP_PROJECT_ID` with your project ID.
+
+---
+
+### Step 6: Configure Deployment Settings
+
+Edit `deployment-config.yaml` in your repository:
+
+```yaml
+target_cloud: gcp
+
+app:
+  name: subscription-manager
+  environment: production
+
+database:
+  name: subscription-db
+  user: subscription-app
+  tier: small              # small | medium | large
+  storage_gb: 10
+  backup_retention_days: 7
+
+api:
+  name: subscription-api
+  port: 8080
+  compute:
+    size: small            # small | medium | large
+    min_instances: 1
+    max_instances: 10
+
+worker:
+  name: subscription-worker
+  compute:
+    size: small
+  schedule: "0 */1 * * *"  # Cron: every hour
+
+regions:
+  gcp: us-central1         # Choose your region
+
+features:
+  run_migrations: true
+  enable_monitoring: true
+```
+
+**Available GCP Regions:**
+- `us-central1` (Iowa)
+- `us-east1` (South Carolina)
+- `us-west1` (Oregon)
+- `europe-west1` (Belgium)
+- `asia-southeast1` (Singapore)
+
+---
+
+### Step 7: Deploy to GCP
+
+#### Option A: Automatic Deployment (Recommended)
+
+1. **Commit and push changes:**
+   ```bash
+   git add deployment-config.yaml
+   git commit -m "Configure GCP deployment"
+   git push origin main
+   ```
+
+2. **GitHub Actions will automatically:**
+   - ✅ Authenticate with GCP
+   - ✅ Create Cloud SQL database
+   - ✅ Store credentials in Secret Manager
+   - ✅ Run Flyway migrations
+   - ✅ Build and push Docker images
+   - ✅ Deploy API to Cloud Run
+   - ✅ Deploy Worker to Cloud Run Jobs
+   - ✅ Configure Cloud Scheduler
+
+3. **Monitor deployment:**
+   - Go to **GitHub** → **Actions** tab
+   - Watch the workflow progress
+
+#### Option B: Manual Deployment via GitHub UI
+
+1. Go to **Actions** → **Manual Deploy (UI)**
+2. Click **Run workflow**
+3. Configure:
+   - Cloud: `gcp`
+   - Environment: `production`
+   - Deploy API: ✓
+   - Deploy Worker: ✓
+   - Setup Database: ✓ (first time only)
+   - Run Migrations: ✓
+   - Database Tier: `small`
+   - API Compute: `small`
+4. Click **Run workflow**
+
+#### Option C: Local Deployment
+
+```bash
+# Authenticate with GCP
+gcloud auth login
+gcloud auth application-default login
+
+# Make scripts executable
+chmod +x infrastructure/deploy.sh
+
+# Run deployment
 ./infrastructure/deploy.sh
 ```
+
+---
+
+### Step 8: Verify Deployment
+
+#### Check Cloud Run Services
+
+```bash
+# List all Cloud Run services
+gcloud run services list
+
+# Get API URL
+gcloud run services describe subscription-api \
+  --region=us-central1 \
+  --format='value(status.url)'
+```
+
+#### Check Cloud SQL Database
+
+```bash
+# List Cloud SQL instances
+gcloud sql instances list
+
+# Get connection details
+gcloud sql instances describe subscription-db \
+  --format='value(connectionName)'
+```
+
+#### Check Cloud Scheduler
+
+```bash
+# List scheduled jobs
+gcloud scheduler jobs list
+```
+
+#### Test API
+
+```bash
+# Get API URL
+API_URL=$(gcloud run services describe subscription-api \
+  --region=us-central1 \
+  --format='value(status.url)')
+
+# Test health endpoint
+curl $API_URL/actuator/health
+
+# Access Swagger UI
+echo "Swagger UI: $API_URL/swagger-ui.html"
+```
+
+---
+
+### GCP Resources Created
+
+After successful deployment, the following resources will be created:
+
+| Resource | Type | Purpose |
+|----------|------|---------|
+| **Cloud SQL Instance** | PostgreSQL 15 | Database (subscription-db) |
+| **Cloud Run Service** | Container | API (subscription-api) |
+| **Cloud Run Job** | Container | Worker (subscription-worker) |
+| **Cloud Scheduler** | Cron Job | Triggers worker hourly |
+| **Secret Manager** | Secrets | Database password (db-password) |
+| **Artifact Registry** | Docker Registry | Container images |
+
+---
+
+### Cost Estimates (GCP)
+
+#### Development/Small Tier
+- Cloud SQL (db-f1-micro): ~$7/month
+- Cloud Run API (minimal traffic): ~$5/month
+- Cloud Run Worker: ~$2/month
+- **Total: ~$15/month**
+
+#### Production/Medium Tier
+- Cloud SQL (db-n1-standard-1): ~$50/month
+- Cloud Run API (moderate traffic): ~$25/month
+- Cloud Run Worker: ~$5/month
+- **Total: ~$80/month**
+
+---
+
+### Monitoring & Logs
+
+#### View Logs
+
+```bash
+# API logs
+gcloud run services logs read subscription-api --region=us-central1
+
+# Worker logs
+gcloud run jobs logs read subscription-worker --region=us-central1
+
+# Database logs
+gcloud sql operations list --instance=subscription-db
+```
+
+#### Cloud Console
+
+- **Cloud Run:** https://console.cloud.google.com/run
+- **Cloud SQL:** https://console.cloud.google.com/sql
+- **Logs Explorer:** https://console.cloud.google.com/logs
+- **Secret Manager:** https://console.cloud.google.com/security/secret-manager
+
+---
+
+### Troubleshooting Common Issues
+
+#### Issue 1: Authentication Error in GitHub Actions
+
+**Error:** `No authentication found for gcloud`
+
+**Solution:**
+- Ensure `GCP_SA_KEY` secret is set correctly in GitHub
+- Verify the JSON key is complete (starts with `{` and ends with `}`)
+- Check that the service account has necessary permissions
+
+#### Issue 2: Artifact Registry API Not Enabled
+
+**Error:** `Artifact Registry API has not been used in project before or it is disabled`
+
+**Solution:**
+1. Enable the Artifact Registry API:
+   ```bash
+   gcloud services enable artifactregistry.googleapis.com
+   ```
+2. Wait 2-3 minutes for the API to propagate
+3. Retry the deployment
+
+#### Issue 3: Service Networking API Not Enabled
+
+**Error:** `SERVICE_NETWORKING_NOT_ENABLED`
+
+**Solution:**
+- The deployment uses public IP by default (no action needed)
+- If you need private networking, enable the Service Networking API:
+  ```bash
+  gcloud services enable servicenetworking.googleapis.com
+  ```
+
+#### Issue 4: Docker Push Permission Denied
+
+**Error:** `denied: gcr.io repo does not exist. Creating on push requires the artifactregistry.repositories.createOnPush permission`
+
+**Solution (via gcloud CLI):**
+1. Verify the service account has the Artifact Registry Admin role:
+   ```bash
+   gcloud projects add-iam-policy-binding $PROJECT_ID \
+     --member="serviceAccount:github-deployer@${PROJECT_ID}.iam.gserviceaccount.com" \
+     --role="roles/artifactregistry.admin"
+   ```
+
+2. Wait 2-3 minutes for IAM permissions to propagate
+
+3. Retry the deployment
+
+**Solution (via Google Cloud Console):**
+1. Go to [IAM & Admin → IAM](https://console.cloud.google.com/iam-admin/iam)
+2. Find the service account: `github-deployer@YOUR_PROJECT_ID.iam.gserviceaccount.com`
+3. Click the **pencil icon (✏️)** to edit
+4. Click **"+ ADD ANOTHER ROLE"**
+5. Search for and select **"Artifact Registry Admin"**
+6. Click **SAVE**
+7. Wait 2-3 minutes for permissions to propagate
+8. Retry the deployment
+
+**Note:** The `roles/artifactregistry.admin` role includes the `createOnPush` permission needed to automatically create repositories.
+
+#### Issue 5: Cloud Run API Not Enabled
+
+**Error:** `The following APIs are not enabled on project: run.googleapis.com` or `Permission denied to enable service [run.googleapis.com]`
+
+**Solution:**
+The service account cannot enable APIs - you must enable them manually.
+
+**Via gcloud CLI:**
+```bash
+gcloud services enable run.googleapis.com
+```
+
+**Via Google Cloud Console:**
+1. Go to: https://console.developers.google.com/apis/api/run.googleapis.com/overview
+2. Select your project
+3. Click **"ENABLE"**
+4. Wait 2-3 minutes for propagation
+5. Retry the deployment
+
+**Note:** Make sure you enabled ALL required APIs in Step 2 before starting deployment.
+
+#### Issue 6: Secret Not Found
+
+**Error:** `Secret [db-password] not found` or `Secret version [latest] not found`
+
+**Cause:**
+The database password secret hasn't been created in Google Cloud Secret Manager, or the secret exists but has no versions.
+
+**Solution:**
+
+The deployment automatically creates secrets during the setup phase. If you encounter this error:
+
+1. **Verify secret exists:**
+   ```bash
+   gcloud secrets describe db-password --project=$PROJECT_ID
+   ```
+
+2. **If secret doesn't exist, run setup-secrets:**
+   ```bash
+   ./infrastructure/gcp/setup-secrets.sh
+   ```
+   
+   This script will:
+   - Create the `db-password` secret in Secret Manager
+   - Store the database password securely
+   - Grant necessary IAM permissions to Cloud Run service accounts
+   - Wait for permissions to propagate
+
+3. **If secret exists but has no versions:**
+   ```bash
+   # Add a new secret version
+   echo -n "your-database-password" | gcloud secrets versions add db-password \
+     --project=$PROJECT_ID \
+     --data-file=-
+   ```
+
+4. **Verify secret has a version:**
+   ```bash
+   gcloud secrets versions list db-password --project=$PROJECT_ID
+   ```
+
+**Prevention:**
+Always run the full deployment script (`./infrastructure/deploy.sh`) which automatically handles secret creation and configuration.
+
+---
+
+### Cleanup Resources
+
+To delete all GCP resources and avoid charges:
+
+```bash
+# Run cleanup script
+./infrastructure/gcp/cleanup.sh
+
+# Or manually delete resources
+gcloud run services delete subscription-api --region=us-central1
+gcloud run jobs delete subscription-worker --region=us-central1
+gcloud scheduler jobs delete subscription-worker-trigger --location=us-central1
+gcloud sql instances delete subscription-db
+gcloud secrets delete db-password
+```
+
+---
+
+## 🌐 AWS & Azure Deployment
+
+For AWS and Azure deployment instructions, see [`README-DEPLOYMENT.md`](README-DEPLOYMENT.md).
 
 ### Cloud Services Used
 
@@ -996,14 +1504,6 @@ api:
 | **Database** | Cloud SQL | RDS PostgreSQL | Azure Database for PostgreSQL |
 | **Secrets** | Secret Manager | Secrets Manager | Key Vault |
 | **Registry** | Artifact Registry | ECR | Container Registry |
-
-### Prerequisites
-
-- Docker installed
-- Cloud CLI configured (gcloud/aws/az)
-- GitHub repository with secrets configured
-
-For detailed deployment instructions, see [`README-DEPLOYMENT.md`](README-DEPLOYMENT.md).
 
 ---
 

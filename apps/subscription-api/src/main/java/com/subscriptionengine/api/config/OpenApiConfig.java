@@ -41,25 +41,84 @@ public class OpenApiConfig {
         
         return new OpenAPI()
             .info(new Info()
-                .title("Subscription Management API")
+                .title("SubscriptionManager: Headless Subscription Engine")
                 .version("1.0.0")
                 .description("""
-                    Multi-tenant subscription management platform with comprehensive features:
-                    - Tenant isolation and management
-                    - Subscription plans and pricing
-                    - Customer management
-                    - Subscription lifecycle (create, pause, resume, cancel)
-                    - Delivery scheduling and management
-                    - Webhook notifications
-                    - Ecommerce subscriptions with product lists
-                    - Customer dashboard
+                    ## Overview
+                    
+                    A comprehensive, multi-tenant headless subscription management platform designed for modern SaaS applications.
+                    Build subscription-based products with flexible billing, automated delivery, and powerful management APIs.
+                    
+                    ## Key Features
+                    
+                    ### 🏢 Multi-Tenancy
+                    - Complete tenant isolation with row-level security
+                    - Tenant-specific JWT authentication
+                    - Automatic tenant context injection
+                    
+                    ### 📦 Subscription Management
+                    - Flexible subscription plans with custom pricing
+                    - Multiple billing cycles (daily, weekly, monthly, yearly)
+                    - Subscription lifecycle management (create, pause, resume, cancel)
+                    - Trial periods and grace periods
+                    - Proration support for plan changes
+                    
+                    ### 👥 Customer Management
+                    - Customer profiles and metadata
+                    - Multiple subscriptions per customer
+                    - Customer dashboard access
+                    - Subscription history tracking
+                    
+                    ### 🚚 Delivery Management
+                    - Automated delivery scheduling
+                    - Flexible delivery frequencies
+                    - Delivery address management
+                    - Delivery status tracking
+                    - Skip and reschedule deliveries
+                    
+                    ### 💳 Billing & Entitlements
+                    - Automated billing cycles
+                    - Invoice generation
+                    - Payment tracking
+                    - Usage-based entitlements
+                    - Feature access control
+                    
+                    ### 🔔 Webhooks & Integration
+                    - Real-time webhook notifications
+                    - Configurable webhook endpoints
+                    - Event-driven architecture
+                    - Retry mechanisms with exponential backoff
+                    
+                    ### 🛒 Ecommerce Integration
+                    - Product catalog management
+                    - Subscription boxes with product lists
+                    - Inventory tracking
+                    - Order management
+                    
+                    ## Authentication
+                    
+                    All API endpoints require JWT authentication with tenant information embedded in the token.
+                    Include the JWT token in the `Authorization` header:
+                    
+                    ```
+                    Authorization: Bearer <your-jwt-token>
+                    ```
+                    
+                    ## Rate Limiting
+                    
+                    API requests are rate-limited per tenant to ensure fair usage and system stability.
+                    
+                    ## Support
+                    
+                    For technical support, bug reports, feature requests, or integration assistance, please create an issue on GitHub:
+                    https://github.com/neeraj-agentic-lab/SubscriptionManager/issues
                     """)
                 .contact(new Contact()
-                    .name("API Support")
-                    .email("support@subscriptionengine.com"))
+                    .name("GitHub Issues")
+                    .url("https://github.com/neeraj-agentic-lab/SubscriptionManager/issues"))
                 .license(new License()
-                    .name("Proprietary")
-                    .url("https://subscriptionengine.com/license")))
+                    .name("MIT License")
+                    .url("https://github.com/neeraj-agentic-lab/SubscriptionManager/blob/main/LICENSE")))
             .servers(List.of(
                 new Server()
                     .url(baseUrl)
