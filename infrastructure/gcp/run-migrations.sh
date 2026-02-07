@@ -18,8 +18,15 @@ run_migrations() {
         --secret="$GCP_DB_PASSWORD_SECRET" \
         --project="$GCP_PROJECT_ID")
     
-    # Build database URL for Cloud SQL (using Unix socket)
-    DB_URL="jdbc:postgresql:///${GCP_DB_NAME}?cloudSqlInstance=${GCP_PROJECT_ID}:${GCP_REGION}:${GCP_DB_INSTANCE_NAME}&socketFactory=com.google.cloud.sql.postgres.SocketFactory"
+    # Get Cloud SQL instance public IP
+    DB_HOST=$(gcloud sql instances describe "$GCP_DB_INSTANCE_NAME" \
+        --project="$GCP_PROJECT_ID" \
+        --format='value(ipAddresses[0].ipAddress)')
+    
+    log "Database host: $DB_HOST"
+    
+    # Build standard JDBC URL using public IP
+    DB_URL="jdbc:postgresql://${DB_HOST}:5432/${GCP_DB_NAME}"
     
     log "Running Gradle Flyway migrations..."
     
