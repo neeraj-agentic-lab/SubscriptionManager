@@ -43,15 +43,24 @@ setup_secrets() {
     
     success "Secret created/updated"
     
-    # Grant Cloud Run service account access to secrets
-    CLOUD_RUN_SA="${GCP_PROJECT_ID}@appspot.gserviceaccount.com"
+    # Grant Cloud Run default service account access to secrets
+    # Cloud Run uses the Compute Engine default service account
+    COMPUTE_SA="${GCP_PROJECT_ID}-compute@developer.gserviceaccount.com"
     
-    log "Granting Cloud Run access to secrets..."
+    log "Granting Cloud Run (Compute Engine) service account access to secrets..."
     gcloud secrets add-iam-policy-binding "$GCP_DB_PASSWORD_SECRET" \
         --project="$GCP_PROJECT_ID" \
-        --member="serviceAccount:${CLOUD_RUN_SA}" \
+        --member="serviceAccount:${COMPUTE_SA}" \
         --role="roles/secretmanager.secretAccessor" \
         2>/dev/null || warn "Permission may already be granted"
+    
+    # Also grant to App Engine service account (for compatibility)
+    APP_ENGINE_SA="${GCP_PROJECT_ID}@appspot.gserviceaccount.com"
+    gcloud secrets add-iam-policy-binding "$GCP_DB_PASSWORD_SECRET" \
+        --project="$GCP_PROJECT_ID" \
+        --member="serviceAccount:${APP_ENGINE_SA}" \
+        --role="roles/secretmanager.secretAccessor" \
+        2>/dev/null || true
     
     success "Secret Manager setup complete!"
 }
