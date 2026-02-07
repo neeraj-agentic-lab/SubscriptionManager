@@ -67,8 +67,12 @@ configurations {
 dependencies {
     implementation 'org.postgresql:postgresql:42.7.2'
     flywayRuntime 'org.postgresql:postgresql:42.7.2'
+    
+    // Cloud SQL Socket Factory and all required dependencies
     flywayRuntime 'com.google.cloud.sql:postgres-socket-factory:1.15.0'
+    flywayRuntime 'com.google.cloud.sql:cloud-sql-connector-jdbc-core:1.15.0'
     flywayRuntime 'com.google.auth:google-auth-library-oauth2-http:1.20.0'
+    flywayRuntime 'com.google.guava:guava:32.1.3-jre'
 }
 
 // Flyway configuration for migrations
