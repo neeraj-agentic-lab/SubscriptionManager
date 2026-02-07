@@ -45,8 +45,23 @@ setup_secrets() {
     
     # Grant Cloud Run default service account access to secrets
     # Cloud Run uses the Compute Engine default service account
-    # Get project number (not project ID) for the service account
-    PROJECT_NUMBER=$(gcloud projects describe "$GCP_PROJECT_ID" --format='value(projectNumber)')
+    # Use project number from environment variable or try to get it
+    if [ -n "$GCP_PROJECT_NUMBER" ]; then
+        PROJECT_NUMBER="$GCP_PROJECT_NUMBER"
+        log "Using project number from environment: $PROJECT_NUMBER"
+    else
+        # Fallback: try to get from gcloud (requires Cloud Resource Manager API)
+        log "Attempting to fetch project number..."
+        PROJECT_NUMBER=$(gcloud projects describe "$GCP_PROJECT_ID" --format='value(projectNumber)' 2>/dev/null || echo "")
+        if [ -z "$PROJECT_NUMBER" ]; then
+            warn "Could not fetch project number. Please set GCP_PROJECT_NUMBER environment variable."
+            warn "You can find your project number in the GCP Console or run:"
+            warn "  gcloud projects describe $GCP_PROJECT_ID --format='value(projectNumber)'"
+            warn "Skipping compute service account permission grant."
+            return 0
+        fi
+    fi
+    
     COMPUTE_SA="${PROJECT_NUMBER}-compute@developer.gserviceaccount.com"
     
     log "Granting Cloud Run (Compute Engine) service account access to secrets..."
