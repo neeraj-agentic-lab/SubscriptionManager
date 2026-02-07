@@ -49,8 +49,7 @@ setup_cloud_sql() {
             --maintenance-window-day=SUN \
             --maintenance-window-hour=4 \
             --retained-backups-count="$DB_BACKUP_RETENTION" \
-            --no-assign-ip \
-            --network=default
+            --authorized-networks=0.0.0.0/0
         
         success "Cloud SQL instance created"
     fi
