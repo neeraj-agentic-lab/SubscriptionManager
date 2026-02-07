@@ -12,8 +12,8 @@ app:
 
 # Database configuration (shared by API and Worker)
 database:
-  name: subscription_db
-  user: subscription_app
+  name: subscription-db
+  user: subscription-app
   tier: small              # small | medium | large
   storage_gb: 10
   backup_retention_days: 7
