@@ -39,6 +39,12 @@ main() {
     fi
     source "$CLOUD_CONFIG"
     
+    # Step 3: Enable required APIs (GCP only)
+    if [ "$TARGET_CLOUD" = "gcp" ]; then
+        section "Step 0: Enable Required APIs"
+        "$SCRIPT_DIR/$TARGET_CLOUD/setup-apis.sh"
+    fi
+    
     # Step 4: Setup database
     section "Step 1: Database Setup"
     "$SCRIPT_DIR/$TARGET_CLOUD/setup-database.sh"

@@ -45,7 +45,7 @@ setup_secrets() {
     
     # Grant Cloud Run default service account access to secrets
     # Cloud Run uses the Compute Engine default service account
-    # Get project number using gcloud (requires Cloud Resource Manager API to be enabled)
+    # Get project number using gcloud (Cloud Resource Manager API must be enabled)
     log "Fetching project number..."
     PROJECT_NUMBER=$(gcloud projects describe "$GCP_PROJECT_ID" --format='value(projectNumber)')
     COMPUTE_SA="${PROJECT_NUMBER}-compute@developer.gserviceaccount.com"
