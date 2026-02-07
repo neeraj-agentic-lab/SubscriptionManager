@@ -89,7 +89,17 @@ setup_cloud_sql() {
         
         success "Database user created"
         
-        # Store password in Secret Manager (will be done in setup-secrets.sh)
+        # Store password in Secret Manager
+        log "Storing password in Secret Manager..."
+        echo -n "$DB_PASSWORD" | gcloud secrets create "$GCP_DB_PASSWORD_SECRET" \
+            --project="$GCP_PROJECT_ID" \
+            --data-file=- \
+            --replication-policy="automatic" 2>/dev/null || \
+        echo -n "$DB_PASSWORD" | gcloud secrets versions add "$GCP_DB_PASSWORD_SECRET" \
+            --project="$GCP_PROJECT_ID" \
+            --data-file=-
+        
+        success "Password stored in Secret Manager"
         export GCP_DB_PASSWORD="$DB_PASSWORD"
     fi
     
