@@ -94,6 +94,14 @@ deploy_api() {
         --region="$GCP_REGION" \
         --format="value(status.url)")
     
+    # Update service with API_BASE_URL for Swagger UI
+    log "Updating API_BASE_URL for Swagger UI..."
+    gcloud run services update "$GCP_API_SERVICE_NAME" \
+        --project="$GCP_PROJECT_ID" \
+        --region="$GCP_REGION" \
+        --update-env-vars="API_BASE_URL=${SERVICE_URL}" \
+        --quiet
+    
     success "API deployed to Cloud Run!"
     echo ""
     log "API Details:"

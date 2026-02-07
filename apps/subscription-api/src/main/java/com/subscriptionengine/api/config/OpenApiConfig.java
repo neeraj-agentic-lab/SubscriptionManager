@@ -26,9 +26,18 @@ public class OpenApiConfig {
     @Value("${server.servlet.context-path:}")
     private String contextPath;
     
+    @Value("${api.base-url:}")
+    private String apiBaseUrl;
+    
     @Bean
     public OpenAPI customOpenAPI() {
-        String baseUrl = "http://localhost:" + serverPort + (contextPath != null && !contextPath.isEmpty() ? contextPath : "");
+        // Use API_BASE_URL environment variable if set (for Cloud Run), otherwise localhost
+        String baseUrl;
+        if (apiBaseUrl != null && !apiBaseUrl.isEmpty()) {
+            baseUrl = apiBaseUrl + (contextPath != null && !contextPath.isEmpty() ? contextPath : "");
+        } else {
+            baseUrl = "http://localhost:" + serverPort + (contextPath != null && !contextPath.isEmpty() ? contextPath : "");
+        }
         
         return new OpenAPI()
             .info(new Info()
@@ -54,7 +63,7 @@ public class OpenApiConfig {
             .servers(List.of(
                 new Server()
                     .url(baseUrl)
-                    .description("Development server")
+                    .description(apiBaseUrl != null && !apiBaseUrl.isEmpty() ? "Production server" : "Development server")
             ));
     }
 }
