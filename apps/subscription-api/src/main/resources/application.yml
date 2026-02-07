@@ -4,9 +4,9 @@ spring:
   
   # Database configuration
   datasource:
-    url: jdbc:postgresql://localhost:5440/subscription_engine
-    username: postgres
-    password: postgres
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5440/subscription_engine}
+    username: ${DATABASE_USER:postgres}
+    password: ${DATABASE_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
   
   # jOOQ configuration
