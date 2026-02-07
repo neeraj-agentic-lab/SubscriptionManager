@@ -95,11 +95,16 @@ jobs:
           echo "- **Database Tier:** ${{ inputs.database_tier }}" >> $GITHUB_STEP_SUMMARY
           echo "- **API Compute:** ${{ inputs.api_compute_size }}" >> $GITHUB_STEP_SUMMARY
       
-      - name: Setup GCP
+      - name: Authenticate to Google Cloud
         if: inputs.target_cloud == 'gcp'
-        uses: google-github-actions/setup-gcloud@v1
+        uses: google-github-actions/auth@v2
         with:
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+      
+      - name: Setup GCP CLI
+        if: inputs.target_cloud == 'gcp'
+        uses: google-github-actions/setup-gcloud@v2
+        with:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
       
       - name: Setup AWS

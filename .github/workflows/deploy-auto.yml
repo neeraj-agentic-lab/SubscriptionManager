@@ -36,11 +36,16 @@ jobs:
           ENV=$(yq '.app.environment' deployment-config.yaml)
           echo "environment=$ENV" >> $GITHUB_OUTPUT
       
-      - name: Setup GCP
+      - name: Authenticate to Google Cloud
         if: steps.cloud.outputs.target == 'gcp'
-        uses: google-github-actions/setup-gcloud@v1
+        uses: google-github-actions/auth@v2
         with:
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+      
+      - name: Setup GCP CLI
+        if: steps.cloud.outputs.target == 'gcp'
+        uses: google-github-actions/setup-gcloud@v2
+        with:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
       
       - name: Setup AWS
