@@ -74,7 +74,6 @@ jobs:
         env:
           TARGET_CLOUD: ${{ steps.cloud.outputs.target }}
           ENVIRONMENT: ${{ steps.cloud.outputs.environment }}
-          GCP_PROJECT_NUMBER: ${{ secrets.GCP_PROJECT_NUMBER }}
       
       - name: Deployment summary
         if: success()
