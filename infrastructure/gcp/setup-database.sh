@@ -75,7 +75,26 @@ setup_cloud_sql() {
     if gcloud sql users describe "$GCP_DB_USER" \
         --instance="$GCP_DB_INSTANCE_NAME" \
         --project="$GCP_PROJECT_ID" &>/dev/null; then
-        success "Database user '$GCP_DB_USER' already exists"
+        log "Database user '$GCP_DB_USER' already exists"
+        
+        # Sync password with Secret Manager
+        if gcloud secrets describe "$GCP_DB_PASSWORD_SECRET" \
+            --project="$GCP_PROJECT_ID" &>/dev/null; then
+            log "Syncing database user password with Secret Manager..."
+            DB_PASSWORD=$(gcloud secrets versions access latest \
+                --secret="$GCP_DB_PASSWORD_SECRET" \
+                --project="$GCP_PROJECT_ID")
+            
+            # Update database user password to match Secret Manager
+            gcloud sql users set-password "$GCP_DB_USER" \
+                --instance="$GCP_DB_INSTANCE_NAME" \
+                --password="$DB_PASSWORD" \
+                --project="$GCP_PROJECT_ID"
+            
+            success "Password synced with Secret Manager"
+        fi
+        
+        success "Database user ready"
     else
         log "Creating database user '$GCP_DB_USER'..."
         
