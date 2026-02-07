@@ -105,8 +105,10 @@ deploy_api() {
     log "  Min Instances: ${API_MIN_INSTANCES:-1}"
     log "  Max Instances: ${API_MAX_INSTANCES:-10}"
     echo ""
-    log "Health Check: ${SERVICE_URL}/actuator/health"
-    log "Swagger UI: ${SERVICE_URL}/swagger-ui.html"
+    log "API Endpoints:"
+    log "  Health Check: ${SERVICE_URL}/api/actuator/health"
+    log "  Swagger UI: ${SERVICE_URL}/api/swagger-ui.html"
+    log "  API Base: ${SERVICE_URL}/api/v1"
     echo ""
 }
 
