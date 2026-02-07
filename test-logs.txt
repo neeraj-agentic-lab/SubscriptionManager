@@ -1,0 +1,1686 @@
+Initialized native services in: /Users/nyadav/.gradle/native
+Initialized jansi services in: /Users/nyadav/.gradle/native
+Received JVM installation metadata from '/opt/homebrew/Cellar/openjdk@17/17.0.14/libexec/openjdk.jdk/Contents/Home': {JAVA_HOME=/opt/homebrew/Cellar/openjdk@17/17.0.14/libexec/openjdk.jdk/Contents/Home, JAVA_VERSION=17.0.14, JAVA_VENDOR=Homebrew, RUNTIME_NAME=OpenJDK Runtime Environment, RUNTIME_VERSION=17.0.14+0, VM_NAME=OpenJDK 64-Bit Server VM, VM_VERSION=17.0.14+0, VM_VENDOR=Homebrew, OS_ARCH=aarch64}
+Found daemon DaemonInfo{pid=75512, address=[7001da18-7df6-4da5-848e-636da22b1cbe port:50390, addresses:[/127.0.0.1]], state=Idle, lastBusy=1770226892897, context=DefaultDaemonContext[uid=754028dc-3479-4e25-a6bd-7f8e5ac5abd4,javaHome=/opt/homebrew/Cellar/openjdk/25.0.2/libexec/openjdk.jdk/Contents/Home,daemonRegistryDir=/Users/nyadav/.gradle/daemon,pid=75512,idleTimeout=10800000,priority=NORMAL,applyInstrumentationAgent=true,daemonOpts=--add-opens=java.base/java.util=ALL-UNNAMED,--add-opens=java.base/java.lang=ALL-UNNAMED,--add-opens=java.base/java.lang.invoke=ALL-UNNAMED,--add-opens=java.prefs/java.util.prefs=ALL-UNNAMED,--add-opens=java.base/java.nio.charset=ALL-UNNAMED,--add-opens=java.base/java.net=ALL-UNNAMED,--add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED,-XX:MaxMetaspaceSize=384m,-XX:+HeapDumpOnOutOfMemoryError,-Xms256m,-Xmx512m,-Dfile.encoding=UTF-8,-Duser.country=US,-Duser.language=en,-Duser.variant]} however its context does not match the desired criteria.
+Java home is different.
+Wanted: DefaultDaemonContext[uid=null,javaHome=/opt/homebrew/Cellar/openjdk@17/17.0.14/libexec/openjdk.jdk/Contents/Home,daemonRegistryDir=/Users/nyadav/.gradle/daemon,pid=4875,idleTimeout=null,priority=NORMAL,applyInstrumentationAgent=true,daemonOpts=--add-opens=java.base/java.util=ALL-UNNAMED,--add-opens=java.base/java.lang=ALL-UNNAMED,--add-opens=java.base/java.lang.invoke=ALL-UNNAMED,--add-opens=java.prefs/java.util.prefs=ALL-UNNAMED,--add-opens=java.base/java.nio.charset=ALL-UNNAMED,--add-opens=java.base/java.net=ALL-UNNAMED,--add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED,-XX:MaxMetaspaceSize=384m,-XX:+HeapDumpOnOutOfMemoryError,-Xms256m,-Xmx512m,-Dfile.encoding=UTF-8,-Duser.country=US,-Duser.language=en,-Duser.variant]
+Actual: DefaultDaemonContext[uid=754028dc-3479-4e25-a6bd-7f8e5ac5abd4,javaHome=/opt/homebrew/Cellar/openjdk/25.0.2/libexec/openjdk.jdk/Contents/Home,daemonRegistryDir=/Users/nyadav/.gradle/daemon,pid=75512,idleTimeout=10800000,priority=NORMAL,applyInstrumentationAgent=true,daemonOpts=--add-opens=java.base/java.util=ALL-UNNAMED,--add-opens=java.base/java.lang=ALL-UNNAMED,--add-opens=java.base/java.lang.invoke=ALL-UNNAMED,--add-opens=java.prefs/java.util.prefs=ALL-UNNAMED,--add-opens=java.base/java.nio.charset=ALL-UNNAMED,--add-opens=java.base/java.net=ALL-UNNAMED,--add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED,-XX:MaxMetaspaceSize=384m,-XX:+HeapDumpOnOutOfMemoryError,-Xms256m,-Xmx512m,-Dfile.encoding=UTF-8,-Duser.country=US,-Duser.language=en,-Duser.variant]
+
+  Looking for a different daemon...
+The client will now receive all logging from the daemon (pid: 75392). The daemon log file: /Users/nyadav/.gradle/daemon/8.5/daemon-75392.out.log
+Starting 44th build in daemon [uptime: 2 hrs 0 mins 15.855 secs, performance: 100%, GC rate: 0.00/s, heap usage: 0% of 512 MiB, non-heap usage: 24% of 384 MiB]
+Using 10 worker leases.
+Now considering [/Users/nyadav/personal/development/SubscriptionManager] as hierarchies to watch
+Watching the file system is configured to be enabled if available
+File system watching is active
+Starting Build
+Settings evaluated using settings file '/Users/nyadav/personal/development/SubscriptionManager/settings.gradle'.
+Projects loaded. Root project using build file '/Users/nyadav/personal/development/SubscriptionManager/build.gradle'.
+Included projects: [root project 'subscription-engine', project ':apps', project ':modules', project ':apps:subscription-api', project ':apps:subscription-worker', project ':modules:auth', project ':modules:common', project ':modules:domain-billing', project ':modules:domain-delivery', project ':modules:domain-entitlements', project ':modules:domain-plans', project ':modules:domain-subscriptions', project ':modules:integrations', project ':modules:outbox', project ':modules:scheduler']
+
+> Configure project :
+Evaluating root project 'subscription-engine' using build file '/Users/nyadav/personal/development/SubscriptionManager/build.gradle'.
+Applying dependency management to configuration 'annotationProcessor' in project 'apps'
+Applying dependency management to configuration 'apiElements' in project 'apps'
+Applying dependency management to configuration 'archives' in project 'apps'
+Applying dependency management to configuration 'compileClasspath' in project 'apps'
+Applying dependency management to configuration 'compileOnly' in project 'apps'
+Applying dependency management to configuration 'default' in project 'apps'
+Applying dependency management to configuration 'implementation' in project 'apps'
+Applying dependency management to configuration 'mainSourceElements' in project 'apps'
+Applying dependency management to configuration 'runtimeClasspath' in project 'apps'
+Applying dependency management to configuration 'runtimeElements' in project 'apps'
+Applying dependency management to configuration 'runtimeOnly' in project 'apps'
+Applying dependency management to configuration 'testAnnotationProcessor' in project 'apps'
+Applying dependency management to configuration 'testCompileClasspath' in project 'apps'
+Applying dependency management to configuration 'testCompileOnly' in project 'apps'
+Applying dependency management to configuration 'testImplementation' in project 'apps'
+Applying dependency management to configuration 'testResultsElementsForTest' in project 'apps'
+Applying dependency management to configuration 'testRuntimeClasspath' in project 'apps'
+Applying dependency management to configuration 'testRuntimeOnly' in project 'apps'
+Applying dependency management to configuration 'annotationProcessor' in project 'modules'
+Applying dependency management to configuration 'apiElements' in project 'modules'
+Applying dependency management to configuration 'archives' in project 'modules'
+Applying dependency management to configuration 'compileClasspath' in project 'modules'
+Applying dependency management to configuration 'compileOnly' in project 'modules'
+Applying dependency management to configuration 'default' in project 'modules'
+Applying dependency management to configuration 'implementation' in project 'modules'
+Applying dependency management to configuration 'mainSourceElements' in project 'modules'
+Applying dependency management to configuration 'runtimeClasspath' in project 'modules'
+Applying dependency management to configuration 'runtimeElements' in project 'modules'
+Applying dependency management to configuration 'runtimeOnly' in project 'modules'
+Applying dependency management to configuration 'testAnnotationProcessor' in project 'modules'
+Applying dependency management to configuration 'testCompileClasspath' in project 'modules'
+Applying dependency management to configuration 'testCompileOnly' in project 'modules'
+Applying dependency management to configuration 'testImplementation' in project 'modules'
+Applying dependency management to configuration 'testResultsElementsForTest' in project 'modules'
+Applying dependency management to configuration 'testRuntimeClasspath' in project 'modules'
+Applying dependency management to configuration 'testRuntimeOnly' in project 'modules'
+Applying dependency management to configuration 'annotationProcessor' in project 'subscription-api'
+Applying dependency management to configuration 'apiElements' in project 'subscription-api'
+Applying dependency management to configuration 'archives' in project 'subscription-api'
+Applying dependency management to configuration 'bootArchives' in project 'subscription-api'
+Applying dependency management to configuration 'compileClasspath' in project 'subscription-api'
+Applying dependency management to configuration 'compileOnly' in project 'subscription-api'
+Applying dependency management to configuration 'default' in project 'subscription-api'
+Applying dependency management to configuration 'developmentOnly' in project 'subscription-api'
+Applying dependency management to configuration 'implementation' in project 'subscription-api'
+Applying dependency management to configuration 'mainSourceElements' in project 'subscription-api'
+Applying dependency management to configuration 'productionRuntimeClasspath' in project 'subscription-api'
+Applying dependency management to configuration 'runtimeClasspath' in project 'subscription-api'
+Applying dependency management to configuration 'runtimeElements' in project 'subscription-api'
+Applying dependency management to configuration 'runtimeOnly' in project 'subscription-api'
+Applying dependency management to configuration 'testAndDevelopmentOnly' in project 'subscription-api'
+Applying dependency management to configuration 'testAnnotationProcessor' in project 'subscription-api'
+Applying dependency management to configuration 'testCompileClasspath' in project 'subscription-api'
+Applying dependency management to configuration 'testCompileOnly' in project 'subscription-api'
+Applying dependency management to configuration 'testImplementation' in project 'subscription-api'
+Applying dependency management to configuration 'testResultsElementsForTest' in project 'subscription-api'
+Applying dependency management to configuration 'testRuntimeClasspath' in project 'subscription-api'
+Applying dependency management to configuration 'testRuntimeOnly' in project 'subscription-api'
+Applying dependency management to configuration 'annotationProcessor' in project 'subscription-worker'
+Applying dependency management to configuration 'apiElements' in project 'subscription-worker'
+Applying dependency management to configuration 'archives' in project 'subscription-worker'
+Applying dependency management to configuration 'bootArchives' in project 'subscription-worker'
+Applying dependency management to configuration 'compileClasspath' in project 'subscription-worker'
+Applying dependency management to configuration 'compileOnly' in project 'subscription-worker'
+Applying dependency management to configuration 'default' in project 'subscription-worker'
+Applying dependency management to configuration 'developmentOnly' in project 'subscription-worker'
+Applying dependency management to configuration 'implementation' in project 'subscription-worker'
+Applying dependency management to configuration 'mainSourceElements' in project 'subscription-worker'
+Applying dependency management to configuration 'productionRuntimeClasspath' in project 'subscription-worker'
+Applying dependency management to configuration 'runtimeClasspath' in project 'subscription-worker'
+Applying dependency management to configuration 'runtimeElements' in project 'subscription-worker'
+Applying dependency management to configuration 'runtimeOnly' in project 'subscription-worker'
+Applying dependency management to configuration 'testAndDevelopmentOnly' in project 'subscription-worker'
+Applying dependency management to configuration 'testAnnotationProcessor' in project 'subscription-worker'
+Applying dependency management to configuration 'testCompileClasspath' in project 'subscription-worker'
+Applying dependency management to configuration 'testCompileOnly' in project 'subscription-worker'
+Applying dependency management to configuration 'testImplementation' in project 'subscription-worker'
+Applying dependency management to configuration 'testResultsElementsForTest' in project 'subscription-worker'
+Applying dependency management to configuration 'testRuntimeClasspath' in project 'subscription-worker'
+Applying dependency management to configuration 'testRuntimeOnly' in project 'subscription-worker'
+Applying dependency management to configuration 'annotationProcessor' in project 'auth'
+Applying dependency management to configuration 'apiElements' in project 'auth'
+Applying dependency management to configuration 'archives' in project 'auth'
+Applying dependency management to configuration 'compileClasspath' in project 'auth'
+Applying dependency management to configuration 'compileOnly' in project 'auth'
+Applying dependency management to configuration 'default' in project 'auth'
+Applying dependency management to configuration 'implementation' in project 'auth'
+Applying dependency management to configuration 'mainSourceElements' in project 'auth'
+Applying dependency management to configuration 'runtimeClasspath' in project 'auth'
+Applying dependency management to configuration 'runtimeElements' in project 'auth'
+Applying dependency management to configuration 'runtimeOnly' in project 'auth'
+Applying dependency management to configuration 'testAnnotationProcessor' in project 'auth'
+Applying dependency management to configuration 'testCompileClasspath' in project 'auth'
+Applying dependency management to configuration 'testCompileOnly' in project 'auth'
+Applying dependency management to configuration 'testImplementation' in project 'auth'
+Applying dependency management to configuration 'testResultsElementsForTest' in project 'auth'
+Applying dependency management to configuration 'testRuntimeClasspath' in project 'auth'
+Applying dependency management to configuration 'testRuntimeOnly' in project 'auth'
+Applying dependency management to configuration 'annotationProcessor' in project 'common'
+Applying dependency management to configuration 'apiElements' in project 'common'
+Applying dependency management to configuration 'archives' in project 'common'
+Applying dependency management to configuration 'compileClasspath' in project 'common'
+Applying dependency management to configuration 'compileOnly' in project 'common'
+Applying dependency management to configuration 'default' in project 'common'
+Applying dependency management to configuration 'implementation' in project 'common'
+Applying dependency management to configuration 'mainSourceElements' in project 'common'
+Applying dependency management to configuration 'runtimeClasspath' in project 'common'
+Applying dependency management to configuration 'runtimeElements' in project 'common'
+Applying dependency management to configuration 'runtimeOnly' in project 'common'
+Applying dependency management to configuration 'testAnnotationProcessor' in project 'common'
+Applying dependency management to configuration 'testCompileClasspath' in project 'common'
+Applying dependency management to configuration 'testCompileOnly' in project 'common'
+Applying dependency management to configuration 'testImplementation' in project 'common'
+Applying dependency management to configuration 'testResultsElementsForTest' in project 'common'
+Applying dependency management to configuration 'testRuntimeClasspath' in project 'common'
+Applying dependency management to configuration 'testRuntimeOnly' in project 'common'
+Applying dependency management to configuration 'annotationProcessor' in project 'domain-billing'
+Applying dependency management to configuration 'apiElements' in project 'domain-billing'
+Applying dependency management to configuration 'archives' in project 'domain-billing'
+Applying dependency management to configuration 'compileClasspath' in project 'domain-billing'
+Applying dependency management to configuration 'compileOnly' in project 'domain-billing'
+Applying dependency management to configuration 'default' in project 'domain-billing'
+Applying dependency management to configuration 'implementation' in project 'domain-billing'
+Applying dependency management to configuration 'mainSourceElements' in project 'domain-billing'
+Applying dependency management to configuration 'runtimeClasspath' in project 'domain-billing'
+Applying dependency management to configuration 'runtimeElements' in project 'domain-billing'
+Applying dependency management to configuration 'runtimeOnly' in project 'domain-billing'
+Applying dependency management to configuration 'testAnnotationProcessor' in project 'domain-billing'
+Applying dependency management to configuration 'testCompileClasspath' in project 'domain-billing'
+Applying dependency management to configuration 'testCompileOnly' in project 'domain-billing'
+Applying dependency management to configuration 'testImplementation' in project 'domain-billing'
+Applying dependency management to configuration 'testResultsElementsForTest' in project 'domain-billing'
+Applying dependency management to configuration 'testRuntimeClasspath' in project 'domain-billing'
+Applying dependency management to configuration 'testRuntimeOnly' in project 'domain-billing'
+Applying dependency management to configuration 'annotationProcessor' in project 'domain-delivery'
+Applying dependency management to configuration 'apiElements' in project 'domain-delivery'
+Applying dependency management to configuration 'archives' in project 'domain-delivery'
+Applying dependency management to configuration 'compileClasspath' in project 'domain-delivery'
+Applying dependency management to configuration 'compileOnly' in project 'domain-delivery'
+Applying dependency management to configuration 'default' in project 'domain-delivery'
+Applying dependency management to configuration 'implementation' in project 'domain-delivery'
+Applying dependency management to configuration 'mainSourceElements' in project 'domain-delivery'
+Applying dependency management to configuration 'runtimeClasspath' in project 'domain-delivery'
+Applying dependency management to configuration 'runtimeElements' in project 'domain-delivery'
+Applying dependency management to configuration 'runtimeOnly' in project 'domain-delivery'
+Applying dependency management to configuration 'testAnnotationProcessor' in project 'domain-delivery'
+Applying dependency management to configuration 'testCompileClasspath' in project 'domain-delivery'
+Applying dependency management to configuration 'testCompileOnly' in project 'domain-delivery'
+Applying dependency management to configuration 'testImplementation' in project 'domain-delivery'
+Applying dependency management to configuration 'testResultsElementsForTest' in project 'domain-delivery'
+Applying dependency management to configuration 'testRuntimeClasspath' in project 'domain-delivery'
+Applying dependency management to configuration 'testRuntimeOnly' in project 'domain-delivery'
+Applying dependency management to configuration 'annotationProcessor' in project 'domain-entitlements'
+Applying dependency management to configuration 'apiElements' in project 'domain-entitlements'
+Applying dependency management to configuration 'archives' in project 'domain-entitlements'
+Applying dependency management to configuration 'compileClasspath' in project 'domain-entitlements'
+Applying dependency management to configuration 'compileOnly' in project 'domain-entitlements'
+Applying dependency management to configuration 'default' in project 'domain-entitlements'
+Applying dependency management to configuration 'implementation' in project 'domain-entitlements'
+Applying dependency management to configuration 'mainSourceElements' in project 'domain-entitlements'
+Applying dependency management to configuration 'runtimeClasspath' in project 'domain-entitlements'
+Applying dependency management to configuration 'runtimeElements' in project 'domain-entitlements'
+Applying dependency management to configuration 'runtimeOnly' in project 'domain-entitlements'
+Applying dependency management to configuration 'testAnnotationProcessor' in project 'domain-entitlements'
+Applying dependency management to configuration 'testCompileClasspath' in project 'domain-entitlements'
+Applying dependency management to configuration 'testCompileOnly' in project 'domain-entitlements'
+Applying dependency management to configuration 'testImplementation' in project 'domain-entitlements'
+Applying dependency management to configuration 'testResultsElementsForTest' in project 'domain-entitlements'
+Applying dependency management to configuration 'testRuntimeClasspath' in project 'domain-entitlements'
+Applying dependency management to configuration 'testRuntimeOnly' in project 'domain-entitlements'
+Applying dependency management to configuration 'annotationProcessor' in project 'domain-plans'
+Applying dependency management to configuration 'apiElements' in project 'domain-plans'
+Applying dependency management to configuration 'archives' in project 'domain-plans'
+Applying dependency management to configuration 'compileClasspath' in project 'domain-plans'
+Applying dependency management to configuration 'compileOnly' in project 'domain-plans'
+Applying dependency management to configuration 'default' in project 'domain-plans'
+Applying dependency management to configuration 'implementation' in project 'domain-plans'
+Applying dependency management to configuration 'mainSourceElements' in project 'domain-plans'
+Applying dependency management to configuration 'runtimeClasspath' in project 'domain-plans'
+Applying dependency management to configuration 'runtimeElements' in project 'domain-plans'
+Applying dependency management to configuration 'runtimeOnly' in project 'domain-plans'
+Applying dependency management to configuration 'testAnnotationProcessor' in project 'domain-plans'
+Applying dependency management to configuration 'testCompileClasspath' in project 'domain-plans'
+Applying dependency management to configuration 'testCompileOnly' in project 'domain-plans'
+Applying dependency management to configuration 'testImplementation' in project 'domain-plans'
+Applying dependency management to configuration 'testResultsElementsForTest' in project 'domain-plans'
+Applying dependency management to configuration 'testRuntimeClasspath' in project 'domain-plans'
+Applying dependency management to configuration 'testRuntimeOnly' in project 'domain-plans'
+Applying dependency management to configuration 'annotationProcessor' in project 'domain-subscriptions'
+Applying dependency management to configuration 'apiElements' in project 'domain-subscriptions'
+Applying dependency management to configuration 'archives' in project 'domain-subscriptions'
+Applying dependency management to configuration 'compileClasspath' in project 'domain-subscriptions'
+Applying dependency management to configuration 'compileOnly' in project 'domain-subscriptions'
+Applying dependency management to configuration 'default' in project 'domain-subscriptions'
+Applying dependency management to configuration 'implementation' in project 'domain-subscriptions'
+Applying dependency management to configuration 'mainSourceElements' in project 'domain-subscriptions'
+Applying dependency management to configuration 'runtimeClasspath' in project 'domain-subscriptions'
+Applying dependency management to configuration 'runtimeElements' in project 'domain-subscriptions'
+Applying dependency management to configuration 'runtimeOnly' in project 'domain-subscriptions'
+Applying dependency management to configuration 'testAnnotationProcessor' in project 'domain-subscriptions'
+Applying dependency management to configuration 'testCompileClasspath' in project 'domain-subscriptions'
+Applying dependency management to configuration 'testCompileOnly' in project 'domain-subscriptions'
+Applying dependency management to configuration 'testImplementation' in project 'domain-subscriptions'
+Applying dependency management to configuration 'testResultsElementsForTest' in project 'domain-subscriptions'
+Applying dependency management to configuration 'testRuntimeClasspath' in project 'domain-subscriptions'
+Applying dependency management to configuration 'testRuntimeOnly' in project 'domain-subscriptions'
+Applying dependency management to configuration 'annotationProcessor' in project 'integrations'
+Applying dependency management to configuration 'apiElements' in project 'integrations'
+Applying dependency management to configuration 'archives' in project 'integrations'
+Applying dependency management to configuration 'compileClasspath' in project 'integrations'
+Applying dependency management to configuration 'compileOnly' in project 'integrations'
+Applying dependency management to configuration 'default' in project 'integrations'
+Applying dependency management to configuration 'implementation' in project 'integrations'
+Applying dependency management to configuration 'mainSourceElements' in project 'integrations'
+Applying dependency management to configuration 'runtimeClasspath' in project 'integrations'
+Applying dependency management to configuration 'runtimeElements' in project 'integrations'
+Applying dependency management to configuration 'runtimeOnly' in project 'integrations'
+Applying dependency management to configuration 'testAnnotationProcessor' in project 'integrations'
+Applying dependency management to configuration 'testCompileClasspath' in project 'integrations'
+Applying dependency management to configuration 'testCompileOnly' in project 'integrations'
+Applying dependency management to configuration 'testImplementation' in project 'integrations'
+Applying dependency management to configuration 'testResultsElementsForTest' in project 'integrations'
+Applying dependency management to configuration 'testRuntimeClasspath' in project 'integrations'
+Applying dependency management to configuration 'testRuntimeOnly' in project 'integrations'
+Applying dependency management to configuration 'annotationProcessor' in project 'outbox'
+Applying dependency management to configuration 'apiElements' in project 'outbox'
+Applying dependency management to configuration 'archives' in project 'outbox'
+Applying dependency management to configuration 'compileClasspath' in project 'outbox'
+Applying dependency management to configuration 'compileOnly' in project 'outbox'
+Applying dependency management to configuration 'default' in project 'outbox'
+Applying dependency management to configuration 'implementation' in project 'outbox'
+Applying dependency management to configuration 'mainSourceElements' in project 'outbox'
+Applying dependency management to configuration 'runtimeClasspath' in project 'outbox'
+Applying dependency management to configuration 'runtimeElements' in project 'outbox'
+Applying dependency management to configuration 'runtimeOnly' in project 'outbox'
+Applying dependency management to configuration 'testAnnotationProcessor' in project 'outbox'
+Applying dependency management to configuration 'testCompileClasspath' in project 'outbox'
+Applying dependency management to configuration 'testCompileOnly' in project 'outbox'
+Applying dependency management to configuration 'testImplementation' in project 'outbox'
+Applying dependency management to configuration 'testResultsElementsForTest' in project 'outbox'
+Applying dependency management to configuration 'testRuntimeClasspath' in project 'outbox'
+Applying dependency management to configuration 'testRuntimeOnly' in project 'outbox'
+Applying dependency management to configuration 'annotationProcessor' in project 'scheduler'
+Applying dependency management to configuration 'apiElements' in project 'scheduler'
+Applying dependency management to configuration 'archives' in project 'scheduler'
+Applying dependency management to configuration 'compileClasspath' in project 'scheduler'
+Applying dependency management to configuration 'compileOnly' in project 'scheduler'
+Applying dependency management to configuration 'default' in project 'scheduler'
+Applying dependency management to configuration 'implementation' in project 'scheduler'
+Applying dependency management to configuration 'mainSourceElements' in project 'scheduler'
+Applying dependency management to configuration 'runtimeClasspath' in project 'scheduler'
+Applying dependency management to configuration 'runtimeElements' in project 'scheduler'
+Applying dependency management to configuration 'runtimeOnly' in project 'scheduler'
+Applying dependency management to configuration 'testAnnotationProcessor' in project 'scheduler'
+Applying dependency management to configuration 'testCompileClasspath' in project 'scheduler'
+Applying dependency management to configuration 'testCompileOnly' in project 'scheduler'
+Applying dependency management to configuration 'testImplementation' in project 'scheduler'
+Applying dependency management to configuration 'testResultsElementsForTest' in project 'scheduler'
+Applying dependency management to configuration 'testRuntimeClasspath' in project 'scheduler'
+Applying dependency management to configuration 'testRuntimeOnly' in project 'scheduler'
+
+> Configure project :apps
+Evaluating project ':apps' using build file '/Users/nyadav/personal/development/SubscriptionManager/apps/build.gradle'.
+
+> Configure project :modules
+Evaluating project ':modules' using build file '/Users/nyadav/personal/development/SubscriptionManager/modules/build.gradle'.
+
+> Configure project :apps:subscription-api
+Evaluating project ':apps:subscription-api' using build file '/Users/nyadav/personal/development/SubscriptionManager/apps/subscription-api/build.gradle'.
+Applying dependency management to configuration 'allureWorkaroundGradleBug' in project 'subscription-api'
+Applying dependency management to configuration 'allureRawResultElements' in project 'subscription-api'
+Applying dependency management to configuration 'allureCopyCategoriesElements' in project 'subscription-api'
+Applying dependency management to configuration 'allureRawResultDirs' in project 'subscription-api'
+Applying dependency management to configuration 'allureAspectjWeaverAgent' in project 'subscription-api'
+Applying dependency management to configuration 'allureReport' in project 'subscription-api'
+Applying dependency management to configuration 'allureGenerateCategories' in project 'subscription-api'
+Applying dependency management to configuration 'allureCommandline' in project 'subscription-api'
+
+> Configure project :apps:subscription-worker
+Evaluating project ':apps:subscription-worker' using build file '/Users/nyadav/personal/development/SubscriptionManager/apps/subscription-worker/build.gradle'.
+
+> Configure project :modules:auth
+Evaluating project ':modules:auth' using build file '/Users/nyadav/personal/development/SubscriptionManager/modules/auth/build.gradle'.
+Applying dependency management to configuration 'api' in project 'auth'
+Applying dependency management to configuration 'compileOnlyApi' in project 'auth'
+
+> Configure project :modules:common
+Evaluating project ':modules:common' using build file '/Users/nyadav/personal/development/SubscriptionManager/modules/common/build.gradle'.
+Applying dependency management to configuration 'api' in project 'common'
+Applying dependency management to configuration 'compileOnlyApi' in project 'common'
+Applying dependency management to configuration 'jooqGenerator' in project 'common'
+
+> Configure project :modules:domain-billing
+Evaluating project ':modules:domain-billing' using build file '/Users/nyadav/personal/development/SubscriptionManager/modules/domain-billing/build.gradle'.
+
+> Configure project :modules:domain-delivery
+Evaluating project ':modules:domain-delivery' using build file '/Users/nyadav/personal/development/SubscriptionManager/modules/domain-delivery/build.gradle'.
+
+> Configure project :modules:domain-entitlements
+Evaluating project ':modules:domain-entitlements' using build file '/Users/nyadav/personal/development/SubscriptionManager/modules/domain-entitlements/build.gradle'.
+
+> Configure project :modules:domain-plans
+Evaluating project ':modules:domain-plans' using build file '/Users/nyadav/personal/development/SubscriptionManager/modules/domain-plans/build.gradle'.
+Applying dependency management to configuration 'api' in project 'domain-plans'
+Applying dependency management to configuration 'compileOnlyApi' in project 'domain-plans'
+
+> Configure project :modules:domain-subscriptions
+Evaluating project ':modules:domain-subscriptions' using build file '/Users/nyadav/personal/development/SubscriptionManager/modules/domain-subscriptions/build.gradle'.
+Applying dependency management to configuration 'api' in project 'domain-subscriptions'
+Applying dependency management to configuration 'compileOnlyApi' in project 'domain-subscriptions'
+
+> Configure project :modules:integrations
+Evaluating project ':modules:integrations' using build file '/Users/nyadav/personal/development/SubscriptionManager/modules/integrations/build.gradle'.
+
+> Configure project :modules:outbox
+Evaluating project ':modules:outbox' using build file '/Users/nyadav/personal/development/SubscriptionManager/modules/outbox/build.gradle'.
+
+> Configure project :modules:scheduler
+Evaluating project ':modules:scheduler' using build file '/Users/nyadav/personal/development/SubscriptionManager/modules/scheduler/build.gradle'.
+Applying dependency management to configuration 'api' in project 'scheduler'
+Applying dependency management to configuration 'compileOnlyApi' in project 'scheduler'
+All projects evaluated.
+Task path ':apps:subscription-api:test' matched project ':apps:subscription-api'
+Task name matched 'test'
+Selected primary task 'test' from project :apps:subscription-api
+Tasks to be executed: [task ':modules:common:compileJava', task ':modules:auth:compileJava', task ':modules:domain-plans:compileJava', task ':modules:scheduler:compileJava', task ':modules:domain-subscriptions:compileJava', task ':modules:integrations:compileJava', task ':modules:integrations:processResources', task ':modules:integrations:classes', task ':modules:integrations:jar', task ':modules:domain-billing:compileJava', task ':modules:domain-billing:processResources', task ':modules:domain-billing:classes', task ':modules:domain-billing:jar', task ':modules:outbox:compileJava', task ':modules:outbox:processResources', task ':modules:outbox:classes', task ':modules:outbox:jar', task ':modules:domain-delivery:compileJava', task ':modules:domain-delivery:processResources', task ':modules:domain-delivery:classes', task ':modules:domain-delivery:jar', task ':modules:domain-entitlements:compileJava', task ':modules:domain-entitlements:processResources', task ':modules:domain-entitlements:classes', task ':modules:domain-entitlements:jar', task ':apps:subscription-api:compileJava', task ':apps:subscription-api:processResources', task ':apps:subscription-api:classes', task ':apps:subscription-api:compileTestJava', task ':apps:subscription-api:processTestResources', task ':apps:subscription-api:testClasses', task ':modules:auth:processResources', task ':modules:auth:classes', task ':modules:auth:jar', task ':modules:common:processResources', task ':modules:common:classes', task ':modules:common:jar', task ':modules:domain-plans:processResources', task ':modules:domain-plans:classes', task ':modules:domain-plans:jar', task ':modules:domain-subscriptions:processResources', task ':modules:domain-subscriptions:classes', task ':modules:domain-subscriptions:jar', task ':modules:scheduler:processResources', task ':modules:scheduler:classes', task ':modules:scheduler:jar', task ':apps:subscription-api:test']
+Tasks that were excluded: []
+Resolve mutations for :modules:common:compileJava (Thread[Execution worker,5,main]) started.
+:modules:common:compileJava (Thread[Execution worker,5,main]) started.
+
+> Task :modules:common:compileJava UP-TO-DATE
+Resolving global dependency management for project 'common'
+Excluding []
+Excluding []
+Caching disabled for task ':modules:common:compileJava' because:
+  Build cache is disabled
+Skipping task ':modules:common:compileJava' as it is up-to-date.
+work action resolve main (project :modules:common) (Thread[Execution worker,5,main]) started.
+Resolve mutations for :modules:auth:compileJava (Thread[Execution worker,5,main]) started.
+:modules:auth:compileJava (Thread[Execution worker,5,main]) started.
+
+> Task :modules:auth:compileJava UP-TO-DATE
+Resolving global dependency management for project 'auth'
+Excluding []
+Excluding []
+Caching disabled for task ':modules:auth:compileJava' because:
+  Build cache is disabled
+Skipping task ':modules:auth:compileJava' as it is up-to-date.
+work action resolve main (project :modules:auth) (Thread[Execution worker,5,main]) started.
+Resolve mutations for :modules:domain-plans:compileJava (Thread[Execution worker,5,main]) started.
+:modules:domain-plans:compileJava (Thread[Execution worker,5,main]) started.
+
+> Task :modules:domain-plans:compileJava UP-TO-DATE
+Resolving global dependency management for project 'domain-plans'
+Excluding []
+Excluding []
+Caching disabled for task ':modules:domain-plans:compileJava' because:
+  Build cache is disabled
+Skipping task ':modules:domain-plans:compileJava' as it is up-to-date.
+work action resolve main (project :modules:domain-plans) (Thread[Execution worker,5,main]) started.
+Resolve mutations for :modules:scheduler:compileJava (Thread[Execution worker,5,main]) started.
+:modules:scheduler:compileJava (Thread[Execution worker,5,main]) started.
+
+> Task :modules:scheduler:compileJava UP-TO-DATE
+Resolving global dependency management for project 'scheduler'
+Excluding []
+Excluding []
+Caching disabled for task ':modules:scheduler:compileJava' because:
+  Build cache is disabled
+Skipping task ':modules:scheduler:compileJava' as it is up-to-date.
+work action resolve main (project :modules:scheduler) (Thread[Execution worker,5,main]) started.
+Resolve mutations for :modules:domain-subscriptions:compileJava (Thread[Execution worker Thread 3,5,main]) started.
+:modules:domain-subscriptions:compileJava (Thread[Execution worker Thread 3,5,main]) started.
+
+> Task :modules:domain-subscriptions:compileJava UP-TO-DATE
+Resolving global dependency management for project 'domain-subscriptions'
+Excluding []
+Excluding []
+Caching disabled for task ':modules:domain-subscriptions:compileJava' because:
+  Build cache is disabled
+Skipping task ':modules:domain-subscriptions:compileJava' as it is up-to-date.
+work action resolve main (project :modules:domain-subscriptions) (Thread[Execution worker Thread 3,5,main]) started.
+Resolve mutations for :modules:integrations:compileJava (Thread[Execution worker Thread 3,5,main]) started.
+:modules:integrations:compileJava (Thread[Execution worker Thread 3,5,main]) started.
+
+> Task :modules:integrations:compileJava UP-TO-DATE
+Resolving global dependency management for project 'integrations'
+Excluding []
+Excluding []
+Caching disabled for task ':modules:integrations:compileJava' because:
+  Build cache is disabled
+Skipping task ':modules:integrations:compileJava' as it is up-to-date.
+Resolve mutations for :modules:integrations:processResources (Thread[Execution worker Thread 3,5,main]) started.
+:modules:integrations:processResources (Thread[Execution worker Thread 3,5,main]) started.
+
+> Task :modules:integrations:processResources NO-SOURCE
+Skipping task ':modules:integrations:processResources' as it has no source files and no previous output files.
+Resolve mutations for :modules:integrations:classes (Thread[Execution worker Thread 3,5,main]) started.
+:modules:integrations:classes (Thread[Execution worker Thread 3,5,main]) started.
+
+> Task :modules:integrations:classes UP-TO-DATE
+Skipping task ':modules:integrations:classes' as it has no actions.
+Resolve mutations for :modules:integrations:jar (Thread[Execution worker Thread 3,5,main]) started.
+:modules:integrations:jar (Thread[Execution worker Thread 3,5,main]) started.
+
+> Task :modules:integrations:jar UP-TO-DATE
+Caching disabled for task ':modules:integrations:jar' because:
+  Build cache is disabled
+Skipping task ':modules:integrations:jar' as it is up-to-date.
+work action resolve integrations.jar (project :modules:integrations) (Thread[Execution worker Thread 3,5,main]) started.
+Resolve mutations for :modules:domain-billing:compileJava (Thread[included builds,5,main]) started.
+:modules:domain-billing:compileJava (Thread[included builds,5,main]) started.
+
+> Task :modules:domain-billing:compileJava UP-TO-DATE
+Resolving global dependency management for project 'domain-billing'
+Excluding []
+Excluding []
+Caching disabled for task ':modules:domain-billing:compileJava' because:
+  Build cache is disabled
+Skipping task ':modules:domain-billing:compileJava' as it is up-to-date.
+Resolve mutations for :modules:domain-billing:processResources (Thread[included builds,5,main]) started.
+:modules:domain-billing:processResources (Thread[included builds,5,main]) started.
+
+> Task :modules:domain-billing:processResources NO-SOURCE
+Skipping task ':modules:domain-billing:processResources' as it has no source files and no previous output files.
+Resolve mutations for :modules:domain-billing:classes (Thread[included builds,5,main]) started.
+:modules:domain-billing:classes (Thread[included builds,5,main]) started.
+
+> Task :modules:domain-billing:classes UP-TO-DATE
+Skipping task ':modules:domain-billing:classes' as it has no actions.
+Resolve mutations for :modules:domain-billing:jar (Thread[included builds,5,main]) started.
+:modules:domain-billing:jar (Thread[included builds,5,main]) started.
+
+> Task :modules:domain-billing:jar UP-TO-DATE
+Caching disabled for task ':modules:domain-billing:jar' because:
+  Build cache is disabled
+Skipping task ':modules:domain-billing:jar' as it is up-to-date.
+work action resolve domain-billing.jar (project :modules:domain-billing) (Thread[included builds,5,main]) started.
+Resolve mutations for :modules:outbox:compileJava (Thread[included builds,5,main]) started.
+:modules:outbox:compileJava (Thread[included builds,5,main]) started.
+
+> Task :modules:outbox:compileJava UP-TO-DATE
+Resolving global dependency management for project 'outbox'
+Excluding []
+Excluding []
+Caching disabled for task ':modules:outbox:compileJava' because:
+  Build cache is disabled
+Skipping task ':modules:outbox:compileJava' as it is up-to-date.
+Resolve mutations for :modules:outbox:processResources (Thread[included builds,5,main]) started.
+:modules:outbox:processResources (Thread[included builds,5,main]) started.
+
+> Task :modules:outbox:processResources NO-SOURCE
+Skipping task ':modules:outbox:processResources' as it has no source files and no previous output files.
+Resolve mutations for :modules:outbox:classes (Thread[included builds,5,main]) started.
+:modules:outbox:classes (Thread[included builds,5,main]) started.
+
+> Task :modules:outbox:classes UP-TO-DATE
+Skipping task ':modules:outbox:classes' as it has no actions.
+Resolve mutations for :modules:outbox:jar (Thread[included builds,5,main]) started.
+:modules:outbox:jar (Thread[included builds,5,main]) started.
+
+> Task :modules:outbox:jar UP-TO-DATE
+Caching disabled for task ':modules:outbox:jar' because:
+  Build cache is disabled
+Skipping task ':modules:outbox:jar' as it is up-to-date.
+work action resolve outbox.jar (project :modules:outbox) (Thread[included builds,5,main]) started.
+Resolve mutations for :modules:domain-delivery:compileJava (Thread[Execution worker Thread 2,5,main]) started.
+:modules:domain-delivery:compileJava (Thread[Execution worker Thread 2,5,main]) started.
+
+> Task :modules:domain-delivery:compileJava UP-TO-DATE
+Resolving global dependency management for project 'domain-delivery'
+Excluding []
+Excluding []
+Caching disabled for task ':modules:domain-delivery:compileJava' because:
+  Build cache is disabled
+Skipping task ':modules:domain-delivery:compileJava' as it is up-to-date.
+Resolve mutations for :modules:domain-delivery:processResources (Thread[Execution worker Thread 2,5,main]) started.
+:modules:domain-delivery:processResources (Thread[Execution worker Thread 2,5,main]) started.
+
+> Task :modules:domain-delivery:processResources NO-SOURCE
+Skipping task ':modules:domain-delivery:processResources' as it has no source files and no previous output files.
+Resolve mutations for :modules:domain-delivery:classes (Thread[Execution worker Thread 2,5,main]) started.
+:modules:domain-delivery:classes (Thread[Execution worker Thread 2,5,main]) started.
+
+> Task :modules:domain-delivery:classes UP-TO-DATE
+Skipping task ':modules:domain-delivery:classes' as it has no actions.
+Resolve mutations for :modules:domain-delivery:jar (Thread[Execution worker Thread 2,5,main]) started.
+:modules:domain-delivery:jar (Thread[Execution worker Thread 2,5,main]) started.
+
+> Task :modules:domain-delivery:jar UP-TO-DATE
+Caching disabled for task ':modules:domain-delivery:jar' because:
+  Build cache is disabled
+Skipping task ':modules:domain-delivery:jar' as it is up-to-date.
+work action resolve domain-delivery.jar (project :modules:domain-delivery) (Thread[Execution worker Thread 2,5,main]) started.
+Resolve mutations for :modules:domain-entitlements:compileJava (Thread[Execution worker Thread 2,5,main]) started.
+:modules:domain-entitlements:compileJava (Thread[Execution worker Thread 2,5,main]) started.
+
+> Task :modules:domain-entitlements:compileJava NO-SOURCE
+Skipping task ':modules:domain-entitlements:compileJava' as it has no source files and no previous output files.
+Resolve mutations for :modules:domain-entitlements:processResources (Thread[Execution worker Thread 2,5,main]) started.
+:modules:domain-entitlements:processResources (Thread[Execution worker Thread 5,5,main]) started.
+
+> Task :modules:domain-entitlements:processResources NO-SOURCE
+Skipping task ':modules:domain-entitlements:processResources' as it has no source files and no previous output files.
+Resolve mutations for :modules:domain-entitlements:classes (Thread[Execution worker Thread 5,5,main]) started.
+:modules:domain-entitlements:classes (Thread[Execution worker Thread 5,5,main]) started.
+
+> Task :modules:domain-entitlements:classes UP-TO-DATE
+Skipping task ':modules:domain-entitlements:classes' as it has no actions.
+Resolve mutations for :modules:domain-entitlements:jar (Thread[Execution worker Thread 5,5,main]) started.
+:modules:domain-entitlements:jar (Thread[Execution worker Thread 5,5,main]) started.
+
+> Task :modules:domain-entitlements:jar UP-TO-DATE
+Caching disabled for task ':modules:domain-entitlements:jar' because:
+  Build cache is disabled
+Skipping task ':modules:domain-entitlements:jar' as it is up-to-date.
+work action resolve domain-entitlements.jar (project :modules:domain-entitlements) (Thread[Execution worker Thread 5,5,main]) started.
+Resolve mutations for :apps:subscription-api:compileJava (Thread[Execution worker Thread 5,5,main]) started.
+:apps:subscription-api:compileJava (Thread[Execution worker Thread 5,5,main]) started.
+
+> Task :apps:subscription-api:compileJava UP-TO-DATE
+Resolving global dependency management for project 'subscription-api'
+Excluding []
+Excluding []
+Caching disabled for task ':apps:subscription-api:compileJava' because:
+  Build cache is disabled
+Skipping task ':apps:subscription-api:compileJava' as it is up-to-date.
+Resolve mutations for :apps:subscription-api:processResources (Thread[Execution worker Thread 5,5,main]) started.
+:apps:subscription-api:processResources (Thread[Execution worker Thread 5,5,main]) started.
+
+> Task :apps:subscription-api:processResources UP-TO-DATE
+Caching disabled for task ':apps:subscription-api:processResources' because:
+  Build cache is disabled
+Skipping task ':apps:subscription-api:processResources' as it is up-to-date.
+Resolve mutations for :apps:subscription-api:classes (Thread[Execution worker Thread 5,5,main]) started.
+:apps:subscription-api:classes (Thread[Execution worker Thread 5,5,main]) started.
+
+> Task :apps:subscription-api:classes UP-TO-DATE
+Skipping task ':apps:subscription-api:classes' as it has no actions.
+Resolve mutations for :apps:subscription-api:compileTestJava (Thread[Execution worker Thread 5,5,main]) started.
+:apps:subscription-api:compileTestJava (Thread[Execution worker Thread 5,5,main]) started.
+
+> Task :apps:subscription-api:compileTestJava UP-TO-DATE
+allure-gradle: added dependency io.qameta.allure:allure-junit5:2.25.0 to runtimeElements scope of org.junit.jupiter:junit-jupiter-api:5.10.1
+Excluding []
+allure-gradle: added dependency io.qameta.allure:allure-junit5:2.25.0 to apiElements scope of org.junit.jupiter:junit-jupiter-api:5.10.1
+Excluding []
+Caching disabled for task ':apps:subscription-api:compileTestJava' because:
+  Build cache is disabled
+Skipping task ':apps:subscription-api:compileTestJava' as it is up-to-date.
+Resolve mutations for :apps:subscription-api:processTestResources (Thread[Execution worker Thread 5,5,main]) started.
+:apps:subscription-api:processTestResources (Thread[Execution worker Thread 5,5,main]) started.
+
+> Task :apps:subscription-api:processTestResources UP-TO-DATE
+Caching disabled for task ':apps:subscription-api:processTestResources' because:
+  Build cache is disabled
+Skipping task ':apps:subscription-api:processTestResources' as it is up-to-date.
+Resolve mutations for :apps:subscription-api:testClasses (Thread[Execution worker Thread 5,5,main]) started.
+:apps:subscription-api:testClasses (Thread[Execution worker Thread 5,5,main]) started.
+
+> Task :apps:subscription-api:testClasses UP-TO-DATE
+Skipping task ':apps:subscription-api:testClasses' as it has no actions.
+Resolve mutations for :modules:auth:processResources (Thread[Execution worker Thread 5,5,main]) started.
+:modules:auth:processResources (Thread[Execution worker Thread 5,5,main]) started.
+
+> Task :modules:auth:processResources NO-SOURCE
+Skipping task ':modules:auth:processResources' as it has no source files and no previous output files.
+Resolve mutations for :modules:auth:classes (Thread[Execution worker Thread 5,5,main]) started.
+:modules:auth:classes (Thread[Execution worker Thread 5,5,main]) started.
+
+> Task :modules:auth:classes UP-TO-DATE
+Skipping task ':modules:auth:classes' as it has no actions.
+Resolve mutations for :modules:auth:jar (Thread[Execution worker Thread 5,5,main]) started.
+:modules:auth:jar (Thread[Execution worker Thread 4,5,main]) started.
+
+> Task :modules:auth:jar UP-TO-DATE
+Caching disabled for task ':modules:auth:jar' because:
+  Build cache is disabled
+Skipping task ':modules:auth:jar' as it is up-to-date.
+work action resolve auth.jar (project :modules:auth) (Thread[Execution worker Thread 4,5,main]) started.
+Resolve mutations for :modules:common:processResources (Thread[Execution worker Thread 4,5,main]) started.
+:modules:common:processResources (Thread[Execution worker Thread 4,5,main]) started.
+
+> Task :modules:common:processResources NO-SOURCE
+Skipping task ':modules:common:processResources' as it has no source files and no previous output files.
+Resolve mutations for :modules:common:classes (Thread[Execution worker Thread 4,5,main]) started.
+:modules:common:classes (Thread[Execution worker Thread 4,5,main]) started.
+
+> Task :modules:common:classes UP-TO-DATE
+Skipping task ':modules:common:classes' as it has no actions.
+Resolve mutations for :modules:common:jar (Thread[Execution worker Thread 4,5,main]) started.
+:modules:common:jar (Thread[Execution worker Thread 4,5,main]) started.
+
+> Task :modules:common:jar UP-TO-DATE
+Caching disabled for task ':modules:common:jar' because:
+  Build cache is disabled
+Skipping task ':modules:common:jar' as it is up-to-date.
+work action resolve common.jar (project :modules:common) (Thread[Execution worker Thread 4,5,main]) started.
+Resolve mutations for :modules:domain-plans:processResources (Thread[Execution worker Thread 7,5,main]) started.
+:modules:domain-plans:processResources (Thread[Execution worker Thread 7,5,main]) started.
+
+> Task :modules:domain-plans:processResources NO-SOURCE
+Skipping task ':modules:domain-plans:processResources' as it has no source files and no previous output files.
+Resolve mutations for :modules:domain-plans:classes (Thread[Execution worker Thread 7,5,main]) started.
+:modules:domain-plans:classes (Thread[Execution worker Thread 7,5,main]) started.
+
+> Task :modules:domain-plans:classes UP-TO-DATE
+Skipping task ':modules:domain-plans:classes' as it has no actions.
+Resolve mutations for :modules:domain-plans:jar (Thread[Execution worker Thread 7,5,main]) started.
+:modules:domain-plans:jar (Thread[Execution worker Thread 7,5,main]) started.
+
+> Task :modules:domain-plans:jar UP-TO-DATE
+Caching disabled for task ':modules:domain-plans:jar' because:
+  Build cache is disabled
+Skipping task ':modules:domain-plans:jar' as it is up-to-date.
+work action resolve domain-plans.jar (project :modules:domain-plans) (Thread[Execution worker Thread 7,5,main]) started.
+Resolve mutations for :modules:domain-subscriptions:processResources (Thread[Execution worker Thread 4,5,main]) started.
+:modules:domain-subscriptions:processResources (Thread[Execution worker Thread 4,5,main]) started.
+
+> Task :modules:domain-subscriptions:processResources NO-SOURCE
+Skipping task ':modules:domain-subscriptions:processResources' as it has no source files and no previous output files.
+Resolve mutations for :modules:domain-subscriptions:classes (Thread[Execution worker Thread 4,5,main]) started.
+:modules:domain-subscriptions:classes (Thread[Execution worker Thread 4,5,main]) started.
+
+> Task :modules:domain-subscriptions:classes UP-TO-DATE
+Skipping task ':modules:domain-subscriptions:classes' as it has no actions.
+Resolve mutations for :modules:domain-subscriptions:jar (Thread[Execution worker Thread 4,5,main]) started.
+:modules:domain-subscriptions:jar (Thread[Execution worker Thread 4,5,main]) started.
+
+> Task :modules:domain-subscriptions:jar UP-TO-DATE
+Caching disabled for task ':modules:domain-subscriptions:jar' because:
+  Build cache is disabled
+Skipping task ':modules:domain-subscriptions:jar' as it is up-to-date.
+work action resolve domain-subscriptions.jar (project :modules:domain-subscriptions) (Thread[Execution worker Thread 4,5,main]) started.
+Resolve mutations for :modules:scheduler:processResources (Thread[Execution worker Thread 4,5,main]) started.
+:modules:scheduler:processResources (Thread[Execution worker Thread 4,5,main]) started.
+
+> Task :modules:scheduler:processResources NO-SOURCE
+Skipping task ':modules:scheduler:processResources' as it has no source files and no previous output files.
+Resolve mutations for :modules:scheduler:classes (Thread[Execution worker Thread 4,5,main]) started.
+:modules:scheduler:classes (Thread[Execution worker Thread 4,5,main]) started.
+
+> Task :modules:scheduler:classes UP-TO-DATE
+Skipping task ':modules:scheduler:classes' as it has no actions.
+Resolve mutations for :modules:scheduler:jar (Thread[Execution worker Thread 4,5,main]) started.
+:modules:scheduler:jar (Thread[Execution worker Thread 4,5,main]) started.
+
+> Task :modules:scheduler:jar UP-TO-DATE
+Caching disabled for task ':modules:scheduler:jar' because:
+  Build cache is disabled
+Skipping task ':modules:scheduler:jar' as it is up-to-date.
+work action resolve scheduler.jar (project :modules:scheduler) (Thread[Execution worker Thread 4,5,main]) started.
+Resolve mutations for :apps:subscription-api:test (Thread[Execution worker Thread 4,5,main]) started.
+:apps:subscription-api:test (Thread[Execution worker Thread 4,5,main]) started.
+Gradle Test Executor 40 started executing tests.
+
+> Task :apps:subscription-api:test
+Excluding []
+Excluding []
+Caching disabled for task ':apps:subscription-api:test' because:
+  Build cache is disabled
+Task ':apps:subscription-api:test' is not up-to-date because:
+  Task has failed previously.
+Starting process 'Gradle Test Executor 40'. Working directory: /Users/nyadav/personal/development/SubscriptionManager/apps/subscription-api Command: /opt/homebrew/Cellar/openjdk@17/17.0.14/libexec/openjdk.jdk/Contents/Home/bin/java -Dallure.results.directory=/Users/nyadav/personal/development/SubscriptionManager/apps/subscription-api/build/allure-results -Djunit.jupiter.execution.parallel.config.strategy=dynamic -Djunit.jupiter.execution.parallel.enabled=true -Djunit.jupiter.extensions.autodetection.enabled=true -Dorg.gradle.internal.worker.tmpdir=/Users/nyadav/personal/development/SubscriptionManager/apps/subscription-api/build/tmp/test/work -Dorg.gradle.native=false -javaagent:/Users/nyadav/.gradle/caches/modules-2/files-2.1/org.aspectj/aspectjweaver/1.9.9.1/dcd2703279a94ad909fa3f3d08671cb0f2dabf7/aspectjweaver-1.9.9.1.jar @/Users/nyadav/.gradle/.tmp/gradle-worker-classpath6769505838200745271txt -Xmx512m -Dfile.encoding=UTF-8 -Duser.country=US -Duser.language=en -Duser.variant -ea worker.org.gradle.process.internal.worker.GradleWorkerMain 'Gradle Test Executor 40'
+Successfully started process 'Gradle Test Executor 40'
+
+TenantManagementTest STANDARD_OUT
+    13:12:41.820 [ForkJoinPool-1-worker-1] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.subscriptionengine.api.integration.TenantManagementTest]: TenantManagementTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+    13:12:41.946 [ForkJoinPool-1-worker-1] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.subscriptionengine.api.SubscriptionApiApplication for test class com.subscriptionengine.api.integration.TenantManagementTest
+    13:12:42.087 [ForkJoinPool-1-worker-1] INFO org.testcontainers.images.PullPolicy -- Image pull policy will be performed by: DefaultPullPolicy()
+    13:12:42.090 [ForkJoinPool-1-worker-1] INFO org.testcontainers.utility.ImageNameSubstitutor -- Image name substitution will be performed by: DefaultImageNameSubstitutor (composite of 'ConfigurationFileImageNameSubstitutor' and 'PrefixingImageNameSubstitutor')
+    13:12:42.105 [ForkJoinPool-1-worker-1] INFO org.testcontainers.DockerClientFactory -- Testcontainers version: 1.21.4
+    13:12:42.303 [ForkJoinPool-1-worker-1] INFO org.testcontainers.dockerclient.DockerClientProviderStrategy -- Loaded org.testcontainers.dockerclient.UnixSocketClientProviderStrategy from ~/.testcontainers.properties, will try it first
+    13:12:42.549 [ForkJoinPool-1-worker-1] INFO org.testcontainers.dockerclient.DockerClientProviderStrategy -- Found Docker environment with local Unix socket (unix:///var/run/docker.sock)
+    13:12:42.550 [ForkJoinPool-1-worker-1] INFO org.testcontainers.DockerClientFactory -- Docker host IP address is localhost
+    13:12:42.563 [ForkJoinPool-1-worker-1] INFO org.testcontainers.DockerClientFactory -- Connected to docker: 
+      Server Version: 29.1.3
+      API Version: 1.52
+      Operating System: Docker Desktop
+      Total Memory: 7836 MB
+      Labels: 
+        com.docker.desktop.address=unix:///Users/nyadav/Library/Containers/com.docker.docker/Data/docker-cli.sock
+    13:12:42.668 [ForkJoinPool-1-worker-1] INFO tc.testcontainers/ryuk:0.12.0 -- Creating container for image: testcontainers/ryuk:0.12.0
+    13:12:42.877 [ForkJoinPool-1-worker-1] INFO tc.testcontainers/ryuk:0.12.0 -- Container testcontainers/ryuk:0.12.0 is starting: 9e9f2a515ed2d8b62ef6b88ed8d72922512e15428d24a94cb40a8dae7c32b750
+    13:12:43.063 [ForkJoinPool-1-worker-1] INFO tc.testcontainers/ryuk:0.12.0 -- Container testcontainers/ryuk:0.12.0 started in PT0.394603S
+    13:12:43.071 [ForkJoinPool-1-worker-1] INFO org.testcontainers.utility.RyukResourceReaper -- Ryuk started - will monitor and terminate Testcontainers containers on JVM exit
+    13:12:43.071 [ForkJoinPool-1-worker-1] INFO org.testcontainers.DockerClientFactory -- Checking the system...
+    13:12:43.071 [ForkJoinPool-1-worker-1] INFO org.testcontainers.DockerClientFactory -- ✔︎ Docker server version should be at least 1.6.0
+    13:12:43.072 [ForkJoinPool-1-worker-1] INFO tc.postgres:15-alpine -- Creating container for image: postgres:15-alpine
+    13:12:43.072 [ForkJoinPool-1-worker-1] WARN tc.postgres:15-alpine -- Reuse was requested but the environment does not support the reuse of containers
+    To enable reuse of containers, you must set 'testcontainers.reuse.enable=true' in a file located at /Users/nyadav/.testcontainers.properties
+    13:12:43.116 [ForkJoinPool-1-worker-1] INFO tc.postgres:15-alpine -- Container postgres:15-alpine is starting: 4599fdda4d9041873190546c6adfdef14a2dabd3aa4c5f6ee33933707ff5f327
+    13:12:43.972 [ForkJoinPool-1-worker-1] INFO tc.postgres:15-alpine -- Container postgres:15-alpine started in PT0.900145S
+    13:12:43.973 [ForkJoinPool-1-worker-1] INFO tc.postgres:15-alpine -- Container is started (JDBC URL: jdbc:postgresql://localhost:54072/subscription_engine_test?loggerLevel=OFF)
+
+      .   ____          _            __ _ _
+     /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+    ( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+     \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+      '  |____| .__|_| |_|_| |_\__, | / / / /
+     =========|_|==============|___/=/_/_/_/
+     :: Spring Boot ::                (v3.2.1)
+
+    13:12:44.300 [ForkJoinPool-1-worker-1] INFO  [] c.s.a.i.TenantManagementTest - Starting TenantManagementTest using Java 17.0.14 with PID 4895 (started by nyadav in /Users/nyadav/personal/development/SubscriptionManager/apps/subscription-api)
+    13:12:44.303 [ForkJoinPool-1-worker-1] DEBUG [] c.s.a.i.TenantManagementTest - Running with Spring Boot v3.2.1, Spring v6.1.2
+    13:12:44.303 [ForkJoinPool-1-worker-1] INFO  [] c.s.a.i.TenantManagementTest - The following 1 profile is active: "test"
+    13:12:45.961 [ForkJoinPool-1-worker-1] INFO  [] o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 0 (http)
+    13:12:45.969 [ForkJoinPool-1-worker-1] INFO  [] o.a.catalina.core.StandardService - Starting service [Tomcat]
+    13:12:45.969 [ForkJoinPool-1-worker-1] INFO  [] o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.17]
+    13:12:46.018 [ForkJoinPool-1-worker-1] INFO  [] o.a.c.c.C.[.[localhost].[/api] - Initializing Spring embedded WebApplicationContext
+    13:12:46.019 [ForkJoinPool-1-worker-1] INFO  [] o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1518 ms
+    13:12:46.155 [ForkJoinPool-1-worker-1] DEBUG [] o.s.w.f.ServerHttpObservationFilter - Filter 'webMvcObservationFilter' configured for use
+    13:12:46.155 [ForkJoinPool-1-worker-1] DEBUG [] c.s.a.JwtTenantAuthenticationFilter - Filter 'jwtTenantAuthenticationFilter' configured for use
+    13:12:46.221 [ForkJoinPool-1-worker-1] INFO  [] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+    13:12:46.369 [ForkJoinPool-1-worker-1] INFO  [] com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@4a88a113
+    13:12:46.371 [ForkJoinPool-1-worker-1] INFO  [] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+    13:12:46.434 [ForkJoinPool-1-worker-1] INFO  [] o.f.c.i.license.VersionPrinter - Flyway Community Edition 9.22.3 by Redgate
+    13:12:46.435 [ForkJoinPool-1-worker-1] INFO  [] o.f.c.i.license.VersionPrinter - See release notes here: https://rd.gt/416ObMi
+    13:12:46.435 [ForkJoinPool-1-worker-1] INFO  [] o.f.c.i.license.VersionPrinter - 
+    13:12:46.448 [ForkJoinPool-1-worker-1] INFO  [] org.flywaydb.core.FlywayExecutor - Database: jdbc:postgresql://localhost:54072/subscription_engine_test (PostgreSQL 15.14)
+    13:12:46.483 [ForkJoinPool-1-worker-1] INFO  [] o.f.c.i.s.JdbcTableSchemaHistory - Schema history table "public"."flyway_schema_history" does not exist yet
+    13:12:46.486 [ForkJoinPool-1-worker-1] INFO  [] o.f.core.internal.command.DbValidate - Successfully validated 11 migrations (execution time 00:00.014s)
+    13:12:46.496 [ForkJoinPool-1-worker-1] INFO  [] o.f.c.i.s.JdbcTableSchemaHistory - Creating Schema History table "public"."flyway_schema_history" ...
+    13:12:46.520 [ForkJoinPool-1-worker-1] INFO  [] o.f.core.internal.command.DbMigrate - Current version of schema "public": << Empty Schema >>
+    13:12:46.528 [ForkJoinPool-1-worker-1] INFO  [] o.f.core.internal.command.DbMigrate - Migrating schema "public" to version "001 - Create tenants and tenant config"
+    13:12:46.557 [ForkJoinPool-1-worker-1] INFO  [] o.f.core.internal.command.DbMigrate - Migrating schema "public" to version "002 - Create customers and plans"
+    13:12:46.583 [ForkJoinPool-1-worker-1] INFO  [] o.f.core.internal.command.DbMigrate - Migrating schema "public" to version "003 - Create subscriptions and subscription items"
+    13:12:46.613 [ForkJoinPool-1-worker-1] INFO  [] o.f.core.internal.command.DbMigrate - Migrating schema "public" to version "004 - Create invoices and payment attempts"
+    13:12:46.650 [ForkJoinPool-1-worker-1] INFO  [] o.f.core.internal.command.DbMigrate - Migrating schema "public" to version "005 - Create delivery instances and entitlements"
+    13:12:46.678 [ForkJoinPool-1-worker-1] INFO  [] o.f.core.internal.command.DbMigrate - Migrating schema "public" to version "006 - Create scheduled tasks and outbox events"
+    13:12:46.703 [ForkJoinPool-1-worker-1] INFO  [] o.f.core.internal.command.DbMigrate - Migrating schema "public" to version "007 - Create idempotency keys and webhooks"
+    13:12:46.729 [ForkJoinPool-1-worker-1] INFO  [] o.f.core.internal.command.DbMigrate - Migrating schema "public" to version "008 - Add guest shopper support"
+    13:12:46.748 [ForkJoinPool-1-worker-1] INFO  [] o.f.core.internal.command.DbMigrate - Migrating schema "public" to version "009 - create job execution history"
+    13:12:46.765 [ForkJoinPool-1-worker-1] INFO  [] o.f.core.internal.command.DbMigrate - Migrating schema "public" to version "010 - create job configuration"
+    13:12:46.779 [ForkJoinPool-1-worker-1] INFO  [] o.f.core.internal.command.DbMigrate - Migrating schema "public" to version "011 - Add delivery cancellation fields"
+    13:12:46.788 [ForkJoinPool-1-worker-1] INFO  [] o.f.core.internal.command.DbMigrate - Successfully applied 11 migrations to schema "public", now at version v011 (execution time 00:00.161s)
+    13:12:47.701 [ForkJoinPool-1-worker-1] INFO  [] c.s.b.service.BillingTaskHandlerImpl - [BILLING_HANDLER_INIT] BillingTaskHandlerImpl initialized with InvoiceGenerationService, PaymentProcessingService, and DAOs
+    13:12:47.926 [ForkJoinPool-1-worker-1] DEBUG [] o.s.s.c.a.a.c.AuthenticationConfiguration$DefaultPasswordEncoderAuthenticationManagerBuilder - No authenticationProviders and no parentAuthenticationManager defined. Returning null.
+    13:12:48.058 [ForkJoinPool-1-worker-1] DEBUG [] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 29 mappings in 'requestMappingHandlerMapping'
+    13:12:48.128 [ForkJoinPool-1-worker-1] DEBUG [] o.s.w.s.h.SimpleUrlHandlerMapping - Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+    13:12:48.206 [ForkJoinPool-1-worker-1] INFO  [] o.s.b.a.e.web.EndpointLinksResolver - Exposing 3 endpoint(s) beneath base path '/actuator'
+    13:12:48.298 [ForkJoinPool-1-worker-1] INFO  [] o.s.s.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@58712b54, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@16d6313c, org.springframework.security.web.context.SecurityContextHolderFilter@7af73e3d, org.springframework.security.web.header.HeaderWriterFilter@597f661e, org.springframework.web.filter.CorsFilter@326eb21d, org.springframework.security.web.authentication.logout.LogoutFilter@57fe85a5, org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter@2a32cd9, com.subscriptionengine.auth.JwtTenantAuthenticationFilter@4d17dd16, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@2b655279, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@74d053f5, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@3d675574, org.springframework.security.web.session.SessionManagementFilter@501b9116, org.springframework.security.web.access.ExceptionTranslationFilter@3b522ed6, org.springframework.security.web.access.intercept.AuthorizationFilter@2812cb52]
+    13:12:48.384 [ForkJoinPool-1-worker-1] DEBUG [] o.s.w.s.m.m.a.RequestMappingHandlerAdapter - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+    13:12:48.415 [ForkJoinPool-1-worker-1] DEBUG [] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 0 @ExceptionHandler, 1 ResponseBodyAdvice
+    13:12:48.624 [ForkJoinPool-1-worker-1] INFO  [] o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 54099 (http) with context path '/api'
+    13:12:48.644 [ForkJoinPool-1-worker-1] INFO  [] c.s.a.i.TenantManagementTest - Started TenantManagementTest in 4.628 seconds (process running for 8.16)
+
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+
+> Task :apps:subscription-api:test
+
+TenantManagementTest > Should retrieve tenant by ID STANDARD_OUT
+    Request method:	POST
+    Request URI:	http://localhost:54099/api/v1/tenants
+    Proxy:			<none>
+    Request params:	<none>
+    Query params:	<none>
+    Form params:	<none>
+    Path params:	<none>
+    Headers:		Accept=application/json, application/javascript, text/javascript, text/json
+    				Authorization=Bearer eyJhbGciOiJIUzI1NiJ9.eyJ0ZW5hbnRfaWQiOiI4MThmOTQxMi0yYTZlLTQwYWItYmMwYS0wOWRmMGM0ZjVkZjQiLCJ1c2VyX2lkIjoiMjQwMTY2MDUtMWJjOS00ZTY0LTk0MGUtMzNlNjJjN2E1MTY0Iiwicm9sZXMiOlsiVVNFUiJdLCJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJzdWIiOiIyNDAxNjYwNS0xYmM5LTRlNjQtOTQwZS0zM2U2MmM3YTUxNjQiLCJpYXQiOjE3NzAyMjg3NjksImV4cCI6MTc3MDIzMjM2OX0.28hFY_FWv2i3aawgAkN0DJYJwQC3Ww6NrIzCtklHdko
+    				Content-Type=application/json
+    Cookies:		<none>
+    Multiparts:		<none>
+    Body:
+    {
+        "status": "ACTIVE",
+        "slug": "retrieve-test-tenant-079d617a",
+        "name": "Retrieve Test Tenant"
+    }
+    13:12:50.279 [http-nio-auto-1-exec-1] INFO  [] o.a.c.c.C.[.[localhost].[/api] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+    13:12:50.279 [http-nio-auto-1-exec-1] INFO  [] o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+    13:12:50.280 [http-nio-auto-1-exec-1] DEBUG [] o.s.web.servlet.DispatcherServlet - Detected StandardServletMultipartResolver
+    13:12:50.280 [http-nio-auto-1-exec-1] DEBUG [] o.s.web.servlet.DispatcherServlet - Detected AcceptHeaderLocaleResolver
+    13:12:50.280 [http-nio-auto-1-exec-1] DEBUG [] o.s.web.servlet.DispatcherServlet - Detected FixedThemeResolver
+    13:12:50.280 [http-nio-auto-1-exec-1] DEBUG [] o.s.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@26d32b03
+    13:12:50.280 [http-nio-auto-1-exec-1] DEBUG [] o.s.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.support.SessionFlashMapManager@373183a7
+    13:12:50.280 [http-nio-auto-1-exec-1] DEBUG [] o.s.web.servlet.DispatcherServlet - enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+    13:12:50.280 [http-nio-auto-1-exec-1] INFO  [] o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+    13:12:50.294 [http-nio-auto-1-exec-1] DEBUG [] o.s.security.web.FilterChainProxy - Securing POST /v1/tenants
+    13:12:50.334 [http-nio-auto-1-exec-1] DEBUG [] o.s.s.o.s.r.a.JwtAuthenticationProvider - Authenticated token
+    13:12:50.336 [http-nio-auto-1-exec-1] DEBUG [] o.s.s.o.s.r.w.a.BearerTokenAuthenticationFilter - Set SecurityContextHolder to JwtAuthenticationToken [Principal=org.springframework.security.oauth2.jwt.Jwt@cd756f82, Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=127.0.0.1, SessionId=null], Granted Authorities=[]]
+    13:12:50.336 [http-nio-auto-1-exec-1] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JwtTenantAuthenticationFilter.shouldNotFilter() - Path: /api/v1/tenants, ShouldSkip: false
+    13:12:50.336 [http-nio-auto-1-exec-1] INFO  [] c.s.a.JwtTenantAuthenticationFilter - === JwtTenantAuthenticationFilter.doFilterInternal() START - POST /api/v1/tenants ===
+    13:12:50.336 [http-nio-auto-1-exec-1] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Authentication type: JwtAuthenticationToken
+    13:12:50.336 [http-nio-auto-1-exec-1] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JWT token found, extracting tenant information...
+    13:12:50.336 [http-nio-auto-1-exec-1] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Extracted tenant ID from JWT: 818f9412-2a6e-40ab-bc0a-09df0c4f5df4
+    13:12:50.336 [http-nio-auto-1-exec-1] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Set tenant context: 818f9412-2a6e-40ab-bc0a-09df0c4f5df4
+    13:12:50.336 [http-nio-auto-1-exec-1] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Verified tenant context: 818f9412-2a6e-40ab-bc0a-09df0c4f5df4
+    13:12:50.336 [http-nio-auto-1-exec-1] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JwtTenantAuthenticationFilter: SUCCESSFULLY set tenant context - tenantId: 818f9412-2a6e-40ab-bc0a-09df0c4f5df4, userId: 24016605-1bc9-4e64-940e-33e62c7a5164, userEmail: test@example.com, thread: http-nio-auto-1-exec-1
+    13:12:50.336 [http-nio-auto-1-exec-1] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Continuing with filter chain...
+    13:12:50.340 [http-nio-auto-1-exec-1] DEBUG [] o.s.security.web.FilterChainProxy - Secured POST /v1/tenants
+    13:12:50.340 [http-nio-auto-1-exec-1] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JwtTenantAuthenticationFilter.shouldNotFilter() - Path: /api/v1/tenants, ShouldSkip: false
+    13:12:50.341 [http-nio-auto-1-exec-1] DEBUG [] o.s.web.servlet.DispatcherServlet - POST "/api/v1/tenants", parameters={}
+    13:12:50.342 [http-nio-auto-1-exec-1] DEBUG [] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.subscriptionengine.api.controller.TenantsController#createTenant(CreateTenantRequest)
+    13:12:50.380 [http-nio-auto-1-exec-1] DEBUG [] o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Read "application/json;charset=UTF-8" to [com.subscriptionengine.api.controller.TenantsController$CreateTenantRequest@4830f70f]
+    13:12:50.402 [http-nio-auto-1-exec-1] INFO  [] c.s.api.controller.TenantsController - Creating new tenant: Retrieve Test Tenant
+    13:12:50.443 [http-nio-auto-1-exec-1] INFO  [] org.jooq.Constants - 
+                                      
+    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    @@@@@@@@@@@@@@@@  @@        @@@@@@@@@@
+    @@@@@@@@@@@@@@@@@@@@        @@@@@@@@@@
+    @@@@@@@@@@@@@@@@  @@  @@    @@@@@@@@@@
+    @@@@@@@@@@  @@@@  @@  @@    @@@@@@@@@@
+    @@@@@@@@@@        @@        @@@@@@@@@@
+    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    @@@@@@@@@@        @@        @@@@@@@@@@
+    @@@@@@@@@@    @@  @@  @@@@  @@@@@@@@@@
+    @@@@@@@@@@    @@  @@  @@@@  @@@@@@@@@@
+    @@@@@@@@@@        @@  @  @  @@@@@@@@@@
+    @@@@@@@@@@        @@        @@@@@@@@@@
+    @@@@@@@@@@@@@@@@@@@@@@@  @@@@@@@@@@@@@
+    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  Thank you for using jOOQ 3.18.7 (Build date: 2023-10-10T12:53:05Z)
+                                      
+    13:12:50.444 [http-nio-auto-1-exec-1] INFO  [] org.jooq.Constants - 
+
+    jOOQ tip of the day: You can nest collections directly in SQL using jOOQ's SQL/XML or SQL/JSON support: https://blog.jooq.org/nesting-collections-with-jooq-3-14s-sql-xml-or-sql-json-support/
+
+    13:12:50.457 [http-nio-auto-1-exec-1] DEBUG [] org.jooq.tools.LoggerListener - Executing query          : insert into "public"."tenants" ("id", "name", "slug", "status", "created_at", "updated_at") values (cast(? as uuid), ?, ?, ?, cast(? as timestamp(6) with time zone), cast(? as timestamp(6) with time zone)) returning "public"."tenants"."id"
+    13:12:50.458 [http-nio-auto-1-exec-1] DEBUG [] org.jooq.tools.LoggerListener - -> with bind values      : insert into "public"."tenants" ("id", "name", "slug", "status", "created_at", "updated_at") values ('8b420f05-5fca-47b9-a831-d1b06b2e90be', 'Retrieve Test Tenant', 'retrieve-test-tenant-079d617a', 'ACTIVE', timestamp with time zone '2026-02-04 13:12:50.402441-05:00', timestamp with time zone '2026-02-04 13:12:50.402458-05:00') returning "public"."tenants"."id"
+    13:12:50.464 [http-nio-auto-1-exec-1] INFO  [] o.j.i.D.logVersionSupport - Version                  : Database version is supported by dialect POSTGRES: 15.14
+    13:12:50.489 [http-nio-auto-1-exec-1] DEBUG [] org.jooq.tools.LoggerListener - Fetched result           : +------------------------------------+
+    13:12:50.489 [http-nio-auto-1-exec-1] DEBUG [] org.jooq.tools.LoggerListener -                          : |id                                  |
+    13:12:50.489 [http-nio-auto-1-exec-1] DEBUG [] org.jooq.tools.LoggerListener -                          : +------------------------------------+
+    13:12:50.489 [http-nio-auto-1-exec-1] DEBUG [] org.jooq.tools.LoggerListener -                          : |8b420f05-5fca-47b9-a831-d1b06b2e90be|
+    13:12:50.489 [http-nio-auto-1-exec-1] DEBUG [] org.jooq.tools.LoggerListener -                          : +------------------------------------+
+    13:12:50.489 [http-nio-auto-1-exec-1] DEBUG [] org.jooq.tools.LoggerListener - Fetched row(s)           : 1
+    13:12:50.493 [http-nio-auto-1-exec-1] INFO  [] c.s.api.controller.TenantsController - Successfully created tenant: 8b420f05-5fca-47b9-a831-d1b06b2e90be
+    13:12:50.497 [http-nio-auto-1-exec-1] DEBUG [] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [application/json, application/javascript, text/javascript, text/json] and supported [application/json, application/*+json]
+    13:12:50.498 [http-nio-auto-1-exec-1] DEBUG [] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{createdAt=2026-02-04T13:12:50.402441-05:00, slug=retrieve-test-tenant-079d617a, status=ACTIVE, name (truncated)...]
+    13:12:50.502 [http-nio-auto-1-exec-1] DEBUG [] o.s.web.servlet.DispatcherServlet - Completed 201 CREATED
+    13:12:50.503 [http-nio-auto-1-exec-1] DEBUG [] c.s.auth.TenantContextCleanupFilter - Clearing tenant context after request completion
+    13:12:50.508 [http-nio-auto-1-exec-1] INFO  [] c.s.a.JwtTenantAuthenticationFilter - === JwtTenantAuthenticationFilter.doFilterInternal() END ===
+    13:12:50.513 [ForkJoinPool-1-worker-1] DEBUG [] i.r.internal.RestAssuredHttpBuilder - Parsing response as: application/json
+    13:12:50.513 [ForkJoinPool-1-worker-1] DEBUG [] i.r.internal.RestAssuredHttpBuilder - Parsed data to instance of: class org.apache.http.conn.EofSensorInputStream
+    Request method:	GET
+    Request URI:	http://localhost:54099/api/v1/tenants/8b420f05-5fca-47b9-a831-d1b06b2e90be
+    Proxy:			<none>
+    Request params:	<none>
+    Query params:	<none>
+    Form params:	<none>
+    Path params:	<none>
+    Headers:		Accept=application/json, application/javascript, text/javascript, text/json
+    				Authorization=Bearer eyJhbGciOiJIUzI1NiJ9.eyJ0ZW5hbnRfaWQiOiI4YjQyMGYwNS01ZmNhLTQ3YjktYTgzMS1kMWIwNmIyZTkwYmUiLCJ1c2VyX2lkIjoiZGIzZWQyMzYtOTg2ZS00YmJmLTljZGMtZmIwZmFkYTEzYmJjIiwicm9sZXMiOlsiVVNFUiJdLCJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJzdWIiOiJkYjNlZDIzNi05ODZlLTRiYmYtOWNkYy1mYjBmYWRhMTNiYmMiLCJpYXQiOjE3NzAyMjg3NzAsImV4cCI6MTc3MDIzMjM3MH0.e7DBg3zQ15dS2bQ0YuFcKxOYLGBMEO4FJRX1FrgVXZY
+    				Content-Type=application/json
+    Cookies:		<none>
+    Multiparts:		<none>
+    Body:			<none>
+    13:12:50.969 [http-nio-auto-1-exec-2] DEBUG [] o.s.security.web.FilterChainProxy - Securing GET /v1/tenants/8b420f05-5fca-47b9-a831-d1b06b2e90be
+    13:12:50.970 [http-nio-auto-1-exec-2] DEBUG [] o.s.s.o.s.r.a.JwtAuthenticationProvider - Authenticated token
+    13:12:50.970 [http-nio-auto-1-exec-2] DEBUG [] o.s.s.o.s.r.w.a.BearerTokenAuthenticationFilter - Set SecurityContextHolder to JwtAuthenticationToken [Principal=org.springframework.security.oauth2.jwt.Jwt@8fa2f683, Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=127.0.0.1, SessionId=null], Granted Authorities=[]]
+    13:12:50.971 [http-nio-auto-1-exec-2] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JwtTenantAuthenticationFilter.shouldNotFilter() - Path: /api/v1/tenants/8b420f05-5fca-47b9-a831-d1b06b2e90be, ShouldSkip: false
+    13:12:50.971 [http-nio-auto-1-exec-2] INFO  [] c.s.a.JwtTenantAuthenticationFilter - === JwtTenantAuthenticationFilter.doFilterInternal() START - GET /api/v1/tenants/8b420f05-5fca-47b9-a831-d1b06b2e90be ===
+    13:12:50.971 [http-nio-auto-1-exec-2] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Authentication type: JwtAuthenticationToken
+    13:12:50.971 [http-nio-auto-1-exec-2] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JWT token found, extracting tenant information...
+    13:12:50.971 [http-nio-auto-1-exec-2] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Extracted tenant ID from JWT: 8b420f05-5fca-47b9-a831-d1b06b2e90be
+    13:12:50.971 [http-nio-auto-1-exec-2] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Set tenant context: 8b420f05-5fca-47b9-a831-d1b06b2e90be
+    13:12:50.971 [http-nio-auto-1-exec-2] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Verified tenant context: 8b420f05-5fca-47b9-a831-d1b06b2e90be
+    13:12:50.971 [http-nio-auto-1-exec-2] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JwtTenantAuthenticationFilter: SUCCESSFULLY set tenant context - tenantId: 8b420f05-5fca-47b9-a831-d1b06b2e90be, userId: db3ed236-986e-4bbf-9cdc-fb0fada13bbc, userEmail: test@example.com, thread: http-nio-auto-1-exec-2
+    13:12:50.971 [http-nio-auto-1-exec-2] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Continuing with filter chain...
+    13:12:50.971 [http-nio-auto-1-exec-2] DEBUG [] o.s.security.web.FilterChainProxy - Secured GET /v1/tenants/8b420f05-5fca-47b9-a831-d1b06b2e90be
+    13:12:50.971 [http-nio-auto-1-exec-2] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JwtTenantAuthenticationFilter.shouldNotFilter() - Path: /api/v1/tenants/8b420f05-5fca-47b9-a831-d1b06b2e90be, ShouldSkip: false
+    13:12:50.971 [http-nio-auto-1-exec-2] DEBUG [] o.s.web.servlet.DispatcherServlet - GET "/api/v1/tenants/8b420f05-5fca-47b9-a831-d1b06b2e90be", parameters={}
+    13:12:50.972 [http-nio-auto-1-exec-2] DEBUG [] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.subscriptionengine.api.controller.TenantsController#getTenantById(UUID)
+    13:12:50.972 [http-nio-auto-1-exec-2] INFO  [] c.s.api.controller.TenantsController - Fetching tenant: 8b420f05-5fca-47b9-a831-d1b06b2e90be
+    13:12:51.202 [http-nio-auto-1-exec-2] DEBUG [] org.jooq.tools.LoggerListener - Executing query          : select "public"."tenants"."id", "public"."tenants"."name", "public"."tenants"."slug", "public"."tenants"."status", "public"."tenants"."custom_attrs", "public"."tenants"."created_at", "public"."tenants"."updated_at" from "public"."tenants" where "public"."tenants"."id" = cast(? as uuid)
+    13:12:51.203 [http-nio-auto-1-exec-2] DEBUG [] org.jooq.tools.LoggerListener - -> with bind values      : select "public"."tenants"."id", "public"."tenants"."name", "public"."tenants"."slug", "public"."tenants"."status", "public"."tenants"."custom_attrs", "public"."tenants"."created_at", "public"."tenants"."updated_at" from "public"."tenants" where "public"."tenants"."id" = '8b420f05-5fca-47b9-a831-d1b06b2e90be'
+    13:12:51.210 [http-nio-auto-1-exec-2] DEBUG [] org.jooq.tools.LoggerListener - Fetched result           : +------------------------------------+--------------------+-----------------------------+------+------------+--------------------------------+--------------------------------+
+    13:12:51.210 [http-nio-auto-1-exec-2] DEBUG [] org.jooq.tools.LoggerListener -                          : |id                                  |name                |slug                         |status|custom_attrs|created_at                      |updated_at                      |
+    13:12:51.210 [http-nio-auto-1-exec-2] DEBUG [] org.jooq.tools.LoggerListener -                          : +------------------------------------+--------------------+-----------------------------+------+------------+--------------------------------+--------------------------------+
+    13:12:51.210 [http-nio-auto-1-exec-2] DEBUG [] org.jooq.tools.LoggerListener -                          : |8b420f05-5fca-47b9-a831-d1b06b2e90be|Retrieve Test Tenant|retrieve-test-tenant-079d617a|ACTIVE|{}          |2026-02-04T13:12:50.402441-05:00|2026-02-04T13:12:50.402458-05:00|
+    13:12:51.210 [http-nio-auto-1-exec-2] DEBUG [] org.jooq.tools.LoggerListener -                          : +------------------------------------+--------------------+-----------------------------+------+------------+--------------------------------+--------------------------------+
+    13:12:51.210 [http-nio-auto-1-exec-2] DEBUG [] org.jooq.tools.LoggerListener - Fetched row(s)           : 1
+    13:12:51.218 [http-nio-auto-1-exec-2] DEBUG [] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [application/json, application/javascript, text/javascript, text/json] and supported [application/json, application/*+json]
+    13:12:51.218 [http-nio-auto-1-exec-2] DEBUG [] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [com.subscriptionengine.api.controller.TenantsController$TenantResponse@4b20411a]
+    13:12:51.219 [http-nio-auto-1-exec-2] DEBUG [] o.s.web.servlet.DispatcherServlet - Completed 200 OK
+    13:12:51.219 [http-nio-auto-1-exec-2] DEBUG [] c.s.auth.TenantContextCleanupFilter - Clearing tenant context after request completion
+    13:12:51.219 [http-nio-auto-1-exec-2] INFO  [] c.s.a.JwtTenantAuthenticationFilter - === JwtTenantAuthenticationFilter.doFilterInternal() END ===
+    13:12:51.219 [ForkJoinPool-1-worker-1] DEBUG [] i.r.internal.RestAssuredHttpBuilder - Parsing response as: application/json
+    13:12:51.219 [ForkJoinPool-1-worker-1] DEBUG [] i.r.internal.RestAssuredHttpBuilder - Parsed data to instance of: class org.apache.http.conn.EofSensorInputStream
+
+TenantManagementTest > Should create a new tenant STANDARD_OUT
+    Request method:	POST
+    Request URI:	http://localhost:54099/api/v1/tenants
+    Proxy:			<none>
+    Request params:	<none>
+    Query params:	<none>
+    Form params:	<none>
+    Path params:	<none>
+    Headers:		Accept=application/json, application/javascript, text/javascript, text/json
+    				Authorization=Bearer eyJhbGciOiJIUzI1NiJ9.eyJ0ZW5hbnRfaWQiOiI5YTdmZWFjOS02YjA5LTQ1YWEtYmU4My02YmI2MDc3YTZmYzEiLCJ1c2VyX2lkIjoiZGJjOTQ5NWUtY2VhZS00MjQ4LWEyNTAtZWQ3ZDA4ZDQwNzQ4Iiwicm9sZXMiOlsiVVNFUiJdLCJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJzdWIiOiJkYmM5NDk1ZS1jZWFlLTQyNDgtYTI1MC1lZDdkMDhkNDA3NDgiLCJpYXQiOjE3NzAyMjg3NzEsImV4cCI6MTc3MDIzMjM3MX0.Fd0l9Sm1LjdnHwJnzwQxVP5rfdT2FCD0wO3vvUCLNXA
+    				Content-Type=application/json
+    Cookies:		<none>
+    Multiparts:		<none>
+    Body:
+    {
+        "status": "ACTIVE",
+        "slug": "test-tenant-ed813760",
+        "name": "Test Tenant c5379c1f"
+    }
+    13:12:51.381 [http-nio-auto-1-exec-3] DEBUG [] o.s.security.web.FilterChainProxy - Securing POST /v1/tenants
+    13:12:51.382 [http-nio-auto-1-exec-3] DEBUG [] o.s.s.o.s.r.a.JwtAuthenticationProvider - Authenticated token
+    13:12:51.382 [http-nio-auto-1-exec-3] DEBUG [] o.s.s.o.s.r.w.a.BearerTokenAuthenticationFilter - Set SecurityContextHolder to JwtAuthenticationToken [Principal=org.springframework.security.oauth2.jwt.Jwt@ab6e2121, Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=127.0.0.1, SessionId=null], Granted Authorities=[]]
+    13:12:51.382 [http-nio-auto-1-exec-3] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JwtTenantAuthenticationFilter.shouldNotFilter() - Path: /api/v1/tenants, ShouldSkip: false
+    13:12:51.382 [http-nio-auto-1-exec-3] INFO  [] c.s.a.JwtTenantAuthenticationFilter - === JwtTenantAuthenticationFilter.doFilterInternal() START - POST /api/v1/tenants ===
+    13:12:51.382 [http-nio-auto-1-exec-3] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Authentication type: JwtAuthenticationToken
+    13:12:51.382 [http-nio-auto-1-exec-3] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JWT token found, extracting tenant information...
+    13:12:51.382 [http-nio-auto-1-exec-3] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Extracted tenant ID from JWT: 9a7feac9-6b09-45aa-be83-6bb6077a6fc1
+    13:12:51.382 [http-nio-auto-1-exec-3] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Set tenant context: 9a7feac9-6b09-45aa-be83-6bb6077a6fc1
+    13:12:51.382 [http-nio-auto-1-exec-3] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Verified tenant context: 9a7feac9-6b09-45aa-be83-6bb6077a6fc1
+    13:12:51.382 [http-nio-auto-1-exec-3] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JwtTenantAuthenticationFilter: SUCCESSFULLY set tenant context - tenantId: 9a7feac9-6b09-45aa-be83-6bb6077a6fc1, userId: dbc9495e-ceae-4248-a250-ed7d08d40748, userEmail: test@example.com, thread: http-nio-auto-1-exec-3
+    13:12:51.382 [http-nio-auto-1-exec-3] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Continuing with filter chain...
+    13:12:51.383 [http-nio-auto-1-exec-3] DEBUG [] o.s.security.web.FilterChainProxy - Secured POST /v1/tenants
+    13:12:51.383 [http-nio-auto-1-exec-3] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JwtTenantAuthenticationFilter.shouldNotFilter() - Path: /api/v1/tenants, ShouldSkip: false
+    13:12:51.383 [http-nio-auto-1-exec-3] DEBUG [] o.s.web.servlet.DispatcherServlet - POST "/api/v1/tenants", parameters={}
+    13:12:51.383 [http-nio-auto-1-exec-3] DEBUG [] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.subscriptionengine.api.controller.TenantsController#createTenant(CreateTenantRequest)
+    13:12:51.383 [http-nio-auto-1-exec-3] DEBUG [] o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Read "application/json;charset=UTF-8" to [com.subscriptionengine.api.controller.TenantsController$CreateTenantRequest@437ebb1e]
+    13:12:51.384 [http-nio-auto-1-exec-3] INFO  [] c.s.api.controller.TenantsController - Creating new tenant: Test Tenant c5379c1f
+    13:12:51.384 [http-nio-auto-1-exec-3] DEBUG [] org.jooq.tools.LoggerListener - Executing query          : insert into "public"."tenants" ("id", "name", "slug", "status", "created_at", "updated_at") values (cast(? as uuid), ?, ?, ?, cast(? as timestamp(6) with time zone), cast(? as timestamp(6) with time zone)) returning "public"."tenants"."id"
+    13:12:51.385 [http-nio-auto-1-exec-3] DEBUG [] org.jooq.tools.LoggerListener - -> with bind values      : insert into "public"."tenants" ("id", "name", "slug", "status", "created_at", "updated_at") values ('77a249bf-a0a3-4b10-8240-05efa26d099c', 'Test Tenant c5379c1f', 'test-tenant-ed813760', 'ACTIVE', timestamp with time zone '2026-02-04 13:12:51.384173-05:00', timestamp with time zone '2026-02-04 13:12:51.384178-05:00') returning "public"."tenants"."id"
+    13:12:51.387 [http-nio-auto-1-exec-3] DEBUG [] org.jooq.tools.LoggerListener - Fetched result           : +------------------------------------+
+    13:12:51.387 [http-nio-auto-1-exec-3] DEBUG [] org.jooq.tools.LoggerListener -                          : |id                                  |
+    13:12:51.387 [http-nio-auto-1-exec-3] DEBUG [] org.jooq.tools.LoggerListener -                          : +------------------------------------+
+    13:12:51.387 [http-nio-auto-1-exec-3] DEBUG [] org.jooq.tools.LoggerListener -                          : |77a249bf-a0a3-4b10-8240-05efa26d099c|
+    13:12:51.387 [http-nio-auto-1-exec-3] DEBUG [] org.jooq.tools.LoggerListener -                          : +------------------------------------+
+    13:12:51.387 [http-nio-auto-1-exec-3] DEBUG [] org.jooq.tools.LoggerListener - Fetched row(s)           : 1
+    13:12:51.388 [http-nio-auto-1-exec-3] INFO  [] c.s.api.controller.TenantsController - Successfully created tenant: 77a249bf-a0a3-4b10-8240-05efa26d099c
+    13:12:51.388 [http-nio-auto-1-exec-3] DEBUG [] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [application/json, application/javascript, text/javascript, text/json] and supported [application/json, application/*+json]
+    13:12:51.388 [http-nio-auto-1-exec-3] DEBUG [] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{createdAt=2026-02-04T13:12:51.384173-05:00, slug=test-tenant-ed813760, status=ACTIVE, name=Test Ten (truncated)...]
+    13:12:51.389 [http-nio-auto-1-exec-3] DEBUG [] o.s.web.servlet.DispatcherServlet - Completed 201 CREATED
+    13:12:51.389 [http-nio-auto-1-exec-3] DEBUG [] c.s.auth.TenantContextCleanupFilter - Clearing tenant context after request completion
+    13:12:51.389 [ForkJoinPool-1-worker-1] DEBUG [] i.r.internal.RestAssuredHttpBuilder - Parsing response as: application/json
+    13:12:51.389 [ForkJoinPool-1-worker-1] DEBUG [] i.r.internal.RestAssuredHttpBuilder - Parsed data to instance of: class org.apache.http.conn.EofSensorInputStream
+    13:12:51.390 [http-nio-auto-1-exec-3] INFO  [] c.s.a.JwtTenantAuthenticationFilter - === JwtTenantAuthenticationFilter.doFilterInternal() END ===
+
+TenantManagementTest > Should delete tenant without data STANDARD_OUT
+    Request method:	POST
+    Request URI:	http://localhost:54099/api/v1/tenants
+    Proxy:			<none>
+    Request params:	<none>
+    Query params:	<none>
+    Form params:	<none>
+    Path params:	<none>
+    Headers:		Accept=application/json, application/javascript, text/javascript, text/json
+    				Authorization=Bearer eyJhbGciOiJIUzI1NiJ9.eyJ0ZW5hbnRfaWQiOiI3NDQ3MWUzYS0zNWU1LTQzOTMtYmY4OC0xZGMwNTBmODkxY2QiLCJ1c2VyX2lkIjoiZTdhMTRjZTYtODI1My00ZjNhLTg3YjMtMzkzMDZiODdhYjBjIiwicm9sZXMiOlsiVVNFUiJdLCJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJzdWIiOiJlN2ExNGNlNi04MjUzLTRmM2EtODdiMy0zOTMwNmI4N2FiMGMiLCJpYXQiOjE3NzAyMjg3NzEsImV4cCI6MTc3MDIzMjM3MX0.OnerEzlVq1xJ8uiGQGkoy-70WbCMWEBFDGv_CjSRT54
+    				Content-Type=application/json
+    Cookies:		<none>
+    Multiparts:		<none>
+    Body:
+    {
+        "status": "ACTIVE",
+        "slug": "tenant-to-delete-7f200d1e",
+        "name": "Tenant To Delete"
+    }
+    13:12:51.451 [http-nio-auto-1-exec-4] DEBUG [] o.s.security.web.FilterChainProxy - Securing POST /v1/tenants
+    13:12:51.452 [http-nio-auto-1-exec-4] DEBUG [] o.s.s.o.s.r.a.JwtAuthenticationProvider - Authenticated token
+    13:12:51.452 [http-nio-auto-1-exec-4] DEBUG [] o.s.s.o.s.r.w.a.BearerTokenAuthenticationFilter - Set SecurityContextHolder to JwtAuthenticationToken [Principal=org.springframework.security.oauth2.jwt.Jwt@72cca449, Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=127.0.0.1, SessionId=null], Granted Authorities=[]]
+    13:12:51.452 [http-nio-auto-1-exec-4] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JwtTenantAuthenticationFilter.shouldNotFilter() - Path: /api/v1/tenants, ShouldSkip: false
+    13:12:51.452 [http-nio-auto-1-exec-4] INFO  [] c.s.a.JwtTenantAuthenticationFilter - === JwtTenantAuthenticationFilter.doFilterInternal() START - POST /api/v1/tenants ===
+    13:12:51.452 [http-nio-auto-1-exec-4] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Authentication type: JwtAuthenticationToken
+    13:12:51.452 [http-nio-auto-1-exec-4] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JWT token found, extracting tenant information...
+    13:12:51.452 [http-nio-auto-1-exec-4] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Extracted tenant ID from JWT: 74471e3a-35e5-4393-bf88-1dc050f891cd
+    13:12:51.452 [http-nio-auto-1-exec-4] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Set tenant context: 74471e3a-35e5-4393-bf88-1dc050f891cd
+    13:12:51.452 [http-nio-auto-1-exec-4] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Verified tenant context: 74471e3a-35e5-4393-bf88-1dc050f891cd
+    13:12:51.452 [http-nio-auto-1-exec-4] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JwtTenantAuthenticationFilter: SUCCESSFULLY set tenant context - tenantId: 74471e3a-35e5-4393-bf88-1dc050f891cd, userId: e7a14ce6-8253-4f3a-87b3-39306b87ab0c, userEmail: test@example.com, thread: http-nio-auto-1-exec-4
+    13:12:51.452 [http-nio-auto-1-exec-4] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Continuing with filter chain...
+    13:12:51.452 [http-nio-auto-1-exec-4] DEBUG [] o.s.security.web.FilterChainProxy - Secured POST /v1/tenants
+    13:12:51.452 [http-nio-auto-1-exec-4] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JwtTenantAuthenticationFilter.shouldNotFilter() - Path: /api/v1/tenants, ShouldSkip: false
+    13:12:51.452 [http-nio-auto-1-exec-4] DEBUG [] o.s.web.servlet.DispatcherServlet - POST "/api/v1/tenants", parameters={}
+    13:12:51.453 [http-nio-auto-1-exec-4] DEBUG [] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.subscriptionengine.api.controller.TenantsController#createTenant(CreateTenantRequest)
+    13:12:51.453 [http-nio-auto-1-exec-4] DEBUG [] o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Read "application/json;charset=UTF-8" to [com.subscriptionengine.api.controller.TenantsController$CreateTenantRequest@5753e272]
+    13:12:51.453 [http-nio-auto-1-exec-4] INFO  [] c.s.api.controller.TenantsController - Creating new tenant: Tenant To Delete
+    13:12:51.454 [http-nio-auto-1-exec-4] DEBUG [] org.jooq.tools.LoggerListener - Executing query          : insert into "public"."tenants" ("id", "name", "slug", "status", "created_at", "updated_at") values (cast(? as uuid), ?, ?, ?, cast(? as timestamp(6) with time zone), cast(? as timestamp(6) with time zone)) returning "public"."tenants"."id"
+    13:12:51.454 [http-nio-auto-1-exec-4] DEBUG [] org.jooq.tools.LoggerListener - -> with bind values      : insert into "public"."tenants" ("id", "name", "slug", "status", "created_at", "updated_at") values ('68f98096-6b85-4ce0-96f5-b29dae17924e', 'Tenant To Delete', 'tenant-to-delete-7f200d1e', 'ACTIVE', timestamp with time zone '2026-02-04 13:12:51.453696-05:00', timestamp with time zone '2026-02-04 13:12:51.453704-05:00') returning "public"."tenants"."id"
+    13:12:51.470 [http-nio-auto-1-exec-4] DEBUG [] org.jooq.tools.LoggerListener - Fetched result           : +------------------------------------+
+    13:12:51.470 [http-nio-auto-1-exec-4] DEBUG [] org.jooq.tools.LoggerListener -                          : |id                                  |
+    13:12:51.470 [http-nio-auto-1-exec-4] DEBUG [] org.jooq.tools.LoggerListener -                          : +------------------------------------+
+    13:12:51.470 [http-nio-auto-1-exec-4] DEBUG [] org.jooq.tools.LoggerListener -                          : |68f98096-6b85-4ce0-96f5-b29dae17924e|
+    13:12:51.470 [http-nio-auto-1-exec-4] DEBUG [] org.jooq.tools.LoggerListener -                          : +------------------------------------+
+    13:12:51.470 [http-nio-auto-1-exec-4] DEBUG [] org.jooq.tools.LoggerListener - Fetched row(s)           : 1
+    13:12:51.471 [http-nio-auto-1-exec-4] INFO  [] c.s.api.controller.TenantsController - Successfully created tenant: 68f98096-6b85-4ce0-96f5-b29dae17924e
+    13:12:51.471 [http-nio-auto-1-exec-4] DEBUG [] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [application/json, application/javascript, text/javascript, text/json] and supported [application/json, application/*+json]
+    13:12:51.471 [http-nio-auto-1-exec-4] DEBUG [] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{createdAt=2026-02-04T13:12:51.453696-05:00, slug=tenant-to-delete-7f200d1e, status=ACTIVE, name=Ten (truncated)...]
+    13:12:51.471 [http-nio-auto-1-exec-4] DEBUG [] o.s.web.servlet.DispatcherServlet - Completed 201 CREATED
+    13:12:51.471 [http-nio-auto-1-exec-4] DEBUG [] c.s.auth.TenantContextCleanupFilter - Clearing tenant context after request completion
+    13:12:51.472 [http-nio-auto-1-exec-4] INFO  [] c.s.a.JwtTenantAuthenticationFilter - === JwtTenantAuthenticationFilter.doFilterInternal() END ===
+    13:12:51.472 [ForkJoinPool-1-worker-1] DEBUG [] i.r.internal.RestAssuredHttpBuilder - Parsing response as: application/json
+    13:12:51.472 [ForkJoinPool-1-worker-1] DEBUG [] i.r.internal.RestAssuredHttpBuilder - Parsed data to instance of: class org.apache.http.conn.EofSensorInputStream
+    Request method:	DELETE
+    Request URI:	http://localhost:54099/api/v1/tenants/68f98096-6b85-4ce0-96f5-b29dae17924e
+    Proxy:			<none>
+    Request params:	<none>
+    Query params:	<none>
+    Form params:	<none>
+    Path params:	<none>
+    Headers:		Accept=application/json, application/javascript, text/javascript, text/json
+    				Authorization=Bearer eyJhbGciOiJIUzI1NiJ9.eyJ0ZW5hbnRfaWQiOiI2OGY5ODA5Ni02Yjg1LTRjZTAtOTZmNS1iMjlkYWUxNzkyNGUiLCJ1c2VyX2lkIjoiMjljNzVmZWItM2MxMi00MjVlLTg0OTItODQyZWY5MDM0NzVjIiwicm9sZXMiOlsiVVNFUiJdLCJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJzdWIiOiIyOWM3NWZlYi0zYzEyLTQyNWUtODQ5Mi04NDJlZjkwMzQ3NWMiLCJpYXQiOjE3NzAyMjg3NzEsImV4cCI6MTc3MDIzMjM3MX0.YyYmxlKb9zjnvqAOfGKnaP35nIktwLcTgme2CNy_h24
+    				Content-Type=application/json
+    Cookies:		<none>
+    Multiparts:		<none>
+    Body:			<none>
+    13:12:51.492 [http-nio-auto-1-exec-7] DEBUG [] o.s.security.web.FilterChainProxy - Securing DELETE /v1/tenants/68f98096-6b85-4ce0-96f5-b29dae17924e
+    13:12:51.493 [http-nio-auto-1-exec-7] DEBUG [] o.s.s.o.s.r.a.JwtAuthenticationProvider - Authenticated token
+    13:12:51.493 [http-nio-auto-1-exec-7] DEBUG [] o.s.s.o.s.r.w.a.BearerTokenAuthenticationFilter - Set SecurityContextHolder to JwtAuthenticationToken [Principal=org.springframework.security.oauth2.jwt.Jwt@3473389d, Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=127.0.0.1, SessionId=null], Granted Authorities=[]]
+    13:12:51.493 [http-nio-auto-1-exec-7] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JwtTenantAuthenticationFilter.shouldNotFilter() - Path: /api/v1/tenants/68f98096-6b85-4ce0-96f5-b29dae17924e, ShouldSkip: false
+    13:12:51.493 [http-nio-auto-1-exec-7] INFO  [] c.s.a.JwtTenantAuthenticationFilter - === JwtTenantAuthenticationFilter.doFilterInternal() START - DELETE /api/v1/tenants/68f98096-6b85-4ce0-96f5-b29dae17924e ===
+    13:12:51.493 [http-nio-auto-1-exec-7] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Authentication type: JwtAuthenticationToken
+    13:12:51.493 [http-nio-auto-1-exec-7] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JWT token found, extracting tenant information...
+    13:12:51.493 [http-nio-auto-1-exec-7] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Extracted tenant ID from JWT: 68f98096-6b85-4ce0-96f5-b29dae17924e
+    13:12:51.493 [http-nio-auto-1-exec-7] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Set tenant context: 68f98096-6b85-4ce0-96f5-b29dae17924e
+    13:12:51.493 [http-nio-auto-1-exec-7] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Verified tenant context: 68f98096-6b85-4ce0-96f5-b29dae17924e
+    13:12:51.493 [http-nio-auto-1-exec-7] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JwtTenantAuthenticationFilter: SUCCESSFULLY set tenant context - tenantId: 68f98096-6b85-4ce0-96f5-b29dae17924e, userId: 29c75feb-3c12-425e-8492-842ef903475c, userEmail: test@example.com, thread: http-nio-auto-1-exec-7
+    13:12:51.493 [http-nio-auto-1-exec-7] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Continuing with filter chain...
+    13:12:51.493 [http-nio-auto-1-exec-7] DEBUG [] o.s.security.web.FilterChainProxy - Secured DELETE /v1/tenants/68f98096-6b85-4ce0-96f5-b29dae17924e
+    13:12:51.493 [http-nio-auto-1-exec-7] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JwtTenantAuthenticationFilter.shouldNotFilter() - Path: /api/v1/tenants/68f98096-6b85-4ce0-96f5-b29dae17924e, ShouldSkip: false
+    13:12:51.493 [http-nio-auto-1-exec-7] DEBUG [] o.s.web.servlet.DispatcherServlet - DELETE "/api/v1/tenants/68f98096-6b85-4ce0-96f5-b29dae17924e", parameters={}
+    13:12:51.493 [http-nio-auto-1-exec-7] DEBUG [] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.subscriptionengine.api.controller.TenantsController#deleteTenant(UUID)
+    13:12:51.494 [http-nio-auto-1-exec-7] INFO  [] c.s.api.controller.TenantsController - Deleting tenant: 68f98096-6b85-4ce0-96f5-b29dae17924e
+    13:12:51.494 [http-nio-auto-1-exec-7] DEBUG [] org.jooq.tools.LoggerListener - Executing query          : select "public"."tenants"."id", "public"."tenants"."name", "public"."tenants"."slug", "public"."tenants"."status", "public"."tenants"."custom_attrs", "public"."tenants"."created_at", "public"."tenants"."updated_at" from "public"."tenants" where "public"."tenants"."id" = cast(? as uuid)
+    13:12:51.496 [http-nio-auto-1-exec-7] DEBUG [] org.jooq.tools.LoggerListener - -> with bind values      : select "public"."tenants"."id", "public"."tenants"."name", "public"."tenants"."slug", "public"."tenants"."status", "public"."tenants"."custom_attrs", "public"."tenants"."created_at", "public"."tenants"."updated_at" from "public"."tenants" where "public"."tenants"."id" = '68f98096-6b85-4ce0-96f5-b29dae17924e'
+    13:12:51.501 [http-nio-auto-1-exec-7] DEBUG [] org.jooq.tools.LoggerListener - Fetched result           : +------------------------------------+----------------+-------------------------+------+------------+--------------------------------+--------------------------------+
+    13:12:51.501 [http-nio-auto-1-exec-7] DEBUG [] org.jooq.tools.LoggerListener -                          : |id                                  |name            |slug                     |status|custom_attrs|created_at                      |updated_at                      |
+    13:12:51.501 [http-nio-auto-1-exec-7] DEBUG [] org.jooq.tools.LoggerListener -                          : +------------------------------------+----------------+-------------------------+------+------------+--------------------------------+--------------------------------+
+    13:12:51.501 [http-nio-auto-1-exec-7] DEBUG [] org.jooq.tools.LoggerListener -                          : |68f98096-6b85-4ce0-96f5-b29dae17924e|Tenant To Delete|tenant-to-delete-7f200d1e|ACTIVE|{}          |2026-02-04T13:12:51.453696-05:00|2026-02-04T13:12:51.453704-05:00|
+    13:12:51.501 [http-nio-auto-1-exec-7] DEBUG [] org.jooq.tools.LoggerListener -                          : +------------------------------------+----------------+-------------------------+------+------------+--------------------------------+--------------------------------+
+    13:12:51.501 [http-nio-auto-1-exec-7] DEBUG [] org.jooq.tools.LoggerListener - Fetched row(s)           : 1
+    13:12:51.529 [http-nio-auto-1-exec-7] DEBUG [] org.jooq.tools.LoggerListener - Executing query          : select count(*) from "public"."subscriptions" where "public"."subscriptions"."tenant_id" = cast(? as uuid)
+    13:12:51.530 [http-nio-auto-1-exec-7] DEBUG [] org.jooq.tools.LoggerListener - -> with bind values      : select count(*) from "public"."subscriptions" where "public"."subscriptions"."tenant_id" = '68f98096-6b85-4ce0-96f5-b29dae17924e'
+    13:12:51.533 [http-nio-auto-1-exec-7] DEBUG [] org.jooq.tools.LoggerListener - Fetched result           : +-----+
+    13:12:51.533 [http-nio-auto-1-exec-7] DEBUG [] org.jooq.tools.LoggerListener -                          : |count|
+    13:12:51.533 [http-nio-auto-1-exec-7] DEBUG [] org.jooq.tools.LoggerListener -                          : +-----+
+    13:12:51.533 [http-nio-auto-1-exec-7] DEBUG [] org.jooq.tools.LoggerListener -                          : |    0|
+    13:12:51.533 [http-nio-auto-1-exec-7] DEBUG [] org.jooq.tools.LoggerListener -                          : +-----+
+    13:12:51.533 [http-nio-auto-1-exec-7] DEBUG [] org.jooq.tools.LoggerListener - Fetched row(s)           : 1
+    13:12:51.534 [http-nio-auto-1-exec-7] DEBUG [] org.jooq.tools.LoggerListener - Executing query          : select count(*) from "public"."plans" where "public"."plans"."tenant_id" = cast(? as uuid)
+    13:12:51.535 [http-nio-auto-1-exec-7] DEBUG [] org.jooq.tools.LoggerListener - -> with bind values      : select count(*) from "public"."plans" where "public"."plans"."tenant_id" = '68f98096-6b85-4ce0-96f5-b29dae17924e'
+    13:12:51.537 [http-nio-auto-1-exec-7] DEBUG [] org.jooq.tools.LoggerListener - Fetched result           : +-----+
+    13:12:51.537 [http-nio-auto-1-exec-7] DEBUG [] org.jooq.tools.LoggerListener -                          : |count|
+    13:12:51.537 [http-nio-auto-1-exec-7] DEBUG [] org.jooq.tools.LoggerListener -                          : +-----+
+    13:12:51.537 [http-nio-auto-1-exec-7] DEBUG [] org.jooq.tools.LoggerListener -                          : |    0|
+    13:12:51.537 [http-nio-auto-1-exec-7] DEBUG [] org.jooq.tools.LoggerListener -                          : +-----+
+    13:12:51.537 [http-nio-auto-1-exec-7] DEBUG [] org.jooq.tools.LoggerListener - Fetched row(s)           : 1
+    13:12:51.538 [http-nio-auto-1-exec-7] DEBUG [] org.jooq.tools.LoggerListener - Executing query          : select count(*) from "public"."customers" where "public"."customers"."tenant_id" = cast(? as uuid)
+    13:12:51.538 [http-nio-auto-1-exec-7] DEBUG [] org.jooq.tools.LoggerListener - -> with bind values      : select count(*) from "public"."customers" where "public"."customers"."tenant_id" = '68f98096-6b85-4ce0-96f5-b29dae17924e'
+    13:12:51.543 [http-nio-auto-1-exec-7] DEBUG [] org.jooq.tools.LoggerListener - Fetched result           : +-----+
+    13:12:51.543 [http-nio-auto-1-exec-7] DEBUG [] org.jooq.tools.LoggerListener -                          : |count|
+    13:12:51.543 [http-nio-auto-1-exec-7] DEBUG [] org.jooq.tools.LoggerListener -                          : +-----+
+    13:12:51.543 [http-nio-auto-1-exec-7] DEBUG [] org.jooq.tools.LoggerListener -                          : |    0|
+    13:12:51.543 [http-nio-auto-1-exec-7] DEBUG [] org.jooq.tools.LoggerListener -                          : +-----+
+    13:12:51.543 [http-nio-auto-1-exec-7] DEBUG [] org.jooq.tools.LoggerListener - Fetched row(s)           : 1
+    13:12:51.550 [http-nio-auto-1-exec-7] DEBUG [] org.jooq.tools.LoggerListener - Executing query          : delete from "public"."tenants" where "public"."tenants"."id" = cast(? as uuid)
+    13:12:51.551 [http-nio-auto-1-exec-7] DEBUG [] org.jooq.tools.LoggerListener - -> with bind values      : delete from "public"."tenants" where "public"."tenants"."id" = '68f98096-6b85-4ce0-96f5-b29dae17924e'
+    13:12:51.561 [http-nio-auto-1-exec-7] DEBUG [] org.jooq.tools.LoggerListener - Affected row(s)          : 1
+    13:12:51.561 [http-nio-auto-1-exec-7] INFO  [] c.s.api.controller.TenantsController - Successfully deleted tenant: 68f98096-6b85-4ce0-96f5-b29dae17924e
+    13:12:51.562 [http-nio-auto-1-exec-7] DEBUG [] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [application/json, application/javascript, text/javascript, text/json] and supported [application/json, application/*+json]
+    13:12:51.562 [http-nio-auto-1-exec-7] DEBUG [] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{tenantId=68f98096-6b85-4ce0-96f5-b29dae17924e, message=Tenant deleted successfully}]
+    13:12:51.562 [http-nio-auto-1-exec-7] DEBUG [] o.s.web.servlet.DispatcherServlet - Completed 200 OK
+    13:12:51.562 [http-nio-auto-1-exec-7] DEBUG [] c.s.auth.TenantContextCleanupFilter - Clearing tenant context after request completion
+    13:12:51.563 [ForkJoinPool-1-worker-1] DEBUG [] i.r.internal.RestAssuredHttpBuilder - Parsing response as: application/json
+    13:12:51.563 [ForkJoinPool-1-worker-1] DEBUG [] i.r.internal.RestAssuredHttpBuilder - Parsed data to instance of: class org.apache.http.conn.EofSensorInputStream
+    13:12:51.563 [http-nio-auto-1-exec-7] INFO  [] c.s.a.JwtTenantAuthenticationFilter - === JwtTenantAuthenticationFilter.doFilterInternal() END ===
+    Request method:	GET
+    Request URI:	http://localhost:54099/api/v1/tenants/68f98096-6b85-4ce0-96f5-b29dae17924e
+    Proxy:			<none>
+    Request params:	<none>
+    Query params:	<none>
+    Form params:	<none>
+    Path params:	<none>
+    Headers:		Accept=application/json, application/javascript, text/javascript, text/json
+    				Authorization=Bearer eyJhbGciOiJIUzI1NiJ9.eyJ0ZW5hbnRfaWQiOiI2OGY5ODA5Ni02Yjg1LTRjZTAtOTZmNS1iMjlkYWUxNzkyNGUiLCJ1c2VyX2lkIjoiN2U5ODc4ZWItMzJlMS00Y2Q5LTkxZTQtN2EzZjdkOGZjZDE1Iiwicm9sZXMiOlsiVVNFUiJdLCJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJzdWIiOiI3ZTk4NzhlYi0zMmUxLTRjZDktOTFlNC03YTNmN2Q4ZmNkMTUiLCJpYXQiOjE3NzAyMjg3NzEsImV4cCI6MTc3MDIzMjM3MX0.tVnPH1mzeOWHP6RaW2XHNa64p6dYYb7j5_GgcmjOdQ4
+    				Content-Type=application/json
+    Cookies:		<none>
+    Multiparts:		<none>
+    Body:			<none>
+    13:12:51.581 [http-nio-auto-1-exec-8] DEBUG [] o.s.security.web.FilterChainProxy - Securing GET /v1/tenants/68f98096-6b85-4ce0-96f5-b29dae17924e
+    13:12:51.581 [http-nio-auto-1-exec-8] DEBUG [] o.s.s.o.s.r.a.JwtAuthenticationProvider - Authenticated token
+    13:12:51.581 [http-nio-auto-1-exec-8] DEBUG [] o.s.s.o.s.r.w.a.BearerTokenAuthenticationFilter - Set SecurityContextHolder to JwtAuthenticationToken [Principal=org.springframework.security.oauth2.jwt.Jwt@9d0c6b2b, Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=127.0.0.1, SessionId=null], Granted Authorities=[]]
+    13:12:51.581 [http-nio-auto-1-exec-8] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JwtTenantAuthenticationFilter.shouldNotFilter() - Path: /api/v1/tenants/68f98096-6b85-4ce0-96f5-b29dae17924e, ShouldSkip: false
+    13:12:51.581 [http-nio-auto-1-exec-8] INFO  [] c.s.a.JwtTenantAuthenticationFilter - === JwtTenantAuthenticationFilter.doFilterInternal() START - GET /api/v1/tenants/68f98096-6b85-4ce0-96f5-b29dae17924e ===
+    13:12:51.581 [http-nio-auto-1-exec-8] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Authentication type: JwtAuthenticationToken
+    13:12:51.582 [http-nio-auto-1-exec-8] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JWT token found, extracting tenant information...
+    13:12:51.582 [http-nio-auto-1-exec-8] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Extracted tenant ID from JWT: 68f98096-6b85-4ce0-96f5-b29dae17924e
+    13:12:51.582 [http-nio-auto-1-exec-8] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Set tenant context: 68f98096-6b85-4ce0-96f5-b29dae17924e
+    13:12:51.582 [http-nio-auto-1-exec-8] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Verified tenant context: 68f98096-6b85-4ce0-96f5-b29dae17924e
+    13:12:51.582 [http-nio-auto-1-exec-8] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JwtTenantAuthenticationFilter: SUCCESSFULLY set tenant context - tenantId: 68f98096-6b85-4ce0-96f5-b29dae17924e, userId: 7e9878eb-32e1-4cd9-91e4-7a3f7d8fcd15, userEmail: test@example.com, thread: http-nio-auto-1-exec-8
+    13:12:51.582 [http-nio-auto-1-exec-8] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Continuing with filter chain...
+    13:12:51.582 [http-nio-auto-1-exec-8] DEBUG [] o.s.security.web.FilterChainProxy - Secured GET /v1/tenants/68f98096-6b85-4ce0-96f5-b29dae17924e
+    13:12:51.582 [http-nio-auto-1-exec-8] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JwtTenantAuthenticationFilter.shouldNotFilter() - Path: /api/v1/tenants/68f98096-6b85-4ce0-96f5-b29dae17924e, ShouldSkip: false
+    13:12:51.582 [http-nio-auto-1-exec-8] DEBUG [] o.s.web.servlet.DispatcherServlet - GET "/api/v1/tenants/68f98096-6b85-4ce0-96f5-b29dae17924e", parameters={}
+    13:12:51.582 [http-nio-auto-1-exec-8] DEBUG [] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.subscriptionengine.api.controller.TenantsController#getTenantById(UUID)
+    13:12:51.582 [http-nio-auto-1-exec-8] INFO  [] c.s.api.controller.TenantsController - Fetching tenant: 68f98096-6b85-4ce0-96f5-b29dae17924e
+    13:12:51.583 [http-nio-auto-1-exec-8] DEBUG [] org.jooq.tools.LoggerListener - Executing query          : select "public"."tenants"."id", "public"."tenants"."name", "public"."tenants"."slug", "public"."tenants"."status", "public"."tenants"."custom_attrs", "public"."tenants"."created_at", "public"."tenants"."updated_at" from "public"."tenants" where "public"."tenants"."id" = cast(? as uuid)
+    13:12:51.583 [http-nio-auto-1-exec-8] DEBUG [] org.jooq.tools.LoggerListener - -> with bind values      : select "public"."tenants"."id", "public"."tenants"."name", "public"."tenants"."slug", "public"."tenants"."status", "public"."tenants"."custom_attrs", "public"."tenants"."created_at", "public"."tenants"."updated_at" from "public"."tenants" where "public"."tenants"."id" = '68f98096-6b85-4ce0-96f5-b29dae17924e'
+    13:12:51.585 [http-nio-auto-1-exec-8] DEBUG [] org.jooq.tools.LoggerListener - Fetched result           : +----+----+----+------+------------+----------+----------+
+    13:12:51.585 [http-nio-auto-1-exec-8] DEBUG [] org.jooq.tools.LoggerListener -                          : |id  |name|slug|status|custom_attrs|created_at|updated_at|
+    13:12:51.585 [http-nio-auto-1-exec-8] DEBUG [] org.jooq.tools.LoggerListener -                          : +----+----+----+------+------------+----------+----------+
+    13:12:51.585 [http-nio-auto-1-exec-8] DEBUG [] org.jooq.tools.LoggerListener - Fetched row(s)           : 0
+    13:12:51.585 [http-nio-auto-1-exec-8] DEBUG [] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [application/json, application/javascript, text/javascript, text/json] and supported [application/json, application/*+json]
+    13:12:51.585 [http-nio-auto-1-exec-8] DEBUG [] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{error=TENANT_NOT_FOUND, message=Tenant not found: 68f98096-6b85-4ce0-96f5-b29dae17924e}]
+    13:12:51.586 [http-nio-auto-1-exec-8] DEBUG [] o.s.web.servlet.DispatcherServlet - Completed 404 NOT_FOUND
+    13:12:51.586 [http-nio-auto-1-exec-8] DEBUG [] c.s.auth.TenantContextCleanupFilter - Clearing tenant context after request completion
+    13:12:51.586 [http-nio-auto-1-exec-8] INFO  [] c.s.a.JwtTenantAuthenticationFilter - === JwtTenantAuthenticationFilter.doFilterInternal() END ===
+    13:12:51.586 [ForkJoinPool-1-worker-1] DEBUG [] i.r.internal.RestAssuredHttpBuilder - Parsing response as: application/json
+    13:12:51.586 [ForkJoinPool-1-worker-1] DEBUG [] i.r.internal.RestAssuredHttpBuilder - Parsed data to instance of: class org.apache.http.conn.EofSensorInputStream
+
+TenantManagementTest > Should prevent deletion of tenant with subscriptions STANDARD_OUT
+    Request method:	POST
+    Request URI:	http://localhost:54099/api/v1/customers
+    Proxy:			<none>
+    Request params:	<none>
+    Query params:	<none>
+    Form params:	<none>
+    Path params:	<none>
+    Headers:		Accept=application/json, application/javascript, text/javascript, text/json
+    				Authorization=Bearer eyJhbGciOiJIUzI1NiJ9.eyJ0ZW5hbnRfaWQiOiI1YWE4MmQ4ZS1lYmVjLTQzMmItYjU2OC1hYzRiYTYxYmI1NzgiLCJ1c2VyX2lkIjoiOWJhOWEzNDMtNWY3Yi00ZjdjLWJiZGEtNjMzNmU5NmU4MDI5Iiwicm9sZXMiOlsiVVNFUiJdLCJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJzdWIiOiI5YmE5YTM0My01ZjdiLTRmN2MtYmJkYS02MzM2ZTk2ZTgwMjkiLCJpYXQiOjE3NzAyMjg3NzEsImV4cCI6MTc3MDIzMjM3MX0.kW-iCE_RukLCGH6YYkybZXe3ZljuI6Qd0vXVdMxB5fU
+    				Content-Type=application/json
+    Cookies:		<none>
+    Multiparts:		<none>
+    Body:
+    {
+        "name": "Test Customer",
+        "externalCustomerRef": "cust_test_2292032a",
+        "email": "test-4f9514eb@example.com"
+    }
+    13:12:51.605 [http-nio-auto-1-exec-9] DEBUG [] o.s.security.web.FilterChainProxy - Securing POST /v1/customers
+    13:12:51.606 [http-nio-auto-1-exec-9] DEBUG [] o.s.s.o.s.r.a.JwtAuthenticationProvider - Authenticated token
+    13:12:51.606 [http-nio-auto-1-exec-9] DEBUG [] o.s.s.o.s.r.w.a.BearerTokenAuthenticationFilter - Set SecurityContextHolder to JwtAuthenticationToken [Principal=org.springframework.security.oauth2.jwt.Jwt@6fe91695, Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=127.0.0.1, SessionId=null], Granted Authorities=[]]
+    13:12:51.606 [http-nio-auto-1-exec-9] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JwtTenantAuthenticationFilter.shouldNotFilter() - Path: /api/v1/customers, ShouldSkip: false
+    13:12:51.606 [http-nio-auto-1-exec-9] INFO  [] c.s.a.JwtTenantAuthenticationFilter - === JwtTenantAuthenticationFilter.doFilterInternal() START - POST /api/v1/customers ===
+    13:12:51.606 [http-nio-auto-1-exec-9] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Authentication type: JwtAuthenticationToken
+    13:12:51.606 [http-nio-auto-1-exec-9] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JWT token found, extracting tenant information...
+    13:12:51.606 [http-nio-auto-1-exec-9] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Extracted tenant ID from JWT: 5aa82d8e-ebec-432b-b568-ac4ba61bb578
+    13:12:51.606 [http-nio-auto-1-exec-9] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Set tenant context: 5aa82d8e-ebec-432b-b568-ac4ba61bb578
+    13:12:51.606 [http-nio-auto-1-exec-9] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Verified tenant context: 5aa82d8e-ebec-432b-b568-ac4ba61bb578
+    13:12:51.606 [http-nio-auto-1-exec-9] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JwtTenantAuthenticationFilter: SUCCESSFULLY set tenant context - tenantId: 5aa82d8e-ebec-432b-b568-ac4ba61bb578, userId: 9ba9a343-5f7b-4f7c-bbda-6336e96e8029, userEmail: test@example.com, thread: http-nio-auto-1-exec-9
+    13:12:51.606 [http-nio-auto-1-exec-9] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Continuing with filter chain...
+    13:12:51.607 [http-nio-auto-1-exec-9] DEBUG [] o.s.security.web.FilterChainProxy - Secured POST /v1/customers
+    13:12:51.607 [http-nio-auto-1-exec-9] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JwtTenantAuthenticationFilter.shouldNotFilter() - Path: /api/v1/customers, ShouldSkip: false
+    13:12:51.607 [http-nio-auto-1-exec-9] DEBUG [] o.s.web.servlet.DispatcherServlet - POST "/api/v1/customers", parameters={}
+    13:12:51.607 [http-nio-auto-1-exec-9] DEBUG [] o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/], classpath [resources/], classpath [static/], classpath [public/], ServletContext [/]]
+    13:12:51.608 [http-nio-auto-1-exec-9] DEBUG [] o.s.w.s.r.ResourceHttpRequestHandler - Resource not found
+    13:12:51.610 [http-nio-auto-1-exec-9] DEBUG [] o.s.w.s.m.s.DefaultHandlerExceptionResolver - Resolved [org.springframework.web.servlet.resource.NoResourceFoundException: No static resource v1/customers.]
+    13:12:51.610 [http-nio-auto-1-exec-9] DEBUG [] o.s.web.servlet.DispatcherServlet - Completed 404 NOT_FOUND
+    13:12:51.610 [http-nio-auto-1-exec-9] DEBUG [] c.s.auth.TenantContextCleanupFilter - Clearing tenant context after request completion
+    13:12:51.610 [http-nio-auto-1-exec-9] INFO  [] c.s.a.JwtTenantAuthenticationFilter - === JwtTenantAuthenticationFilter.doFilterInternal() END ===
+    13:12:51.613 [http-nio-auto-1-exec-9] DEBUG [] o.s.security.web.FilterChainProxy - Securing POST /error
+    13:12:51.614 [http-nio-auto-1-exec-9] DEBUG [] o.s.security.web.FilterChainProxy - Secured POST /error
+    13:12:51.614 [http-nio-auto-1-exec-9] DEBUG [] o.s.web.servlet.DispatcherServlet - "ERROR" dispatch for POST "/api/error", parameters={}
+    13:12:51.615 [http-nio-auto-1-exec-9] DEBUG [] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController#error(HttpServletRequest)
+    13:12:51.617 [http-nio-auto-1-exec-9] DEBUG [] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [application/json, application/javascript, text/javascript, text/json] and supported [application/json, application/*+json]
+    13:12:51.617 [http-nio-auto-1-exec-9] DEBUG [] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{timestamp=Wed Feb 04 13:12:51 EST 2026, status=404, error=Not Found, path=/api/v1/customers}]
+    13:12:51.618 [ForkJoinPool-1-worker-1] DEBUG [] i.r.internal.RestAssuredHttpBuilder - Parsing response as: application/json
+    13:12:51.618 [http-nio-auto-1-exec-9] DEBUG [] o.s.web.servlet.DispatcherServlet - Exiting from "ERROR" dispatch, status 404
+    13:12:51.618 [ForkJoinPool-1-worker-1] DEBUG [] i.r.internal.RestAssuredHttpBuilder - Parsed data to instance of: class org.apache.http.conn.EofSensorInputStream
+    HTTP/1.1 404 
+    Vary: Origin
+    Vary: Access-Control-Request-Method
+    Vary: Access-Control-Request-Headers
+    X-Content-Type-Options: nosniff
+    X-XSS-Protection: 0
+    Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+    Pragma: no-cache
+    Expires: 0
+    X-Frame-Options: DENY
+    Content-Type: application/json
+    Transfer-Encoding: chunked
+    Date: Wed, 04 Feb 2026 18:12:51 GMT
+    Keep-Alive: timeout=60
+    Connection: keep-alive
+
+    {
+        "timestamp": "2026-02-04T18:12:51.616+00:00",
+        "status": 404,
+        "error": "Not Found",
+        "path": "/api/v1/customers"
+    }
+
+TenantManagementTest > Should prevent deletion of tenant with subscriptions FAILED
+    java.lang.AssertionError: 1 expectation failed.
+    Expected status code <200> but was <404>.
+        at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+        at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:77)
+        at java.base/jdk.internal.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
+        at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:500)
+        at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:481)
+        at org.codehaus.groovy.reflection.CachedConstructor.invoke(CachedConstructor.java:73)
+        at org.codehaus.groovy.runtime.callsite.ConstructorSite$ConstructorSiteNoUnwrapNoCoerce.callConstructor(ConstructorSite.java:108)
+        at org.codehaus.groovy.runtime.callsite.CallSiteArray.defaultCallConstructor(CallSiteArray.java:57)
+        at org.codehaus.groovy.runtime.callsite.AbstractCallSite.callConstructor(AbstractCallSite.java:263)
+        at org.codehaus.groovy.runtime.callsite.AbstractCallSite.callConstructor(AbstractCallSite.java:277)
+        at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:512)
+        at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure$validate$1.call(Unknown Source)
+        at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:696)
+        at io.restassured.internal.ResponseSpecificationImpl.this$2$validateResponseIfRequired(ResponseSpecificationImpl.groovy)
+        at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+        at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+        at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+        at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+        at org.codehaus.groovy.runtime.callsite.PlainObjectMetaMethodSite.doInvoke(PlainObjectMetaMethodSite.java:43)
+        at org.codehaus.groovy.runtime.callsite.PogoMetaMethodSite$PogoCachedMethodSiteNoUnwrapNoCoerce.invoke(PogoMetaMethodSite.java:198)
+        at org.codehaus.groovy.runtime.callsite.PogoMetaMethodSite.callCurrent(PogoMetaMethodSite.java:62)
+        at org.codehaus.groovy.runtime.callsite.AbstractCallSite.callCurrent(AbstractCallSite.java:185)
+        at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:135)
+        at io.restassured.specification.ResponseSpecification$statusCode$1.callCurrent(Unknown Source)
+        at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:143)
+        at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+        at com.subscriptionengine.api.integration.TenantManagementTest.createCustomer(TenantManagementTest.java:284)
+        at com.subscriptionengine.api.integration.TenantManagementTest.shouldPreventDeletionOfTenantWithSubscriptions(TenantManagementTest.java:176)
+
+TenantManagementTest > Should return 404 for non-existent tenant STANDARD_OUT
+    Request method:	POST
+    Request URI:	http://localhost:54099/api/v1/tenants
+    Proxy:			<none>
+    Request params:	<none>
+    Query params:	<none>
+    Form params:	<none>
+    Path params:	<none>
+    Headers:		Accept=application/json, application/javascript, text/javascript, text/json
+    				Authorization=Bearer eyJhbGciOiJIUzI1NiJ9.eyJ0ZW5hbnRfaWQiOiIzZTIzNDIyZi0xMjU0LTQxMDgtOTJiOC1lZWM0MDYxNjM3MDgiLCJ1c2VyX2lkIjoiNDQ1YmYzZTMtNTI1Yi00NmQ1LWE1Y2ItNzc4MjQxODMxOGU4Iiwicm9sZXMiOlsiVVNFUiJdLCJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJzdWIiOiI0NDViZjNlMy01MjViLTQ2ZDUtYTVjYi03NzgyNDE4MzE4ZTgiLCJpYXQiOjE3NzAyMjg3NzEsImV4cCI6MTc3MDIzMjM3MX0.CTl2OA2lStfn2-HGJY6WCOv96Pqms1o_m4wC8egTcew
+    				Content-Type=application/json
+    Cookies:		<none>
+    Multiparts:		<none>
+    Body:
+    {
+        "status": "ACTIVE",
+        "slug": "any-tenant-65f9fa21",
+        "name": "Any Tenant"
+    }
+    13:12:51.659 [http-nio-auto-1-exec-10] DEBUG [] o.s.security.web.FilterChainProxy - Securing POST /v1/tenants
+    13:12:51.659 [http-nio-auto-1-exec-10] DEBUG [] o.s.s.o.s.r.a.JwtAuthenticationProvider - Authenticated token
+    13:12:51.660 [http-nio-auto-1-exec-10] DEBUG [] o.s.s.o.s.r.w.a.BearerTokenAuthenticationFilter - Set SecurityContextHolder to JwtAuthenticationToken [Principal=org.springframework.security.oauth2.jwt.Jwt@cfc7c0cf, Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=127.0.0.1, SessionId=null], Granted Authorities=[]]
+    13:12:51.660 [http-nio-auto-1-exec-10] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JwtTenantAuthenticationFilter.shouldNotFilter() - Path: /api/v1/tenants, ShouldSkip: false
+    13:12:51.660 [http-nio-auto-1-exec-10] INFO  [] c.s.a.JwtTenantAuthenticationFilter - === JwtTenantAuthenticationFilter.doFilterInternal() START - POST /api/v1/tenants ===
+    13:12:51.660 [http-nio-auto-1-exec-10] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Authentication type: JwtAuthenticationToken
+    13:12:51.660 [http-nio-auto-1-exec-10] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JWT token found, extracting tenant information...
+    13:12:51.660 [http-nio-auto-1-exec-10] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Extracted tenant ID from JWT: 3e23422f-1254-4108-92b8-eec406163708
+    13:12:51.660 [http-nio-auto-1-exec-10] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Set tenant context: 3e23422f-1254-4108-92b8-eec406163708
+    13:12:51.660 [http-nio-auto-1-exec-10] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Verified tenant context: 3e23422f-1254-4108-92b8-eec406163708
+    13:12:51.660 [http-nio-auto-1-exec-10] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JwtTenantAuthenticationFilter: SUCCESSFULLY set tenant context - tenantId: 3e23422f-1254-4108-92b8-eec406163708, userId: 445bf3e3-525b-46d5-a5cb-7782418318e8, userEmail: test@example.com, thread: http-nio-auto-1-exec-10
+    13:12:51.660 [http-nio-auto-1-exec-10] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Continuing with filter chain...
+    13:12:51.660 [http-nio-auto-1-exec-10] DEBUG [] o.s.security.web.FilterChainProxy - Secured POST /v1/tenants
+    13:12:51.660 [http-nio-auto-1-exec-10] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JwtTenantAuthenticationFilter.shouldNotFilter() - Path: /api/v1/tenants, ShouldSkip: false
+    13:12:51.660 [http-nio-auto-1-exec-10] DEBUG [] o.s.web.servlet.DispatcherServlet - POST "/api/v1/tenants", parameters={}
+    13:12:51.660 [http-nio-auto-1-exec-10] DEBUG [] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.subscriptionengine.api.controller.TenantsController#createTenant(CreateTenantRequest)
+    13:12:51.661 [http-nio-auto-1-exec-10] DEBUG [] o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Read "application/json;charset=UTF-8" to [com.subscriptionengine.api.controller.TenantsController$CreateTenantRequest@3ebe78e3]
+    13:12:51.661 [http-nio-auto-1-exec-10] INFO  [] c.s.api.controller.TenantsController - Creating new tenant: Any Tenant
+    13:12:51.661 [http-nio-auto-1-exec-10] DEBUG [] org.jooq.tools.LoggerListener - Executing query          : insert into "public"."tenants" ("id", "name", "slug", "status", "created_at", "updated_at") values (cast(? as uuid), ?, ?, ?, cast(? as timestamp(6) with time zone), cast(? as timestamp(6) with time zone)) returning "public"."tenants"."id"
+    13:12:51.662 [http-nio-auto-1-exec-10] DEBUG [] org.jooq.tools.LoggerListener - -> with bind values      : insert into "public"."tenants" ("id", "name", "slug", "status", "created_at", "updated_at") values ('e1e0668b-501f-4403-9841-6a6d804aa4c2', 'Any Tenant', 'any-tenant-65f9fa21', 'ACTIVE', timestamp with time zone '2026-02-04 13:12:51.661203-05:00', timestamp with time zone '2026-02-04 13:12:51.661208-05:00') returning "public"."tenants"."id"
+    13:12:51.666 [http-nio-auto-1-exec-10] DEBUG [] org.jooq.tools.LoggerListener - Fetched result           : +------------------------------------+
+    13:12:51.666 [http-nio-auto-1-exec-10] DEBUG [] org.jooq.tools.LoggerListener -                          : |id                                  |
+    13:12:51.666 [http-nio-auto-1-exec-10] DEBUG [] org.jooq.tools.LoggerListener -                          : +------------------------------------+
+    13:12:51.666 [http-nio-auto-1-exec-10] DEBUG [] org.jooq.tools.LoggerListener -                          : |e1e0668b-501f-4403-9841-6a6d804aa4c2|
+    13:12:51.666 [http-nio-auto-1-exec-10] DEBUG [] org.jooq.tools.LoggerListener -                          : +------------------------------------+
+    13:12:51.666 [http-nio-auto-1-exec-10] DEBUG [] org.jooq.tools.LoggerListener - Fetched row(s)           : 1
+    13:12:51.667 [http-nio-auto-1-exec-10] INFO  [] c.s.api.controller.TenantsController - Successfully created tenant: e1e0668b-501f-4403-9841-6a6d804aa4c2
+    13:12:51.667 [http-nio-auto-1-exec-10] DEBUG [] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [application/json, application/javascript, text/javascript, text/json] and supported [application/json, application/*+json]
+    13:12:51.667 [http-nio-auto-1-exec-10] DEBUG [] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{createdAt=2026-02-04T13:12:51.661203-05:00, slug=any-tenant-65f9fa21, status=ACTIVE, name=Any Tenan (truncated)...]
+    13:12:51.668 [http-nio-auto-1-exec-10] DEBUG [] o.s.web.servlet.DispatcherServlet - Completed 201 CREATED
+    13:12:51.668 [http-nio-auto-1-exec-10] DEBUG [] c.s.auth.TenantContextCleanupFilter - Clearing tenant context after request completion
+    13:12:51.668 [ForkJoinPool-1-worker-1] DEBUG [] i.r.internal.RestAssuredHttpBuilder - Parsing response as: application/json
+    13:12:51.668 [ForkJoinPool-1-worker-1] DEBUG [] i.r.internal.RestAssuredHttpBuilder - Parsed data to instance of: class org.apache.http.conn.EofSensorInputStream
+    13:12:51.668 [http-nio-auto-1-exec-10] INFO  [] c.s.a.JwtTenantAuthenticationFilter - === JwtTenantAuthenticationFilter.doFilterInternal() END ===
+    Request method:	GET
+    Request URI:	http://localhost:54099/api/v1/tenants/c138918b-185d-43cf-bde3-45409ec5d706
+    Proxy:			<none>
+    Request params:	<none>
+    Query params:	<none>
+    Form params:	<none>
+    Path params:	<none>
+    Headers:		Accept=application/json, application/javascript, text/javascript, text/json
+    				Authorization=Bearer eyJhbGciOiJIUzI1NiJ9.eyJ0ZW5hbnRfaWQiOiJlMWUwNjY4Yi01MDFmLTQ0MDMtOTg0MS02YTZkODA0YWE0YzIiLCJ1c2VyX2lkIjoiNTY4ZmM0ODctMTIyOS00MWVlLTg2ZGUtYmY4NjYxYjBkN2FlIiwicm9sZXMiOlsiVVNFUiJdLCJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJzdWIiOiI1NjhmYzQ4Ny0xMjI5LTQxZWUtODZkZS1iZjg2NjFiMGQ3YWUiLCJpYXQiOjE3NzAyMjg3NzEsImV4cCI6MTc3MDIzMjM3MX0.Vw0bGtjce6IiwZh-SscImeOlIDdRDOg8OU9MpHh_UJE
+    				Content-Type=application/json
+    Cookies:		<none>
+    Multiparts:		<none>
+    Body:			<none>
+    13:12:51.686 [http-nio-auto-1-exec-1] DEBUG [] o.s.security.web.FilterChainProxy - Securing GET /v1/tenants/c138918b-185d-43cf-bde3-45409ec5d706
+    13:12:51.687 [http-nio-auto-1-exec-1] DEBUG [] o.s.s.o.s.r.a.JwtAuthenticationProvider - Authenticated token
+    13:12:51.687 [http-nio-auto-1-exec-1] DEBUG [] o.s.s.o.s.r.w.a.BearerTokenAuthenticationFilter - Set SecurityContextHolder to JwtAuthenticationToken [Principal=org.springframework.security.oauth2.jwt.Jwt@25a8b232, Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=127.0.0.1, SessionId=null], Granted Authorities=[]]
+    13:12:51.687 [http-nio-auto-1-exec-1] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JwtTenantAuthenticationFilter.shouldNotFilter() - Path: /api/v1/tenants/c138918b-185d-43cf-bde3-45409ec5d706, ShouldSkip: false
+    13:12:51.687 [http-nio-auto-1-exec-1] INFO  [] c.s.a.JwtTenantAuthenticationFilter - === JwtTenantAuthenticationFilter.doFilterInternal() START - GET /api/v1/tenants/c138918b-185d-43cf-bde3-45409ec5d706 ===
+    13:12:51.687 [http-nio-auto-1-exec-1] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Authentication type: JwtAuthenticationToken
+    13:12:51.687 [http-nio-auto-1-exec-1] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JWT token found, extracting tenant information...
+    13:12:51.687 [http-nio-auto-1-exec-1] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Extracted tenant ID from JWT: e1e0668b-501f-4403-9841-6a6d804aa4c2
+    13:12:51.687 [http-nio-auto-1-exec-1] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Set tenant context: e1e0668b-501f-4403-9841-6a6d804aa4c2
+    13:12:51.687 [http-nio-auto-1-exec-1] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Verified tenant context: e1e0668b-501f-4403-9841-6a6d804aa4c2
+    13:12:51.687 [http-nio-auto-1-exec-1] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JwtTenantAuthenticationFilter: SUCCESSFULLY set tenant context - tenantId: e1e0668b-501f-4403-9841-6a6d804aa4c2, userId: 568fc487-1229-41ee-86de-bf8661b0d7ae, userEmail: test@example.com, thread: http-nio-auto-1-exec-1
+    13:12:51.687 [http-nio-auto-1-exec-1] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Continuing with filter chain...
+    13:12:51.688 [http-nio-auto-1-exec-1] DEBUG [] o.s.security.web.FilterChainProxy - Secured GET /v1/tenants/c138918b-185d-43cf-bde3-45409ec5d706
+    13:12:51.688 [http-nio-auto-1-exec-1] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JwtTenantAuthenticationFilter.shouldNotFilter() - Path: /api/v1/tenants/c138918b-185d-43cf-bde3-45409ec5d706, ShouldSkip: false
+    13:12:51.688 [http-nio-auto-1-exec-1] DEBUG [] o.s.web.servlet.DispatcherServlet - GET "/api/v1/tenants/c138918b-185d-43cf-bde3-45409ec5d706", parameters={}
+    13:12:51.688 [http-nio-auto-1-exec-1] DEBUG [] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.subscriptionengine.api.controller.TenantsController#getTenantById(UUID)
+    13:12:51.689 [http-nio-auto-1-exec-1] INFO  [] c.s.api.controller.TenantsController - Fetching tenant: c138918b-185d-43cf-bde3-45409ec5d706
+    13:12:51.689 [http-nio-auto-1-exec-1] DEBUG [] org.jooq.tools.LoggerListener - Executing query          : select "public"."tenants"."id", "public"."tenants"."name", "public"."tenants"."slug", "public"."tenants"."status", "public"."tenants"."custom_attrs", "public"."tenants"."created_at", "public"."tenants"."updated_at" from "public"."tenants" where "public"."tenants"."id" = cast(? as uuid)
+    13:12:51.689 [http-nio-auto-1-exec-1] DEBUG [] org.jooq.tools.LoggerListener - -> with bind values      : select "public"."tenants"."id", "public"."tenants"."name", "public"."tenants"."slug", "public"."tenants"."status", "public"."tenants"."custom_attrs", "public"."tenants"."created_at", "public"."tenants"."updated_at" from "public"."tenants" where "public"."tenants"."id" = 'c138918b-185d-43cf-bde3-45409ec5d706'
+    13:12:51.703 [http-nio-auto-1-exec-1] DEBUG [] org.jooq.tools.LoggerListener - Fetched result           : +----+----+----+------+------------+----------+----------+
+    13:12:51.703 [http-nio-auto-1-exec-1] DEBUG [] org.jooq.tools.LoggerListener -                          : |id  |name|slug|status|custom_attrs|created_at|updated_at|
+    13:12:51.703 [http-nio-auto-1-exec-1] DEBUG [] org.jooq.tools.LoggerListener -                          : +----+----+----+------+------------+----------+----------+
+    13:12:51.703 [http-nio-auto-1-exec-1] DEBUG [] org.jooq.tools.LoggerListener - Fetched row(s)           : 0
+    13:12:51.704 [http-nio-auto-1-exec-1] DEBUG [] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [application/json, application/javascript, text/javascript, text/json] and supported [application/json, application/*+json]
+    13:12:51.704 [http-nio-auto-1-exec-1] DEBUG [] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{error=TENANT_NOT_FOUND, message=Tenant not found: c138918b-185d-43cf-bde3-45409ec5d706}]
+    13:12:51.704 [http-nio-auto-1-exec-1] DEBUG [] o.s.web.servlet.DispatcherServlet - Completed 404 NOT_FOUND
+    13:12:51.704 [http-nio-auto-1-exec-1] DEBUG [] c.s.auth.TenantContextCleanupFilter - Clearing tenant context after request completion
+    13:12:51.704 [ForkJoinPool-1-worker-1] DEBUG [] i.r.internal.RestAssuredHttpBuilder - Parsing response as: application/json
+    13:12:51.704 [ForkJoinPool-1-worker-1] DEBUG [] i.r.internal.RestAssuredHttpBuilder - Parsed data to instance of: class org.apache.http.conn.EofSensorInputStream
+    13:12:51.704 [http-nio-auto-1-exec-1] INFO  [] c.s.a.JwtTenantAuthenticationFilter - === JwtTenantAuthenticationFilter.doFilterInternal() END ===
+
+TenantManagementTest > Should update tenant information STANDARD_OUT
+    Request method:	POST
+    Request URI:	http://localhost:54099/api/v1/tenants
+    Proxy:			<none>
+    Request params:	<none>
+    Query params:	<none>
+    Form params:	<none>
+    Path params:	<none>
+    Headers:		Accept=application/json, application/javascript, text/javascript, text/json
+    				Authorization=Bearer eyJhbGciOiJIUzI1NiJ9.eyJ0ZW5hbnRfaWQiOiJiMGQxOWJiMS0wYjUxLTRmMzYtOTkzMy03NWNhNjJlMzJlNTEiLCJ1c2VyX2lkIjoiZDQxMTdiNWItNWQ0Ni00MjE2LWJlMTktMGRiODViMzBmZTg3Iiwicm9sZXMiOlsiVVNFUiJdLCJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJzdWIiOiJkNDExN2I1Yi01ZDQ2LTQyMTYtYmUxOS0wZGI4NWIzMGZlODciLCJpYXQiOjE3NzAyMjg3NzEsImV4cCI6MTc3MDIzMjM3MX0.abl4u22F5mbxwg1OxVVmtQdKkzllOwIe7LBhd5kyxCk
+    				Content-Type=application/json
+    Cookies:		<none>
+    Multiparts:		<none>
+    Body:
+    {
+        "status": "ACTIVE",
+        "slug": "original-tenant-name-5f08d850",
+        "name": "Original Tenant Name"
+    }
+    13:12:51.731 [http-nio-auto-1-exec-2] DEBUG [] o.s.security.web.FilterChainProxy - Securing POST /v1/tenants
+    13:12:51.731 [http-nio-auto-1-exec-2] DEBUG [] o.s.s.o.s.r.a.JwtAuthenticationProvider - Authenticated token
+    13:12:51.731 [http-nio-auto-1-exec-2] DEBUG [] o.s.s.o.s.r.w.a.BearerTokenAuthenticationFilter - Set SecurityContextHolder to JwtAuthenticationToken [Principal=org.springframework.security.oauth2.jwt.Jwt@1886a521, Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=127.0.0.1, SessionId=null], Granted Authorities=[]]
+    13:12:51.731 [http-nio-auto-1-exec-2] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JwtTenantAuthenticationFilter.shouldNotFilter() - Path: /api/v1/tenants, ShouldSkip: false
+    13:12:51.731 [http-nio-auto-1-exec-2] INFO  [] c.s.a.JwtTenantAuthenticationFilter - === JwtTenantAuthenticationFilter.doFilterInternal() START - POST /api/v1/tenants ===
+    13:12:51.731 [http-nio-auto-1-exec-2] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Authentication type: JwtAuthenticationToken
+    13:12:51.731 [http-nio-auto-1-exec-2] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JWT token found, extracting tenant information...
+    13:12:51.731 [http-nio-auto-1-exec-2] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Extracted tenant ID from JWT: b0d19bb1-0b51-4f36-9933-75ca62e32e51
+    13:12:51.731 [http-nio-auto-1-exec-2] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Set tenant context: b0d19bb1-0b51-4f36-9933-75ca62e32e51
+    13:12:51.731 [http-nio-auto-1-exec-2] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Verified tenant context: b0d19bb1-0b51-4f36-9933-75ca62e32e51
+    13:12:51.731 [http-nio-auto-1-exec-2] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JwtTenantAuthenticationFilter: SUCCESSFULLY set tenant context - tenantId: b0d19bb1-0b51-4f36-9933-75ca62e32e51, userId: d4117b5b-5d46-4216-be19-0db85b30fe87, userEmail: test@example.com, thread: http-nio-auto-1-exec-2
+    13:12:51.731 [http-nio-auto-1-exec-2] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Continuing with filter chain...
+    13:12:51.732 [http-nio-auto-1-exec-2] DEBUG [] o.s.security.web.FilterChainProxy - Secured POST /v1/tenants
+    13:12:51.732 [http-nio-auto-1-exec-2] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JwtTenantAuthenticationFilter.shouldNotFilter() - Path: /api/v1/tenants, ShouldSkip: false
+    13:12:51.732 [http-nio-auto-1-exec-2] DEBUG [] o.s.web.servlet.DispatcherServlet - POST "/api/v1/tenants", parameters={}
+    13:12:51.732 [http-nio-auto-1-exec-2] DEBUG [] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.subscriptionengine.api.controller.TenantsController#createTenant(CreateTenantRequest)
+    13:12:51.733 [http-nio-auto-1-exec-2] DEBUG [] o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Read "application/json;charset=UTF-8" to [com.subscriptionengine.api.controller.TenantsController$CreateTenantRequest@6371d21c]
+    13:12:51.733 [http-nio-auto-1-exec-2] INFO  [] c.s.api.controller.TenantsController - Creating new tenant: Original Tenant Name
+    13:12:51.733 [http-nio-auto-1-exec-2] DEBUG [] org.jooq.tools.LoggerListener - Executing query          : insert into "public"."tenants" ("id", "name", "slug", "status", "created_at", "updated_at") values (cast(? as uuid), ?, ?, ?, cast(? as timestamp(6) with time zone), cast(? as timestamp(6) with time zone)) returning "public"."tenants"."id"
+    13:12:51.733 [http-nio-auto-1-exec-2] DEBUG [] org.jooq.tools.LoggerListener - -> with bind values      : insert into "public"."tenants" ("id", "name", "slug", "status", "created_at", "updated_at") values ('a3e9bb26-be0a-4793-b23c-49b4988e0a1a', 'Original Tenant Name', 'original-tenant-name-5f08d850', 'ACTIVE', timestamp with time zone '2026-02-04 13:12:51.733118-05:00', timestamp with time zone '2026-02-04 13:12:51.733125-05:00') returning "public"."tenants"."id"
+    13:12:51.736 [http-nio-auto-1-exec-2] DEBUG [] org.jooq.tools.LoggerListener - Fetched result           : +------------------------------------+
+    13:12:51.736 [http-nio-auto-1-exec-2] DEBUG [] org.jooq.tools.LoggerListener -                          : |id                                  |
+    13:12:51.736 [http-nio-auto-1-exec-2] DEBUG [] org.jooq.tools.LoggerListener -                          : +------------------------------------+
+    13:12:51.736 [http-nio-auto-1-exec-2] DEBUG [] org.jooq.tools.LoggerListener -                          : |a3e9bb26-be0a-4793-b23c-49b4988e0a1a|
+    13:12:51.736 [http-nio-auto-1-exec-2] DEBUG [] org.jooq.tools.LoggerListener -                          : +------------------------------------+
+    13:12:51.736 [http-nio-auto-1-exec-2] DEBUG [] org.jooq.tools.LoggerListener - Fetched row(s)           : 1
+    13:12:51.737 [http-nio-auto-1-exec-2] INFO  [] c.s.api.controller.TenantsController - Successfully created tenant: a3e9bb26-be0a-4793-b23c-49b4988e0a1a
+    13:12:51.737 [http-nio-auto-1-exec-2] DEBUG [] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [application/json, application/javascript, text/javascript, text/json] and supported [application/json, application/*+json]
+    13:12:51.737 [http-nio-auto-1-exec-2] DEBUG [] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{createdAt=2026-02-04T13:12:51.733118-05:00, slug=original-tenant-name-5f08d850, status=ACTIVE, name (truncated)...]
+    13:12:51.737 [http-nio-auto-1-exec-2] DEBUG [] o.s.web.servlet.DispatcherServlet - Completed 201 CREATED
+    13:12:51.737 [http-nio-auto-1-exec-2] DEBUG [] c.s.auth.TenantContextCleanupFilter - Clearing tenant context after request completion
+    13:12:51.737 [ForkJoinPool-1-worker-1] DEBUG [] i.r.internal.RestAssuredHttpBuilder - Parsing response as: application/json
+    13:12:51.737 [ForkJoinPool-1-worker-1] DEBUG [] i.r.internal.RestAssuredHttpBuilder - Parsed data to instance of: class org.apache.http.conn.EofSensorInputStream
+    13:12:51.738 [http-nio-auto-1-exec-2] INFO  [] c.s.a.JwtTenantAuthenticationFilter - === JwtTenantAuthenticationFilter.doFilterInternal() END ===
+    Request method:	PUT
+    Request URI:	http://localhost:54099/api/v1/tenants/a3e9bb26-be0a-4793-b23c-49b4988e0a1a
+    Proxy:			<none>
+    Request params:	<none>
+    Query params:	<none>
+    Form params:	<none>
+    Path params:	<none>
+    Headers:		Accept=application/json, application/javascript, text/javascript, text/json
+    				Authorization=Bearer eyJhbGciOiJIUzI1NiJ9.eyJ0ZW5hbnRfaWQiOiJhM2U5YmIyNi1iZTBhLTQ3OTMtYjIzYy00OWI0OTg4ZTBhMWEiLCJ1c2VyX2lkIjoiMmE5MTEwYWUtZWY4ZC00ZjZiLWE5OGQtNDhmY2QzMWZiMzBiIiwicm9sZXMiOlsiVVNFUiJdLCJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJzdWIiOiIyYTkxMTBhZS1lZjhkLTRmNmItYTk4ZC00OGZjZDMxZmIzMGIiLCJpYXQiOjE3NzAyMjg3NzEsImV4cCI6MTc3MDIzMjM3MX0.1TX3sFWklGn4rEOHtht_pLTz4jwIgglPtZDj15YGcpM
+    				Content-Type=application/json
+    Cookies:		<none>
+    Multiparts:		<none>
+    Body:
+    {
+        "status": "ACTIVE",
+        "slug": "updated-tenant-abb2d34e",
+        "name": "Updated Tenant Name"
+    }
+    13:12:51.755 [http-nio-auto-1-exec-3] DEBUG [] o.s.security.web.FilterChainProxy - Securing PUT /v1/tenants/a3e9bb26-be0a-4793-b23c-49b4988e0a1a
+    13:12:51.755 [http-nio-auto-1-exec-3] DEBUG [] o.s.s.o.s.r.a.JwtAuthenticationProvider - Authenticated token
+    13:12:51.755 [http-nio-auto-1-exec-3] DEBUG [] o.s.s.o.s.r.w.a.BearerTokenAuthenticationFilter - Set SecurityContextHolder to JwtAuthenticationToken [Principal=org.springframework.security.oauth2.jwt.Jwt@fe4aacd9, Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=127.0.0.1, SessionId=null], Granted Authorities=[]]
+    13:12:51.755 [http-nio-auto-1-exec-3] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JwtTenantAuthenticationFilter.shouldNotFilter() - Path: /api/v1/tenants/a3e9bb26-be0a-4793-b23c-49b4988e0a1a, ShouldSkip: false
+    13:12:51.755 [http-nio-auto-1-exec-3] INFO  [] c.s.a.JwtTenantAuthenticationFilter - === JwtTenantAuthenticationFilter.doFilterInternal() START - PUT /api/v1/tenants/a3e9bb26-be0a-4793-b23c-49b4988e0a1a ===
+    13:12:51.755 [http-nio-auto-1-exec-3] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Authentication type: JwtAuthenticationToken
+    13:12:51.755 [http-nio-auto-1-exec-3] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JWT token found, extracting tenant information...
+    13:12:51.755 [http-nio-auto-1-exec-3] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Extracted tenant ID from JWT: a3e9bb26-be0a-4793-b23c-49b4988e0a1a
+    13:12:51.755 [http-nio-auto-1-exec-3] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Set tenant context: a3e9bb26-be0a-4793-b23c-49b4988e0a1a
+    13:12:51.755 [http-nio-auto-1-exec-3] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Verified tenant context: a3e9bb26-be0a-4793-b23c-49b4988e0a1a
+    13:12:51.755 [http-nio-auto-1-exec-3] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JwtTenantAuthenticationFilter: SUCCESSFULLY set tenant context - tenantId: a3e9bb26-be0a-4793-b23c-49b4988e0a1a, userId: 2a9110ae-ef8d-4f6b-a98d-48fcd31fb30b, userEmail: test@example.com, thread: http-nio-auto-1-exec-3
+    13:12:51.755 [http-nio-auto-1-exec-3] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Continuing with filter chain...
+    13:12:51.756 [http-nio-auto-1-exec-3] DEBUG [] o.s.security.web.FilterChainProxy - Secured PUT /v1/tenants/a3e9bb26-be0a-4793-b23c-49b4988e0a1a
+    13:12:51.756 [http-nio-auto-1-exec-3] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JwtTenantAuthenticationFilter.shouldNotFilter() - Path: /api/v1/tenants/a3e9bb26-be0a-4793-b23c-49b4988e0a1a, ShouldSkip: false
+    13:12:51.756 [http-nio-auto-1-exec-3] DEBUG [] o.s.web.servlet.DispatcherServlet - PUT "/api/v1/tenants/a3e9bb26-be0a-4793-b23c-49b4988e0a1a", parameters={}
+    13:12:51.756 [http-nio-auto-1-exec-3] DEBUG [] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.subscriptionengine.api.controller.TenantsController#updateTenant(UUID, UpdateTenantRequest)
+    13:12:51.758 [http-nio-auto-1-exec-3] DEBUG [] o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Read "application/json;charset=UTF-8" to [com.subscriptionengine.api.controller.TenantsController$UpdateTenantRequest@4dd3ee29]
+    13:12:51.780 [http-nio-auto-1-exec-3] INFO  [] c.s.api.controller.TenantsController - Updating tenant: a3e9bb26-be0a-4793-b23c-49b4988e0a1a
+    13:12:51.781 [http-nio-auto-1-exec-3] DEBUG [] org.jooq.tools.LoggerListener - Executing query          : select "public"."tenants"."id", "public"."tenants"."name", "public"."tenants"."slug", "public"."tenants"."status", "public"."tenants"."custom_attrs", "public"."tenants"."created_at", "public"."tenants"."updated_at" from "public"."tenants" where "public"."tenants"."id" = cast(? as uuid)
+    13:12:51.781 [http-nio-auto-1-exec-3] DEBUG [] org.jooq.tools.LoggerListener - -> with bind values      : select "public"."tenants"."id", "public"."tenants"."name", "public"."tenants"."slug", "public"."tenants"."status", "public"."tenants"."custom_attrs", "public"."tenants"."created_at", "public"."tenants"."updated_at" from "public"."tenants" where "public"."tenants"."id" = 'a3e9bb26-be0a-4793-b23c-49b4988e0a1a'
+    13:12:51.790 [http-nio-auto-1-exec-3] DEBUG [] org.jooq.tools.LoggerListener - Fetched result           : +------------------------------------+--------------------+-----------------------------+------+------------+--------------------------------+--------------------------------+
+    13:12:51.790 [http-nio-auto-1-exec-3] DEBUG [] org.jooq.tools.LoggerListener -                          : |id                                  |name                |slug                         |status|custom_attrs|created_at                      |updated_at                      |
+    13:12:51.790 [http-nio-auto-1-exec-3] DEBUG [] org.jooq.tools.LoggerListener -                          : +------------------------------------+--------------------+-----------------------------+------+------------+--------------------------------+--------------------------------+
+    13:12:51.790 [http-nio-auto-1-exec-3] DEBUG [] org.jooq.tools.LoggerListener -                          : |a3e9bb26-be0a-4793-b23c-49b4988e0a1a|Original Tenant Name|original-tenant-name-5f08d850|ACTIVE|{}          |2026-02-04T13:12:51.733118-05:00|2026-02-04T13:12:51.733125-05:00|
+    13:12:51.790 [http-nio-auto-1-exec-3] DEBUG [] org.jooq.tools.LoggerListener -                          : +------------------------------------+--------------------+-----------------------------+------+------------+--------------------------------+--------------------------------+
+    13:12:51.790 [http-nio-auto-1-exec-3] DEBUG [] org.jooq.tools.LoggerListener - Fetched row(s)           : 1
+    13:12:51.808 [http-nio-auto-1-exec-3] DEBUG [] org.jooq.tools.LoggerListener - Executing query          : update "public"."tenants" set "name" = ?, "slug" = ?, "status" = ?, "custom_attrs" = cast(? as jsonb), "created_at" = cast(? as timestamp(6) with time zone), "updated_at" = cast(? as timestamp(6) with time zone) where "public"."tenants"."id" = cast(? as uuid)
+    13:12:51.808 [http-nio-auto-1-exec-3] DEBUG [] org.jooq.tools.LoggerListener - -> with bind values      : update "public"."tenants" set "name" = 'Updated Tenant Name', "slug" = 'updated-tenant-abb2d34e', "status" = 'ACTIVE', "custom_attrs" = cast('{}' as jsonb), "created_at" = timestamp with time zone '2026-02-04 13:12:51.733118-05:00', "updated_at" = timestamp with time zone '2026-02-04 13:12:51.79091-05:00' where "public"."tenants"."id" = 'a3e9bb26-be0a-4793-b23c-49b4988e0a1a'
+    13:12:51.810 [http-nio-auto-1-exec-3] DEBUG [] org.jooq.tools.LoggerListener - Affected row(s)          : 1
+    13:12:51.810 [http-nio-auto-1-exec-3] INFO  [] c.s.api.controller.TenantsController - Successfully updated tenant: a3e9bb26-be0a-4793-b23c-49b4988e0a1a
+    13:12:51.811 [http-nio-auto-1-exec-3] DEBUG [] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [application/json, application/javascript, text/javascript, text/json] and supported [application/json, application/*+json]
+    13:12:51.811 [http-nio-auto-1-exec-3] DEBUG [] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [com.subscriptionengine.api.controller.TenantsController$TenantResponse@34233d45]
+    13:12:51.811 [http-nio-auto-1-exec-3] DEBUG [] o.s.web.servlet.DispatcherServlet - Completed 200 OK
+    13:12:51.811 [http-nio-auto-1-exec-3] DEBUG [] c.s.auth.TenantContextCleanupFilter - Clearing tenant context after request completion
+    13:12:51.811 [ForkJoinPool-1-worker-1] DEBUG [] i.r.internal.RestAssuredHttpBuilder - Parsing response as: application/json
+    13:12:51.811 [ForkJoinPool-1-worker-1] DEBUG [] i.r.internal.RestAssuredHttpBuilder - Parsed data to instance of: class org.apache.http.conn.EofSensorInputStream
+    13:12:51.811 [http-nio-auto-1-exec-3] INFO  [] c.s.a.JwtTenantAuthenticationFilter - === JwtTenantAuthenticationFilter.doFilterInternal() END ===
+
+TenantManagementTest > Should list all tenants with pagination STANDARD_OUT
+    Request method:	POST
+    Request URI:	http://localhost:54099/api/v1/tenants
+    Proxy:			<none>
+    Request params:	<none>
+    Query params:	<none>
+    Form params:	<none>
+    Path params:	<none>
+    Headers:		Accept=application/json, application/javascript, text/javascript, text/json
+    				Authorization=Bearer eyJhbGciOiJIUzI1NiJ9.eyJ0ZW5hbnRfaWQiOiI1MTgwYzdjZS1lZTRlLTRhYjUtYTQyMC1iNGI2YjA4Y2U4YzQiLCJ1c2VyX2lkIjoiNDY2MDkwMTctNjVkOS00ZGIwLWE1ZmEtYjVmMDYzNTE0ZjgzIiwicm9sZXMiOlsiVVNFUiJdLCJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJzdWIiOiI0NjYwOTAxNy02NWQ5LTRkYjAtYTVmYS1iNWYwNjM1MTRmODMiLCJpYXQiOjE3NzAyMjg3NzEsImV4cCI6MTc3MDIzMjM3MX0.C3RxYoKdl0S8VDJ0qLip_jaUi1bfOEIJTjI5LMBPuY4
+    				Content-Type=application/json
+    Cookies:		<none>
+    Multiparts:		<none>
+    Body:
+    {
+        "status": "ACTIVE",
+        "slug": "list-test-tenant-1-fa0cb108",
+        "name": "List Test Tenant 1"
+    }
+    13:12:51.834 [http-nio-auto-1-exec-1] DEBUG [] o.s.security.web.FilterChainProxy - Securing POST /v1/tenants
+    13:12:51.835 [http-nio-auto-1-exec-1] DEBUG [] o.s.s.o.s.r.a.JwtAuthenticationProvider - Authenticated token
+    13:12:51.835 [http-nio-auto-1-exec-1] DEBUG [] o.s.s.o.s.r.w.a.BearerTokenAuthenticationFilter - Set SecurityContextHolder to JwtAuthenticationToken [Principal=org.springframework.security.oauth2.jwt.Jwt@8c0298b2, Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=127.0.0.1, SessionId=null], Granted Authorities=[]]
+    13:12:51.835 [http-nio-auto-1-exec-1] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JwtTenantAuthenticationFilter.shouldNotFilter() - Path: /api/v1/tenants, ShouldSkip: false
+    13:12:51.835 [http-nio-auto-1-exec-1] INFO  [] c.s.a.JwtTenantAuthenticationFilter - === JwtTenantAuthenticationFilter.doFilterInternal() START - POST /api/v1/tenants ===
+    13:12:51.835 [http-nio-auto-1-exec-1] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Authentication type: JwtAuthenticationToken
+    13:12:51.835 [http-nio-auto-1-exec-1] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JWT token found, extracting tenant information...
+    13:12:51.835 [http-nio-auto-1-exec-1] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Extracted tenant ID from JWT: 5180c7ce-ee4e-4ab5-a420-b4b6b08ce8c4
+    13:12:51.836 [http-nio-auto-1-exec-1] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Set tenant context: 5180c7ce-ee4e-4ab5-a420-b4b6b08ce8c4
+    13:12:51.836 [http-nio-auto-1-exec-1] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Verified tenant context: 5180c7ce-ee4e-4ab5-a420-b4b6b08ce8c4
+    13:12:51.836 [http-nio-auto-1-exec-1] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JwtTenantAuthenticationFilter: SUCCESSFULLY set tenant context - tenantId: 5180c7ce-ee4e-4ab5-a420-b4b6b08ce8c4, userId: 46609017-65d9-4db0-a5fa-b5f063514f83, userEmail: test@example.com, thread: http-nio-auto-1-exec-1
+    13:12:51.836 [http-nio-auto-1-exec-1] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Continuing with filter chain...
+    13:12:51.836 [http-nio-auto-1-exec-1] DEBUG [] o.s.security.web.FilterChainProxy - Secured POST /v1/tenants
+    13:12:51.836 [http-nio-auto-1-exec-1] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JwtTenantAuthenticationFilter.shouldNotFilter() - Path: /api/v1/tenants, ShouldSkip: false
+    13:12:51.836 [http-nio-auto-1-exec-1] DEBUG [] o.s.web.servlet.DispatcherServlet - POST "/api/v1/tenants", parameters={}
+    13:12:51.836 [http-nio-auto-1-exec-1] DEBUG [] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.subscriptionengine.api.controller.TenantsController#createTenant(CreateTenantRequest)
+    13:12:51.837 [http-nio-auto-1-exec-1] DEBUG [] o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Read "application/json;charset=UTF-8" to [com.subscriptionengine.api.controller.TenantsController$CreateTenantRequest@1c73fdb6]
+    13:12:51.837 [http-nio-auto-1-exec-1] INFO  [] c.s.api.controller.TenantsController - Creating new tenant: List Test Tenant 1
+    13:12:51.837 [http-nio-auto-1-exec-1] DEBUG [] org.jooq.tools.LoggerListener - Executing query          : insert into "public"."tenants" ("id", "name", "slug", "status", "created_at", "updated_at") values (cast(? as uuid), ?, ?, ?, cast(? as timestamp(6) with time zone), cast(? as timestamp(6) with time zone)) returning "public"."tenants"."id"
+    13:12:51.837 [http-nio-auto-1-exec-1] DEBUG [] org.jooq.tools.LoggerListener - -> with bind values      : insert into "public"."tenants" ("id", "name", "slug", "status", "created_at", "updated_at") values ('0d664e63-9437-44a0-a48d-be0c3f1380c9', 'List Test Tenant 1', 'list-test-tenant-1-fa0cb108', 'ACTIVE', timestamp with time zone '2026-02-04 13:12:51.837139-05:00', timestamp with time zone '2026-02-04 13:12:51.837144-05:00') returning "public"."tenants"."id"
+    13:12:51.843 [http-nio-auto-1-exec-1] DEBUG [] org.jooq.tools.LoggerListener - Fetched result           : +------------------------------------+
+    13:12:51.843 [http-nio-auto-1-exec-1] DEBUG [] org.jooq.tools.LoggerListener -                          : |id                                  |
+    13:12:51.843 [http-nio-auto-1-exec-1] DEBUG [] org.jooq.tools.LoggerListener -                          : +------------------------------------+
+    13:12:51.843 [http-nio-auto-1-exec-1] DEBUG [] org.jooq.tools.LoggerListener -                          : |0d664e63-9437-44a0-a48d-be0c3f1380c9|
+    13:12:51.843 [http-nio-auto-1-exec-1] DEBUG [] org.jooq.tools.LoggerListener -                          : +------------------------------------+
+    13:12:51.843 [http-nio-auto-1-exec-1] DEBUG [] org.jooq.tools.LoggerListener - Fetched row(s)           : 1
+    13:12:51.843 [http-nio-auto-1-exec-1] INFO  [] c.s.api.controller.TenantsController - Successfully created tenant: 0d664e63-9437-44a0-a48d-be0c3f1380c9
+    13:12:51.844 [http-nio-auto-1-exec-1] DEBUG [] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [application/json, application/javascript, text/javascript, text/json] and supported [application/json, application/*+json]
+    13:12:51.844 [http-nio-auto-1-exec-1] DEBUG [] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{createdAt=2026-02-04T13:12:51.837139-05:00, slug=list-test-tenant-1-fa0cb108, status=ACTIVE, name=L (truncated)...]
+    13:12:51.844 [http-nio-auto-1-exec-1] DEBUG [] o.s.web.servlet.DispatcherServlet - Completed 201 CREATED
+    13:12:51.844 [http-nio-auto-1-exec-1] DEBUG [] c.s.auth.TenantContextCleanupFilter - Clearing tenant context after request completion
+    13:12:51.844 [ForkJoinPool-1-worker-1] DEBUG [] i.r.internal.RestAssuredHttpBuilder - Parsing response as: application/json
+    13:12:51.844 [ForkJoinPool-1-worker-1] DEBUG [] i.r.internal.RestAssuredHttpBuilder - Parsed data to instance of: class org.apache.http.conn.EofSensorInputStream
+    13:12:51.844 [http-nio-auto-1-exec-1] INFO  [] c.s.a.JwtTenantAuthenticationFilter - === JwtTenantAuthenticationFilter.doFilterInternal() END ===
+    Request method:	POST
+    Request URI:	http://localhost:54099/api/v1/tenants
+    Proxy:			<none>
+    Request params:	<none>
+    Query params:	<none>
+    Form params:	<none>
+    Path params:	<none>
+    Headers:		Accept=application/json, application/javascript, text/javascript, text/json
+    				Authorization=Bearer eyJhbGciOiJIUzI1NiJ9.eyJ0ZW5hbnRfaWQiOiJmMzM3NmNjNi00OTM3LTRhOTMtYThkOC1jMjc1MjUwNzRjNzIiLCJ1c2VyX2lkIjoiNDViYTJmZGEtMDI4MC00ZmQ5LWFiZDItNzJlOGM2MzVhYTAwIiwicm9sZXMiOlsiVVNFUiJdLCJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJzdWIiOiI0NWJhMmZkYS0wMjgwLTRmZDktYWJkMi03MmU4YzYzNWFhMDAiLCJpYXQiOjE3NzAyMjg3NzEsImV4cCI6MTc3MDIzMjM3MX0.xTMVc7NWPwK1ST8j4K0D1rMcxsYuwqaqZXVkQ12jkjg
+    				Content-Type=application/json
+    Cookies:		<none>
+    Multiparts:		<none>
+    Body:
+    {
+        "status": "ACTIVE",
+        "slug": "list-test-tenant-2-966889bb",
+        "name": "List Test Tenant 2"
+    }
+    13:12:51.869 [http-nio-auto-1-exec-2] DEBUG [] o.s.security.web.FilterChainProxy - Securing POST /v1/tenants
+    13:12:51.870 [http-nio-auto-1-exec-2] DEBUG [] o.s.s.o.s.r.a.JwtAuthenticationProvider - Authenticated token
+    13:12:51.870 [http-nio-auto-1-exec-2] DEBUG [] o.s.s.o.s.r.w.a.BearerTokenAuthenticationFilter - Set SecurityContextHolder to JwtAuthenticationToken [Principal=org.springframework.security.oauth2.jwt.Jwt@3cc2a234, Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=127.0.0.1, SessionId=null], Granted Authorities=[]]
+    13:12:51.870 [http-nio-auto-1-exec-2] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JwtTenantAuthenticationFilter.shouldNotFilter() - Path: /api/v1/tenants, ShouldSkip: false
+    13:12:51.870 [http-nio-auto-1-exec-2] INFO  [] c.s.a.JwtTenantAuthenticationFilter - === JwtTenantAuthenticationFilter.doFilterInternal() START - POST /api/v1/tenants ===
+    13:12:51.870 [http-nio-auto-1-exec-2] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Authentication type: JwtAuthenticationToken
+    13:12:51.870 [http-nio-auto-1-exec-2] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JWT token found, extracting tenant information...
+    13:12:51.870 [http-nio-auto-1-exec-2] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Extracted tenant ID from JWT: f3376cc6-4937-4a93-a8d8-c27525074c72
+    13:12:51.870 [http-nio-auto-1-exec-2] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Set tenant context: f3376cc6-4937-4a93-a8d8-c27525074c72
+    13:12:51.870 [http-nio-auto-1-exec-2] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Verified tenant context: f3376cc6-4937-4a93-a8d8-c27525074c72
+    13:12:51.870 [http-nio-auto-1-exec-2] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JwtTenantAuthenticationFilter: SUCCESSFULLY set tenant context - tenantId: f3376cc6-4937-4a93-a8d8-c27525074c72, userId: 45ba2fda-0280-4fd9-abd2-72e8c635aa00, userEmail: test@example.com, thread: http-nio-auto-1-exec-2
+    13:12:51.870 [http-nio-auto-1-exec-2] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Continuing with filter chain...
+    13:12:51.870 [http-nio-auto-1-exec-2] DEBUG [] o.s.security.web.FilterChainProxy - Secured POST /v1/tenants
+    13:12:51.870 [http-nio-auto-1-exec-2] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JwtTenantAuthenticationFilter.shouldNotFilter() - Path: /api/v1/tenants, ShouldSkip: false
+    13:12:51.870 [http-nio-auto-1-exec-2] DEBUG [] o.s.web.servlet.DispatcherServlet - POST "/api/v1/tenants", parameters={}
+    13:12:51.870 [http-nio-auto-1-exec-2] DEBUG [] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.subscriptionengine.api.controller.TenantsController#createTenant(CreateTenantRequest)
+    13:12:51.871 [http-nio-auto-1-exec-2] DEBUG [] o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Read "application/json;charset=UTF-8" to [com.subscriptionengine.api.controller.TenantsController$CreateTenantRequest@a14302b]
+    13:12:51.871 [http-nio-auto-1-exec-2] INFO  [] c.s.api.controller.TenantsController - Creating new tenant: List Test Tenant 2
+    13:12:51.871 [http-nio-auto-1-exec-2] DEBUG [] org.jooq.tools.LoggerListener - Executing query          : insert into "public"."tenants" ("id", "name", "slug", "status", "created_at", "updated_at") values (cast(? as uuid), ?, ?, ?, cast(? as timestamp(6) with time zone), cast(? as timestamp(6) with time zone)) returning "public"."tenants"."id"
+    13:12:51.871 [http-nio-auto-1-exec-2] DEBUG [] org.jooq.tools.LoggerListener - -> with bind values      : insert into "public"."tenants" ("id", "name", "slug", "status", "created_at", "updated_at") values ('473312a5-bd0d-4c0c-a5c2-da8c209d90cc', 'List Test Tenant 2', 'list-test-tenant-2-966889bb', 'ACTIVE', timestamp with time zone '2026-02-04 13:12:51.871188-05:00', timestamp with time zone '2026-02-04 13:12:51.871192-05:00') returning "public"."tenants"."id"
+    13:12:51.873 [http-nio-auto-1-exec-2] DEBUG [] org.jooq.tools.LoggerListener - Fetched result           : +------------------------------------+
+    13:12:51.873 [http-nio-auto-1-exec-2] DEBUG [] org.jooq.tools.LoggerListener -                          : |id                                  |
+    13:12:51.873 [http-nio-auto-1-exec-2] DEBUG [] org.jooq.tools.LoggerListener -                          : +------------------------------------+
+    13:12:51.873 [http-nio-auto-1-exec-2] DEBUG [] org.jooq.tools.LoggerListener -                          : |473312a5-bd0d-4c0c-a5c2-da8c209d90cc|
+    13:12:51.873 [http-nio-auto-1-exec-2] DEBUG [] org.jooq.tools.LoggerListener -                          : +------------------------------------+
+    13:12:51.873 [http-nio-auto-1-exec-2] DEBUG [] org.jooq.tools.LoggerListener - Fetched row(s)           : 1
+    13:12:51.874 [http-nio-auto-1-exec-2] INFO  [] c.s.api.controller.TenantsController - Successfully created tenant: 473312a5-bd0d-4c0c-a5c2-da8c209d90cc
+    13:12:51.874 [http-nio-auto-1-exec-2] DEBUG [] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [application/json, application/javascript, text/javascript, text/json] and supported [application/json, application/*+json]
+    13:12:51.874 [http-nio-auto-1-exec-2] DEBUG [] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{createdAt=2026-02-04T13:12:51.871188-05:00, slug=list-test-tenant-2-966889bb, status=ACTIVE, name=L (truncated)...]
+    13:12:51.875 [ForkJoinPool-1-worker-1] DEBUG [] i.r.internal.RestAssuredHttpBuilder - Parsing response as: application/json
+    13:12:51.875 [ForkJoinPool-1-worker-1] DEBUG [] i.r.internal.RestAssuredHttpBuilder - Parsed data to instance of: class org.apache.http.conn.EofSensorInputStream
+    13:12:51.875 [http-nio-auto-1-exec-2] DEBUG [] o.s.web.servlet.DispatcherServlet - Completed 201 CREATED
+    13:12:51.875 [http-nio-auto-1-exec-2] DEBUG [] c.s.auth.TenantContextCleanupFilter - Clearing tenant context after request completion
+    13:12:51.875 [http-nio-auto-1-exec-2] INFO  [] c.s.a.JwtTenantAuthenticationFilter - === JwtTenantAuthenticationFilter.doFilterInternal() END ===
+    Request method:	GET
+    Request URI:	http://localhost:54099/api/v1/tenants?page=0&size=10
+    Proxy:			<none>
+    Request params:	<none>
+    Query params:	page=0
+    				size=10
+    Form params:	<none>
+    Path params:	<none>
+    Headers:		Accept=application/json, application/javascript, text/javascript, text/json
+    				Authorization=Bearer eyJhbGciOiJIUzI1NiJ9.eyJ0ZW5hbnRfaWQiOiIwZDY2NGU2My05NDM3LTQ0YTAtYTQ4ZC1iZTBjM2YxMzgwYzkiLCJ1c2VyX2lkIjoiNGQyYWNmMzMtMTNmMS00N2JmLThlNzYtY2RhMWRhOTAzNTQ0Iiwicm9sZXMiOlsiVVNFUiJdLCJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJzdWIiOiI0ZDJhY2YzMy0xM2YxLTQ3YmYtOGU3Ni1jZGExZGE5MDM1NDQiLCJpYXQiOjE3NzAyMjg3NzEsImV4cCI6MTc3MDIzMjM3MX0.ZWuG0CQqK9-xKxmulJDAvc6j_0H_BxJmhZXgZhQA32g
+    				Content-Type=application/json
+    Cookies:		<none>
+    Multiparts:		<none>
+    Body:			<none>
+    13:12:51.901 [http-nio-auto-1-exec-4] DEBUG [] o.s.security.web.FilterChainProxy - Securing GET /v1/tenants?page=0&size=10
+    13:12:51.902 [http-nio-auto-1-exec-4] DEBUG [] o.s.s.o.s.r.a.JwtAuthenticationProvider - Authenticated token
+    13:12:51.902 [http-nio-auto-1-exec-4] DEBUG [] o.s.s.o.s.r.w.a.BearerTokenAuthenticationFilter - Set SecurityContextHolder to JwtAuthenticationToken [Principal=org.springframework.security.oauth2.jwt.Jwt@a4c82b7c, Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=127.0.0.1, SessionId=null], Granted Authorities=[]]
+    13:12:51.902 [http-nio-auto-1-exec-4] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JwtTenantAuthenticationFilter.shouldNotFilter() - Path: /api/v1/tenants, ShouldSkip: false
+    13:12:51.902 [http-nio-auto-1-exec-4] INFO  [] c.s.a.JwtTenantAuthenticationFilter - === JwtTenantAuthenticationFilter.doFilterInternal() START - GET /api/v1/tenants ===
+    13:12:51.902 [http-nio-auto-1-exec-4] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Authentication type: JwtAuthenticationToken
+    13:12:51.902 [http-nio-auto-1-exec-4] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JWT token found, extracting tenant information...
+    13:12:51.902 [http-nio-auto-1-exec-4] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Extracted tenant ID from JWT: 0d664e63-9437-44a0-a48d-be0c3f1380c9
+    13:12:51.902 [http-nio-auto-1-exec-4] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Set tenant context: 0d664e63-9437-44a0-a48d-be0c3f1380c9
+    13:12:51.902 [http-nio-auto-1-exec-4] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Verified tenant context: 0d664e63-9437-44a0-a48d-be0c3f1380c9
+    13:12:51.902 [http-nio-auto-1-exec-4] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JwtTenantAuthenticationFilter: SUCCESSFULLY set tenant context - tenantId: 0d664e63-9437-44a0-a48d-be0c3f1380c9, userId: 4d2acf33-13f1-47bf-8e76-cda1da903544, userEmail: test@example.com, thread: http-nio-auto-1-exec-4
+    13:12:51.902 [http-nio-auto-1-exec-4] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Continuing with filter chain...
+    13:12:51.902 [http-nio-auto-1-exec-4] DEBUG [] o.s.security.web.FilterChainProxy - Secured GET /v1/tenants?page=0&size=10
+    13:12:51.903 [http-nio-auto-1-exec-4] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JwtTenantAuthenticationFilter.shouldNotFilter() - Path: /api/v1/tenants, ShouldSkip: false
+    13:12:51.903 [http-nio-auto-1-exec-4] DEBUG [] o.s.web.servlet.DispatcherServlet - GET "/api/v1/tenants?page=0&size=10", parameters={masked}
+    13:12:51.903 [http-nio-auto-1-exec-4] DEBUG [] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.subscriptionengine.api.controller.TenantsController#getAllTenants(Pageable)
+    13:12:51.909 [http-nio-auto-1-exec-4] INFO  [] c.s.api.controller.TenantsController - Fetching tenants with pagination: page=0, size=10
+    13:12:51.916 [http-nio-auto-1-exec-4] DEBUG [] org.jooq.tools.LoggerListener - Executing query          : select "public"."tenants"."id", "public"."tenants"."name", "public"."tenants"."slug", "public"."tenants"."status", "public"."tenants"."custom_attrs", "public"."tenants"."created_at", "public"."tenants"."updated_at" from "public"."tenants" order by "public"."tenants"."created_at" desc offset ? rows fetch next ? rows only
+    13:12:51.916 [http-nio-auto-1-exec-4] DEBUG [] org.jooq.tools.LoggerListener - -> with bind values      : select "public"."tenants"."id", "public"."tenants"."name", "public"."tenants"."slug", "public"."tenants"."status", "public"."tenants"."custom_attrs", "public"."tenants"."created_at", "public"."tenants"."updated_at" from "public"."tenants" order by "public"."tenants"."created_at" desc offset 0 rows fetch next 10 rows only
+    13:12:51.921 [http-nio-auto-1-exec-4] DEBUG [] org.jooq.tools.LoggerListener - Fetched result           : +------------------------------------+--------------------+---------------------------+------+------------+--------------------------------+--------------------------------+
+    13:12:51.921 [http-nio-auto-1-exec-4] DEBUG [] org.jooq.tools.LoggerListener -                          : |id                                  |name                |slug                       |status|custom_attrs|created_at                      |updated_at                      |
+    13:12:51.921 [http-nio-auto-1-exec-4] DEBUG [] org.jooq.tools.LoggerListener -                          : +------------------------------------+--------------------+---------------------------+------+------------+--------------------------------+--------------------------------+
+    13:12:51.921 [http-nio-auto-1-exec-4] DEBUG [] org.jooq.tools.LoggerListener -                          : |473312a5-bd0d-4c0c-a5c2-da8c209d90cc|List Test Tenant 2  |list-test-tenant-2-966889bb|ACTIVE|{}          |2026-02-04T13:12:51.871188-05:00|2026-02-04T13:12:51.871192-05:00|
+    13:12:51.921 [http-nio-auto-1-exec-4] DEBUG [] org.jooq.tools.LoggerListener -                          : |0d664e63-9437-44a0-a48d-be0c3f1380c9|List Test Tenant 1  |list-test-tenant-1-fa0cb108|ACTIVE|{}          |2026-02-04T13:12:51.837139-05:00|2026-02-04T13:12:51.837144-05:00|
+    13:12:51.921 [http-nio-auto-1-exec-4] DEBUG [] org.jooq.tools.LoggerListener -                          : |a3e9bb26-be0a-4793-b23c-49b4988e0a1a|Updated Tenant Name |updated-tenant-abb2d34e    |ACTIVE|{}          |2026-02-04T13:12:51.733118-05:00|2026-02-04T13:12:51.808225-05:00|
+    13:12:51.921 [http-nio-auto-1-exec-4] DEBUG [] org.jooq.tools.LoggerListener -                          : |e1e0668b-501f-4403-9841-6a6d804aa4c2|Any Tenant          |any-tenant-65f9fa21        |ACTIVE|{}          |2026-02-04T13:12:51.661203-05:00|2026-02-04T13:12:51.661208-05:00|
+    13:12:51.921 [http-nio-auto-1-exec-4] DEBUG [] org.jooq.tools.LoggerListener -                          : |77a249bf-a0a3-4b10-8240-05efa26d099c|Test Tenant c5379c1f|test-tenant-ed813760       |ACTIVE|{}          |2026-02-04T13:12:51.384173-05:00|2026-02-04T13:12:51.384178-05:00|
+    13:12:51.921 [http-nio-auto-1-exec-4] DEBUG [] org.jooq.tools.LoggerListener -                          : +------------------------------------+--------------------+---------------------------+------+------------+--------------------------------+--------------------------------+
+    13:12:51.921 [http-nio-auto-1-exec-4] DEBUG [] org.jooq.tools.LoggerListener - Fetched row(s)           : 5 (or more)
+    13:12:51.922 [http-nio-auto-1-exec-4] DEBUG [] org.jooq.tools.LoggerListener - Executing query          : select count(*) from "public"."tenants"
+    13:12:51.923 [http-nio-auto-1-exec-4] DEBUG [] org.jooq.tools.LoggerListener - Fetched result           : +-----+
+    13:12:51.923 [http-nio-auto-1-exec-4] DEBUG [] org.jooq.tools.LoggerListener -                          : |count|
+    13:12:51.923 [http-nio-auto-1-exec-4] DEBUG [] org.jooq.tools.LoggerListener -                          : +-----+
+    13:12:51.923 [http-nio-auto-1-exec-4] DEBUG [] org.jooq.tools.LoggerListener -                          : |    6|
+    13:12:51.923 [http-nio-auto-1-exec-4] DEBUG [] org.jooq.tools.LoggerListener -                          : +-----+
+    13:12:51.923 [http-nio-auto-1-exec-4] DEBUG [] org.jooq.tools.LoggerListener - Fetched row(s)           : 1
+    13:12:51.930 [http-nio-auto-1-exec-4] DEBUG [] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [application/json, application/javascript, text/javascript, text/json] and supported [application/json, application/*+json]
+    13:12:51.931 [http-nio-auto-1-exec-4] DEBUG [] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [Page 1 of 1 containing com.subscriptionengine.api.controller.TenantsController$TenantResponse instan (truncated)...]
+    13:12:51.936 [http-nio-auto-1-exec-4] DEBUG [] o.s.web.servlet.DispatcherServlet - Completed 200 OK
+    13:12:51.936 [http-nio-auto-1-exec-4] DEBUG [] c.s.auth.TenantContextCleanupFilter - Clearing tenant context after request completion
+    13:12:51.936 [http-nio-auto-1-exec-4] INFO  [] c.s.a.JwtTenantAuthenticationFilter - === JwtTenantAuthenticationFilter.doFilterInternal() END ===
+    13:12:51.936 [ForkJoinPool-1-worker-1] DEBUG [] i.r.internal.RestAssuredHttpBuilder - Parsing response as: application/json
+    13:12:51.936 [ForkJoinPool-1-worker-1] DEBUG [] i.r.internal.RestAssuredHttpBuilder - Parsed data to instance of: class org.apache.http.conn.EofSensorInputStream
+
+TenantManagementTest > Should create tenant with custom ID STANDARD_OUT
+    Request method:	POST
+    Request URI:	http://localhost:54099/api/v1/tenants
+    Proxy:			<none>
+    Request params:	<none>
+    Query params:	<none>
+    Form params:	<none>
+    Path params:	<none>
+    Headers:		Accept=application/json, application/javascript, text/javascript, text/json
+    				Authorization=Bearer eyJhbGciOiJIUzI1NiJ9.eyJ0ZW5hbnRfaWQiOiJiNTI0Njc1NS0zZTJlLTRiMjctOThhNy04OWNiNzcxMGMwZTEiLCJ1c2VyX2lkIjoiNWI1ODliOTEtMGE0OC00ZDIzLTljM2QtYzc5YmYzNWRiZDBiIiwicm9sZXMiOlsiVVNFUiJdLCJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJzdWIiOiI1YjU4OWI5MS0wYTQ4LTRkMjMtOWMzZC1jNzliZjM1ZGJkMGIiLCJpYXQiOjE3NzAyMjg3NzEsImV4cCI6MTc3MDIzMjM3MX0.nny1wuDW5b9mqgFzOqkVfALPnJB5T3jyhLIqJN9hMOY
+    				Content-Type=application/json
+    Cookies:		<none>
+    Multiparts:		<none>
+    Body:
+    {
+        "id": "b5246755-3e2e-4b27-98a7-89cb7710c0e1",
+        "slug": "custom-id-tenant-06c0db20",
+        "name": "Custom ID Tenant"
+    }
+    13:12:51.979 [http-nio-auto-1-exec-6] DEBUG [] o.s.security.web.FilterChainProxy - Securing POST /v1/tenants
+    13:12:51.980 [http-nio-auto-1-exec-6] DEBUG [] o.s.s.o.s.r.a.JwtAuthenticationProvider - Authenticated token
+    13:12:51.980 [http-nio-auto-1-exec-6] DEBUG [] o.s.s.o.s.r.w.a.BearerTokenAuthenticationFilter - Set SecurityContextHolder to JwtAuthenticationToken [Principal=org.springframework.security.oauth2.jwt.Jwt@67511e67, Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=127.0.0.1, SessionId=null], Granted Authorities=[]]
+    13:12:51.980 [http-nio-auto-1-exec-6] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JwtTenantAuthenticationFilter.shouldNotFilter() - Path: /api/v1/tenants, ShouldSkip: false
+    13:12:51.980 [http-nio-auto-1-exec-6] INFO  [] c.s.a.JwtTenantAuthenticationFilter - === JwtTenantAuthenticationFilter.doFilterInternal() START - POST /api/v1/tenants ===
+    13:12:51.980 [http-nio-auto-1-exec-6] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Authentication type: JwtAuthenticationToken
+    13:12:51.980 [http-nio-auto-1-exec-6] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JWT token found, extracting tenant information...
+    13:12:51.980 [http-nio-auto-1-exec-6] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Extracted tenant ID from JWT: b5246755-3e2e-4b27-98a7-89cb7710c0e1
+    13:12:51.980 [http-nio-auto-1-exec-6] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Set tenant context: b5246755-3e2e-4b27-98a7-89cb7710c0e1
+    13:12:51.980 [http-nio-auto-1-exec-6] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Verified tenant context: b5246755-3e2e-4b27-98a7-89cb7710c0e1
+    13:12:51.980 [http-nio-auto-1-exec-6] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JwtTenantAuthenticationFilter: SUCCESSFULLY set tenant context - tenantId: b5246755-3e2e-4b27-98a7-89cb7710c0e1, userId: 5b589b91-0a48-4d23-9c3d-c79bf35dbd0b, userEmail: test@example.com, thread: http-nio-auto-1-exec-6
+    13:12:51.980 [http-nio-auto-1-exec-6] INFO  [] c.s.a.JwtTenantAuthenticationFilter - Continuing with filter chain...
+    13:12:51.980 [http-nio-auto-1-exec-6] DEBUG [] o.s.security.web.FilterChainProxy - Secured POST /v1/tenants
+    13:12:51.980 [http-nio-auto-1-exec-6] INFO  [] c.s.a.JwtTenantAuthenticationFilter - JwtTenantAuthenticationFilter.shouldNotFilter() - Path: /api/v1/tenants, ShouldSkip: false
+    13:12:51.980 [http-nio-auto-1-exec-6] DEBUG [] o.s.web.servlet.DispatcherServlet - POST "/api/v1/tenants", parameters={}
+    13:12:51.981 [http-nio-auto-1-exec-6] DEBUG [] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.subscriptionengine.api.controller.TenantsController#createTenant(CreateTenantRequest)
+    13:12:51.981 [http-nio-auto-1-exec-6] DEBUG [] o.s.w.s.m.m.a.RequestResponseBodyMethodProcessor - Read "application/json;charset=UTF-8" to [com.subscriptionengine.api.controller.TenantsController$CreateTenantRequest@4438f5a2]
+    13:12:51.981 [http-nio-auto-1-exec-6] INFO  [] c.s.api.controller.TenantsController - Creating new tenant: Custom ID Tenant
+    13:12:51.982 [http-nio-auto-1-exec-6] DEBUG [] org.jooq.tools.LoggerListener - Executing query          : insert into "public"."tenants" ("id", "name", "slug", "status", "created_at", "updated_at") values (cast(? as uuid), ?, ?, ?, cast(? as timestamp(6) with time zone), cast(? as timestamp(6) with time zone)) returning "public"."tenants"."id"
+    13:12:51.982 [http-nio-auto-1-exec-6] DEBUG [] org.jooq.tools.LoggerListener - -> with bind values      : insert into "public"."tenants" ("id", "name", "slug", "status", "created_at", "updated_at") values ('b5246755-3e2e-4b27-98a7-89cb7710c0e1', 'Custom ID Tenant', 'custom-id-tenant-06c0db20', 'ACTIVE', timestamp with time zone '2026-02-04 13:12:51.981465-05:00', timestamp with time zone '2026-02-04 13:12:51.981473-05:00') returning "public"."tenants"."id"
+    13:12:51.984 [http-nio-auto-1-exec-6] DEBUG [] org.jooq.tools.LoggerListener - Fetched result           : +------------------------------------+
+    13:12:51.985 [http-nio-auto-1-exec-6] DEBUG [] org.jooq.tools.LoggerListener -                          : |id                                  |
+    13:12:51.985 [http-nio-auto-1-exec-6] DEBUG [] org.jooq.tools.LoggerListener -                          : +------------------------------------+
+    13:12:51.985 [http-nio-auto-1-exec-6] DEBUG [] org.jooq.tools.LoggerListener -                          : |b5246755-3e2e-4b27-98a7-89cb7710c0e1|
+    13:12:51.985 [http-nio-auto-1-exec-6] DEBUG [] org.jooq.tools.LoggerListener -                          : +------------------------------------+
+    13:12:51.985 [http-nio-auto-1-exec-6] DEBUG [] org.jooq.tools.LoggerListener - Fetched row(s)           : 1
+    13:12:51.985 [http-nio-auto-1-exec-6] INFO  [] c.s.api.controller.TenantsController - Successfully created tenant: b5246755-3e2e-4b27-98a7-89cb7710c0e1
+    13:12:51.985 [http-nio-auto-1-exec-6] DEBUG [] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [application/json, application/javascript, text/javascript, text/json] and supported [application/json, application/*+json]
+    13:12:51.985 [http-nio-auto-1-exec-6] DEBUG [] o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{createdAt=2026-02-04T13:12:51.981465-05:00, slug=custom-id-tenant-06c0db20, status=ACTIVE, name=Cus (truncated)...]
+    13:12:51.985 [http-nio-auto-1-exec-6] DEBUG [] o.s.web.servlet.DispatcherServlet - Completed 201 CREATED
+    13:12:51.985 [http-nio-auto-1-exec-6] DEBUG [] c.s.auth.TenantContextCleanupFilter - Clearing tenant context after request completion
+    13:12:51.985 [ForkJoinPool-1-worker-1] DEBUG [] i.r.internal.RestAssuredHttpBuilder - Parsing response as: application/json
+    13:12:51.985 [http-nio-auto-1-exec-6] INFO  [] c.s.a.JwtTenantAuthenticationFilter - === JwtTenantAuthenticationFilter.doFilterInternal() END ===
+    13:12:51.985 [ForkJoinPool-1-worker-1] DEBUG [] i.r.internal.RestAssuredHttpBuilder - Parsed data to instance of: class org.apache.http.conn.EofSensorInputStream
+
+Gradle Test Executor 40 finished executing tests.
+13:13:04.259 [SpringApplicationShutdownHook] INFO  [] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+13:13:04.262 [SpringApplicationShutdownHook] INFO  [] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+
+> Task :apps:subscription-api:test FAILED
+
+8 tests completed, 1 failed
+Finished generating test XML results (0.002 secs) into: /Users/nyadav/personal/development/SubscriptionManager/apps/subscription-api/build/test-results/test
+Generating HTML test report...
+Finished generating test html results (0.003 secs) into: /Users/nyadav/personal/development/SubscriptionManager/apps/subscription-api/build/reports/tests/test
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':apps:subscription-api:test'.
+> There were failing tests. See the report at: file:///Users/nyadav/personal/development/SubscriptionManager/apps/subscription-api/build/reports/tests/test/index.html
+
+* Try:
+> Run with --scan to get full insights.
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.5/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD FAILED in 25s
+24 actionable tasks: 1 executed, 23 up-to-date
+Watched directory hierarchies: [/Users/nyadav/personal/development/SubscriptionManager]

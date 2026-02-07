@@ -1,0 +1,79 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.2.1' apply false
+    id 'io.spring.dependency-management' version '1.1.4' apply false
+    id 'org.flywaydb.flyway' version '9.22.3'
+    id 'nu.studer.jooq' version '9.0' apply false
+}
+
+allprojects {
+    group = 'com.subscriptionengine'
+    version = '1.0.0-SNAPSHOT'
+    
+    repositories {
+        mavenCentral()
+    }
+}
+
+subprojects {
+    apply plugin: 'java'
+    
+    // Only apply Spring Boot to actual application modules
+    if (project.path.startsWith(':apps:')) {
+        apply plugin: 'org.springframework.boot'
+        apply plugin: 'io.spring.dependency-management'
+    } else {
+        // For library modules, only apply dependency management
+        apply plugin: 'io.spring.dependency-management'
+    }
+    
+    // Ensure Spring Boot BOM is imported for all subprojects
+    dependencyManagement {
+        imports {
+            mavenBom 'org.springframework.boot:spring-boot-dependencies:3.2.1'
+        }
+    }
+    
+    java {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+    
+    dependencies {
+        // Common dependencies for all modules
+        implementation 'org.postgresql:postgresql'
+        
+        // Testing dependencies for all modules
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+        testImplementation 'org.junit.jupiter:junit-jupiter'
+        testImplementation 'org.mockito:mockito-core'
+    }
+    
+    test {
+        useJUnitPlatform()
+    }
+}
+
+// Root project - no application plugins
+repositories {
+    mavenCentral()
+}
+
+// Configure Flyway with PostgreSQL driver
+configurations {
+    flywayRuntime
+}
+
+dependencies {
+    implementation 'org.postgresql:postgresql:42.7.2'
+    flywayRuntime 'org.postgresql:postgresql:42.7.2'
+}
+
+// Flyway configuration for migrations
+flyway {
+    url = 'jdbc:postgresql://localhost:5440/subscription_engine'
+    user = 'postgres'
+    password = 'postgres'
+    locations = ['filesystem:db/migrations']
+    cleanDisabled = false
+}

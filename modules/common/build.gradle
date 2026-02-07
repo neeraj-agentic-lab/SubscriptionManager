@@ -1,0 +1,65 @@
+// Common module - shared utilities and generated jOOQ code
+plugins {
+    id 'java-library'
+    id 'nu.studer.jooq'
+}
+
+dependencies {
+    // jOOQ dependencies
+    implementation 'org.jooq:jooq:3.18.7'
+    implementation 'org.jooq:jooq-meta:3.18.7'
+    implementation 'org.jooq:jooq-codegen:3.18.7'
+    
+    // Database driver
+    implementation 'org.postgresql:postgresql:42.7.2'
+    jooqGenerator 'org.postgresql:postgresql:42.7.2'
+    
+    
+    // Spring Boot integration (version managed by dependency management)
+    implementation 'org.springframework.boot:spring-boot-starter-jooq'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    
+    // Validation annotations (required by generated jOOQ code)
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    
+    // JSON processing (version managed by dependency management)
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+}
+
+jooq {
+    version = '3.18.7'
+    configurations {
+        main {
+            generateSchemaSourceOnCompilation = false
+            generationTool {
+                logging = org.jooq.meta.jaxb.Logging.WARN
+                jdbc {
+                    driver = 'org.postgresql.Driver'
+                    url = 'jdbc:postgresql://localhost:5440/subscription_engine'
+                    user = 'postgres'
+                    password = 'postgres'
+                }
+                generator {
+                    name = 'org.jooq.codegen.DefaultGenerator'
+                    database {
+                        name = 'org.jooq.meta.postgres.PostgresDatabase'
+                        inputSchema = 'public'
+                        excludes = 'flyway_schema_history'
+                    }
+                    generate {
+                        pojos = true
+                        daos = true
+                        validationAnnotations = true
+                        springAnnotations = true
+                        javaTimeTypes = true
+                        fluentSetters = true
+                    }
+                    target {
+                        packageName = 'com.subscriptionengine.generated'
+                        directory = 'src/main/java'
+                    }
+                }
+            }
+        }
+    }
+}

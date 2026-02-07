@@ -1,0 +1,28 @@
+plugins {
+    id 'org.springframework.boot'
+    id 'io.spring.dependency-management'
+    id 'java'
+}
+
+dependencies {
+    implementation project(':modules:common')
+    implementation project(':modules:auth')
+    implementation project(':modules:domain-billing')
+    implementation project(':modules:domain-subscriptions')
+    implementation project(':modules:integrations')
+    implementation project(':modules:scheduler')
+    
+    // Spring Boot starters
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-jooq'
+    
+    // Database driver
+    implementation 'org.postgresql:postgresql:42.7.2'
+}
+
+// Configure main class for Spring Boot
+springBoot {
+    mainClass = 'com.subscriptionengine.worker.SubscriptionWorkerApplication'
+}

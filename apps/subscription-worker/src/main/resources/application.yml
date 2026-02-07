@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: subscription-worker
+  
+  datasource:
+    url: jdbc:postgresql://localhost:5440/subscription_engine
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+    
+  jooq:
+    sql-dialect: postgres
+    
+  # Enable web server for admin APIs
+  main:
+    web-application-type: servlet
+    
+server:
+  port: 8081
+
+# Logging configuration
+logging:
+  level:
+    com.subscriptionengine: INFO
+    org.jooq.tools.LoggerListener: DEBUG
+    org.springframework.scheduling: DEBUG
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level [%X{tenantId}] %logger{36} - %msg%n"
+
+# Management endpoints
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always

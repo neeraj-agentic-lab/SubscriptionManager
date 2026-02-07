@@ -1,0 +1,22 @@
+# Build artifacts
+build/
+target/
+.gradle/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Tests
+src/test/
+
+# Documentation
+*.md
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db

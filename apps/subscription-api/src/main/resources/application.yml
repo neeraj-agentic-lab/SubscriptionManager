@@ -1,0 +1,78 @@
+spring:
+  application:
+    name: subscription-api
+  
+  # Database configuration
+  datasource:
+    url: jdbc:postgresql://localhost:5440/subscription_engine
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  
+  # jOOQ configuration
+  jooq:
+    sql-dialect: postgres
+  
+  # OAuth 2.0 Resource Server configuration
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          # For development/testing (NOT for production)
+          # This will be overridden by custom JWT decoder bean
+          issuer-uri: ${JWT_ISSUER_URI:https://dev-placeholder.local}
+
+# Server configuration
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+# Logging configuration
+logging:
+  level:
+    com.subscriptionengine: DEBUG
+    org.springframework.security: DEBUG
+    org.jooq: DEBUG
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level [%X{tenantId}] %logger{36} - %msg%n"
+
+# Management endpoints
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when_authorized
+
+# SpringDoc OpenAPI configuration
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    # Display download links for OpenAPI spec
+    urls:
+      - name: OpenAPI JSON
+        url: /v3/api-docs
+      - name: OpenAPI YAML
+        url: /v3/api-docs.yaml
+    urls-primary-name: OpenAPI JSON
+  writer-with-default-pretty-printer: true
+  show-actuator: false
+
+# Application-specific configuration
+subscription-engine:
+  security:
+    # Enable tenant validation (can be disabled for testing)
+    tenant-validation-enabled: true
+    
+    # JWT claim names for tenant extraction
+    tenant-claims:
+      - tenant_id
+      - org_id
+      - organization

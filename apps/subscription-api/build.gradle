@@ -1,0 +1,98 @@
+plugins {
+    id 'org.springframework.boot'
+    id 'io.spring.dependency-management'
+    id 'java'
+    id 'io.qameta.allure' version '2.11.2'
+}
+
+dependencies {
+    implementation project(':modules:common')
+    implementation project(':modules:auth')
+    implementation project(':modules:domain-plans')
+    implementation project(':modules:domain-subscriptions')
+    implementation project(':modules:domain-subscriptions')
+    implementation project(':modules:domain-billing')
+    implementation project(':modules:domain-delivery')
+    implementation project(':modules:domain-entitlements')
+    implementation project(':modules:outbox')
+    implementation project(':modules:scheduler')
+    
+    // Spring Boot starters
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+    implementation 'org.springframework.data:spring-data-commons'
+    
+    // OpenAPI/Swagger documentation
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
+    
+    // YAML support for OpenAPI documentation
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
+    
+    // jOOQ dependencies for tenant management
+    implementation 'org.springframework.boot:spring-boot-starter-jooq'
+    
+    // Flyway for database migrations (managed by Spring Boot BOM)
+    runtimeOnly 'org.flywaydb:flyway-core'
+    
+    // Testing dependencies
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+    
+    // Testcontainers 1.21.4 - latest stable version with improved Docker compatibility
+    testImplementation 'org.testcontainers:testcontainers:1.21.4'
+    testImplementation 'org.testcontainers:postgresql:1.21.4'
+    testImplementation 'org.testcontainers:junit-jupiter:1.21.4'
+    
+    // REST Assured for API testing
+    testImplementation 'io.rest-assured:rest-assured:5.4.0'
+    testImplementation 'io.rest-assured:json-path:5.4.0'
+    testImplementation 'io.rest-assured:json-schema-validator:5.4.0'
+    
+    // Allure reporting
+    testImplementation 'io.qameta.allure:allure-junit5:2.25.0'
+    testImplementation 'io.qameta.allure:allure-rest-assured:2.25.0'
+    
+    // Awaitility for async testing
+    testImplementation 'org.awaitility:awaitility:4.2.0'
+    
+    // WireMock for mocking HTTP services
+    testImplementation 'org.wiremock:wiremock-standalone:3.3.1'
+    
+    // JWT for test token generation
+    testImplementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+    testRuntimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
+    testRuntimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3'
+    
+    // AssertJ for fluent assertions
+    testImplementation 'org.assertj:assertj-core:3.25.1'
+}
+
+// Configure main class for Spring Boot
+springBoot {
+    mainClass = 'com.subscriptionengine.api.SubscriptionApiApplication'
+}
+
+// Allure configuration
+allure {
+    version = '2.25.0'
+    adapter {
+        frameworks {
+            junit5 {
+                adapterVersion = '2.25.0'
+            }
+        }
+    }
+}
+
+// Test configuration
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+        exceptionFormat "full"
+    }
+    systemProperty 'junit.jupiter.execution.parallel.enabled', 'true'
+    systemProperty 'junit.jupiter.execution.parallel.config.strategy', 'dynamic'
+}

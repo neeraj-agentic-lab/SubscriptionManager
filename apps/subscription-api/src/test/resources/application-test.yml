@@ -1,0 +1,34 @@
+spring:
+  # Flyway configuration for tests
+  # Path is relative to test working directory (apps/subscription-api)
+  # Go up two levels to reach project root, then into db/migrations
+  flyway:
+    enabled: true
+    locations: filesystem:../../db/migrations
+    baseline-on-migrate: true
+    clean-disabled: false
+  
+  # Security configuration for tests
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://dev-placeholder.local
+
+# Keep security enabled like production
+# JWT secret must match JwtTestHelper and test-jwt-token.py
+jwt:
+  secret: dev-secret-key-not-for-production
+
+# Enable tenant validation for realistic testing
+subscription-engine:
+  security:
+    tenant-validation-enabled: true
+
+# Logging configuration for tests - show detailed request/response
+logging:
+  level:
+    com.subscriptionengine: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG
+    io.restassured: DEBUG

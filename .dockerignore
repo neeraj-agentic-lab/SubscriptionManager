@@ -1,0 +1,59 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# GitHub
+.github
+
+# Documentation
+*.md
+*.docx
+DOCUMENTATION_*.md
+IMPLEMENTATION_PLAN.md
+TESTING.md
+README-DEPLOYMENT.md
+
+# IDE
+.vscode
+.idea
+*.iml
+*.iws
+*.ipr
+
+# Build artifacts
+build/
+target/
+.gradle/
+gradle-wrapper.jar
+
+# Test outputs
+test-output.log
+test-logs.txt
+tenant-test-output.log
+
+# Deployment
+deployment-config.yaml
+infrastructure/
+.env
+.env.*
+!.env.example
+
+# Database
+db/
+
+# Scripts
+scripts/
+*.py
+
+# Docker
+docker-compose.yml
+Dockerfile
+.dockerignore
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db

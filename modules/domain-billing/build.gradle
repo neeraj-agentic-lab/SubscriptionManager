@@ -1,0 +1,21 @@
+dependencies {
+    implementation project(':modules:common')
+    implementation project(':modules:auth')
+    implementation project(':modules:domain-subscriptions')
+    implementation project(':modules:scheduler')
+    implementation project(':modules:integrations')
+    
+    // Spring Boot dependencies
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework:spring-context'
+    implementation 'org.springframework.boot:spring-boot-starter-jooq'
+    
+    // jOOQ dependencies
+    implementation 'org.jooq:jooq'
+    
+    // JSON processing
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+    
+    // Logging
+    implementation 'org.slf4j:slf4j-api'
+}

@@ -1,0 +1,101 @@
+# Multi-Cloud Deployment Configuration
+# Edit this file to configure deployment to GCP, AWS, or Azure
+
+# Target cloud provider (change this to deploy to different cloud)
+target_cloud: gcp  # Options: gcp | aws | azure
+
+# Application metadata
+app:
+  name: subscription-manager
+  environment: production  # production | staging | development
+  version: 1.0.0
+
+# Database configuration (shared by API and Worker)
+database:
+  name: subscription_db
+  user: subscription_app
+  tier: small              # small | medium | large
+  storage_gb: 10
+  backup_retention_days: 7
+  auto_backup: true
+
+# API configuration
+api:
+  name: subscription-api
+  port: 8080
+  compute:
+    size: small            # small | medium | large
+    min_instances: 1
+    max_instances: 10
+    memory_gb: 2
+    cpu: 1
+  health_check:
+    path: /actuator/health
+    interval_seconds: 30
+
+# Worker configuration
+worker:
+  name: subscription-worker
+  compute:
+    size: small            # small | medium | large
+    memory_gb: 2
+    cpu: 1
+  schedule: "0 */1 * * *"  # Cron: every hour
+  tasks:
+    delivery_scheduler: true
+    webhook_processor: true
+    renewal_processor: true
+
+# Region configuration per cloud
+regions:
+  gcp: us-central1
+  aws: us-east-1
+  azure: eastus
+
+# Feature flags
+features:
+  run_migrations: true
+  enable_monitoring: true
+  enable_logging: true
+  enable_auto_scaling: true
+
+# Environment-specific overrides
+environments:
+  production:
+    database:
+      tier: medium
+      storage_gb: 50
+    api:
+      compute:
+        size: medium
+        min_instances: 2
+        max_instances: 20
+    worker:
+      compute:
+        size: medium
+  
+  staging:
+    database:
+      tier: small
+      storage_gb: 20
+    api:
+      compute:
+        size: small
+        min_instances: 1
+        max_instances: 5
+    worker:
+      compute:
+        size: small
+  
+  development:
+    database:
+      tier: small
+      storage_gb: 10
+    api:
+      compute:
+        size: small
+        min_instances: 1
+        max_instances: 3
+    worker:
+      compute:
+        size: small

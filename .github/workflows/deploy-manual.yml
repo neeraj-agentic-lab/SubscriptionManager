@@ -1,0 +1,158 @@
+name: Manual Deploy (UI)
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_cloud:
+        description: '☁️ Target Cloud Provider'
+        required: true
+        type: choice
+        options:
+          - gcp
+          - aws
+          - azure
+        default: gcp
+      
+      environment:
+        description: '🌍 Environment'
+        required: true
+        type: choice
+        options:
+          - production
+          - staging
+          - development
+        default: production
+      
+      deploy_api:
+        description: '🔌 Deploy API'
+        required: true
+        type: boolean
+        default: true
+      
+      deploy_worker:
+        description: '⚙️ Deploy Worker'
+        required: true
+        type: boolean
+        default: true
+      
+      setup_database:
+        description: '🗄️ Setup Database (first time only)'
+        required: true
+        type: boolean
+        default: false
+      
+      run_migrations:
+        description: '📊 Run Database Migrations'
+        required: true
+        type: boolean
+        default: true
+      
+      database_tier:
+        description: '💾 Database Tier'
+        required: true
+        type: choice
+        options:
+          - small
+          - medium
+          - large
+        default: small
+      
+      api_compute_size:
+        description: '🖥️ API Compute Size'
+        required: true
+        type: choice
+        options:
+          - small
+          - medium
+          - large
+        default: small
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'gradle'
+      
+      - name: Display configuration
+        run: |
+          echo "### 📋 Deployment Configuration" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Cloud:** ${{ inputs.target_cloud }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Environment:** ${{ inputs.environment }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Deploy API:** ${{ inputs.deploy_api }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Deploy Worker:** ${{ inputs.deploy_worker }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Setup Database:** ${{ inputs.setup_database }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Run Migrations:** ${{ inputs.run_migrations }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Database Tier:** ${{ inputs.database_tier }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **API Compute:** ${{ inputs.api_compute_size }}" >> $GITHUB_STEP_SUMMARY
+      
+      - name: Setup GCP
+        if: inputs.target_cloud == 'gcp'
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+      
+      - name: Setup AWS
+        if: inputs.target_cloud == 'aws'
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      
+      - name: Setup Azure
+        if: inputs.target_cloud == 'azure'
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      
+      - name: Make scripts executable
+        run: find infrastructure -name "*.sh" -exec chmod +x {} \;
+      
+      - name: Setup database
+        if: inputs.setup_database == true
+        run: ./infrastructure/${{ inputs.target_cloud }}/setup-database.sh
+        env:
+          DATABASE_TIER: ${{ inputs.database_tier }}
+      
+      - name: Run migrations
+        if: inputs.run_migrations == true
+        run: ./infrastructure/${{ inputs.target_cloud }}/run-migrations.sh
+      
+      - name: Deploy API
+        if: inputs.deploy_api == true
+        run: ./infrastructure/${{ inputs.target_cloud }}/deploy-api.sh
+        env:
+          COMPUTE_SIZE: ${{ inputs.api_compute_size }}
+          ENVIRONMENT: ${{ inputs.environment }}
+      
+      - name: Deploy Worker
+        if: inputs.deploy_worker == true
+        run: ./infrastructure/${{ inputs.target_cloud }}/deploy-worker.sh
+        env:
+          ENVIRONMENT: ${{ inputs.environment }}
+      
+      - name: Deployment summary
+        if: success()
+        run: |
+          echo "### ✅ Deployment Complete!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Deployed Components:**" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ inputs.deploy_api }}" == "true" ]; then
+            echo "- ✅ API" >> $GITHUB_STEP_SUMMARY
+          fi
+          if [ "${{ inputs.deploy_worker }}" == "true" ]; then
+            echo "- ✅ Worker" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Time:** $(date -u)" >> $GITHUB_STEP_SUMMARY

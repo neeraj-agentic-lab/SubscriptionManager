@@ -1,0 +1,87 @@
+name: Deploy Component
+
+on:
+  workflow_dispatch:
+    inputs:
+      component:
+        description: '📦 Component to Deploy'
+        required: true
+        type: choice
+        options:
+          - api
+          - worker
+        default: api
+      
+      target_cloud:
+        description: '☁️ Target Cloud'
+        required: true
+        type: choice
+        options:
+          - gcp
+          - aws
+          - azure
+        default: gcp
+      
+      environment:
+        description: '🌍 Environment'
+        required: true
+        type: choice
+        options:
+          - production
+          - staging
+          - development
+        default: production
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'gradle'
+      
+      - name: Setup GCP
+        if: inputs.target_cloud == 'gcp'
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+      
+      - name: Setup AWS
+        if: inputs.target_cloud == 'aws'
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      
+      - name: Setup Azure
+        if: inputs.target_cloud == 'azure'
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      
+      - name: Make scripts executable
+        run: find infrastructure -name "*.sh" -exec chmod +x {} \;
+      
+      - name: Deploy component
+        run: ./infrastructure/deploy-${{ inputs.component }}.sh
+        env:
+          TARGET_CLOUD: ${{ inputs.target_cloud }}
+          ENVIRONMENT: ${{ inputs.environment }}
+      
+      - name: Deployment summary
+        if: success()
+        run: |
+          echo "### ✅ ${{ inputs.component }} Deployed!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Component:** ${{ inputs.component }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Cloud:** ${{ inputs.target_cloud }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Environment:** ${{ inputs.environment }}" >> $GITHUB_STEP_SUMMARY

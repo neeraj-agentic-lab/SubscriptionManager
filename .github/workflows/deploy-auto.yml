@@ -1,0 +1,88 @@
+name: Auto Deploy (Config File)
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'gradle'
+      
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+      
+      - name: Detect target cloud
+        id: cloud
+        run: |
+          CLOUD=$(yq '.target_cloud' deployment-config.yaml)
+          echo "Detected cloud: $CLOUD"
+          echo "target=$CLOUD" >> $GITHUB_OUTPUT
+          
+          ENV=$(yq '.app.environment' deployment-config.yaml)
+          echo "environment=$ENV" >> $GITHUB_OUTPUT
+      
+      - name: Setup GCP
+        if: steps.cloud.outputs.target == 'gcp'
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+      
+      - name: Setup AWS
+        if: steps.cloud.outputs.target == 'aws'
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      
+      - name: Setup Azure
+        if: steps.cloud.outputs.target == 'azure'
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      
+      - name: Make scripts executable
+        run: |
+          chmod +x infrastructure/deploy.sh
+          chmod +x infrastructure/deploy-api.sh
+          chmod +x infrastructure/deploy-worker.sh
+          find infrastructure -name "*.sh" -exec chmod +x {} \;
+      
+      - name: Deploy to selected cloud
+        run: ./infrastructure/deploy.sh
+        env:
+          TARGET_CLOUD: ${{ steps.cloud.outputs.target }}
+          ENVIRONMENT: ${{ steps.cloud.outputs.environment }}
+      
+      - name: Deployment summary
+        if: success()
+        run: |
+          echo "### ✅ Deployment Successful!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Cloud:** ${{ steps.cloud.outputs.target }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Environment:** ${{ steps.cloud.outputs.environment }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Time:** $(date -u)" >> $GITHUB_STEP_SUMMARY
+      
+      - name: Deployment failed
+        if: failure()
+        run: |
+          echo "### ❌ Deployment Failed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Check the logs above for error details." >> $GITHUB_STEP_SUMMARY

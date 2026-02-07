@@ -1,0 +1,24 @@
+plugins {
+    id 'java-library'
+}
+
+dependencies {
+    implementation project(':modules:common')
+    
+    // Spring Security OAuth 2.0 Resource Server
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+    
+    // JWT processing
+    implementation 'org.springframework.security:spring-security-oauth2-jose'
+    implementation 'com.nimbusds:nimbus-jose-jwt:9.37.3'
+    
+    // Validation
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    
+    // Web for filters
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    
+    // Testing
+    testImplementation 'org.springframework.security:spring-security-test'
+}
