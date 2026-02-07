@@ -51,12 +51,27 @@ setup_secrets() {
     COMPUTE_SA="${PROJECT_NUMBER}-compute@developer.gserviceaccount.com"
     
     log "Granting Cloud Run (Compute Engine) service account access to secrets..."
-    log "Service account: $COMPUTE_SA"
-    gcloud secrets add-iam-policy-binding "$GCP_DB_PASSWORD_SECRET" \
+    log "  Secret: $GCP_DB_PASSWORD_SECRET"
+    log "  Service account: $COMPUTE_SA"
+    log "  Role: roles/secretmanager.secretAccessor"
+    
+    # Grant the permission
+    if gcloud secrets add-iam-policy-binding "$GCP_DB_PASSWORD_SECRET" \
         --project="$GCP_PROJECT_ID" \
         --member="serviceAccount:${COMPUTE_SA}" \
-        --role="roles/secretmanager.secretAccessor" \
-        2>/dev/null || warn "Permission may already be granted"
+        --role="roles/secretmanager.secretAccessor"; then
+        success "Permission granted successfully"
+    else
+        warn "Failed to grant permission or permission already exists"
+    fi
+    
+    # Verify the permission was granted
+    log "Verifying IAM policy..."
+    gcloud secrets get-iam-policy "$GCP_DB_PASSWORD_SECRET" \
+        --project="$GCP_PROJECT_ID" \
+        --format="table(bindings.members)" | grep -q "$COMPUTE_SA" && \
+        success "Verified: $COMPUTE_SA has access to secret" || \
+        warn "Warning: Could not verify service account has access"
     
     # Also grant to App Engine service account (for compatibility)
     APP_ENGINE_SA="${GCP_PROJECT_ID}@appspot.gserviceaccount.com"

@@ -55,7 +55,8 @@ main() {
     
     # Wait for IAM permissions to propagate
     log "Waiting for IAM permissions to propagate..."
-    sleep 10
+    log "This can take up to 60 seconds for Secret Manager permissions..."
+    sleep 30
     
     # Step 6: Run migrations
     if [ "$RUN_MIGRATIONS" = "true" ]; then
