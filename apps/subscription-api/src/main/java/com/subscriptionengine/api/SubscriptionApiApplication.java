@@ -2,6 +2,8 @@ package com.subscriptionengine.api;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
@@ -11,8 +13,17 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * @author Neeraj Yadav
  */
 @SpringBootApplication(scanBasePackages = "com.subscriptionengine")
-@EnableScheduling
 public class SubscriptionApiApplication {
+    
+    /**
+     * Enable scheduling only when not explicitly disabled (e.g., in tests).
+     * Tests can disable scheduling by setting spring.task.scheduling.enabled=false
+     */
+    @Configuration
+    @EnableScheduling
+    @ConditionalOnProperty(name = "spring.task.scheduling.enabled", havingValue = "true", matchIfMissing = true)
+    static class SchedulingConfiguration {
+    }
     
     public static void main(String[] args) {
         SpringApplication.run(SubscriptionApiApplication.class, args);

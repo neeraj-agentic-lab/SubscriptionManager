@@ -10,6 +10,7 @@ import org.jooq.DSLContext;
 import org.jooq.JSONB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,16 +46,19 @@ public class WebhookRelayWorker {
     private final OutboxService outboxService;
     private final ObjectMapper objectMapper;
     private final HttpClient httpClient;
+    private final int retryBackoffBaseSeconds;
     
     public WebhookRelayWorker(
             DSLContext dsl,
             WebhookDeliveriesDao webhookDeliveriesDao,
             OutboxService outboxService,
-            ObjectMapper objectMapper) {
+            ObjectMapper objectMapper,
+            @Value("${subscription-engine.webhook.retry-backoff-base-seconds:60}") int retryBackoffBaseSeconds) {
         this.dsl = dsl;
         this.webhookDeliveriesDao = webhookDeliveriesDao;
         this.outboxService = outboxService;
         this.objectMapper = objectMapper;
+        this.retryBackoffBaseSeconds = retryBackoffBaseSeconds;
         this.httpClient = HttpClient.newBuilder()
             .connectTimeout(Duration.ofSeconds(10))
             .build();
@@ -291,7 +295,7 @@ public class WebhookRelayWorker {
                                requestId, delivery.getId(), delivery.getAttemptCount());
                 } else {
                     // Schedule retry with exponential backoff
-                    int backoffSeconds = (int) Math.pow(2, delivery.getAttemptCount()) * 60; // 2^n minutes
+                    int backoffSeconds = (int) Math.pow(2, delivery.getAttemptCount()) * retryBackoffBaseSeconds;
                     delivery.setNextAttemptAt(OffsetDateTime.now().plusSeconds(backoffSeconds));
                     
                     logger.warn("[WEBHOOK_DELIVER_RETRY] RequestId: {} - Webhook {} failed (status: {}), will retry in {} seconds", 
@@ -313,7 +317,7 @@ public class WebhookRelayWorker {
                 delivery.setStatus("FAILED");
             } else {
                 // Schedule retry with exponential backoff
-                int backoffSeconds = (int) Math.pow(2, delivery.getAttemptCount()) * 60;
+                int backoffSeconds = (int) Math.pow(2, delivery.getAttemptCount()) * retryBackoffBaseSeconds;
                 delivery.setNextAttemptAt(OffsetDateTime.now().plusSeconds(backoffSeconds));
             }
             

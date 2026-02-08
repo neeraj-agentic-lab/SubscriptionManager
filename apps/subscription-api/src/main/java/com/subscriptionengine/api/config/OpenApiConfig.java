@@ -1,9 +1,12 @@
 package com.subscriptionengine.api.config;
 
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -39,7 +42,22 @@ public class OpenApiConfig {
             baseUrl = "http://localhost:" + serverPort + (contextPath != null && !contextPath.isEmpty() ? contextPath : "");
         }
         
+        // Define JWT security scheme
+        SecurityScheme jwtSecurityScheme = new SecurityScheme()
+            .name("Bearer Authentication")
+            .type(SecurityScheme.Type.HTTP)
+            .scheme("bearer")
+            .bearerFormat("JWT")
+            .description("Enter your JWT token (without 'Bearer' prefix)");
+        
+        // Add security requirement
+        SecurityRequirement securityRequirement = new SecurityRequirement()
+            .addList("Bearer Authentication");
+        
         return new OpenAPI()
+            .components(new Components()
+                .addSecuritySchemes("Bearer Authentication", jwtSecurityScheme))
+            .addSecurityItem(securityRequirement)
             .info(new Info()
                 .title("SubscriptionManager: Headless Subscription Engine")
                 .version("1.0.0")
@@ -98,8 +116,14 @@ public class OpenApiConfig {
                     ## Authentication
                     
                     All API endpoints require JWT authentication with tenant information embedded in the token.
-                    Include the JWT token in the `Authorization` header:
                     
+                    **To test in Swagger UI:**
+                    1. Click the **"Authorize" 🔓** button at the top right
+                    2. Enter your JWT token (without "Bearer" prefix)
+                    3. Click **"Authorize"** then **"Close"**
+                    4. All requests will now include the Authorization header automatically
+                    
+                    The JWT token should contain tenant information and be formatted as:
                     ```
                     Authorization: Bearer <your-jwt-token>
                     ```

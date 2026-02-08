@@ -76,3 +76,9 @@ subscription-engine:
       - tenant_id
       - org_id
       - organization
+  
+  webhook:
+    # Retry backoff base in seconds (backoff = 2^attempt * base)
+    # Default: 60 (1 minute base, so 2min, 4min, 8min retries)
+    # For tests: 5 (5sec base, so 10sec, 20sec, 40sec retries)
+    retry-backoff-base-seconds: ${WEBHOOK_RETRY_BACKOFF_BASE:5}

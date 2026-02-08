@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Application logs -->
+    <logger name="com.subscriptionengine" level="DEBUG"/>
+    
+    <!-- Spring Web logs -->
+    <logger name="org.springframework.web" level="DEBUG"/>
+    
+    <!-- Show SQL and parameters -->
+    <logger name="org.jooq" level="DEBUG"/>
+    
+    <!-- Security logs -->
+    <logger name="org.springframework.security" level="DEBUG"/>
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>

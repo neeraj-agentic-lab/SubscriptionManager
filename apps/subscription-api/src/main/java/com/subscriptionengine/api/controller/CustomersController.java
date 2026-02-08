@@ -80,58 +80,37 @@ public class CustomersController {
         
         logger.info("Creating customer with email: {} for tenant: {}", request.getEmail(), tenantId);
         
-        try {
-            Customers customer = new Customers();
-            customer.setId(UUID.randomUUID());
-            customer.setTenantId(tenantId);
-            customer.setEmail(request.getEmail());
-            customer.setFirstName(request.getName());
-            customer.setExternalCustomerId(request.getExternalCustomerRef());
-            customer.setCustomAttrs(org.jooq.JSONB.valueOf("{}"));
-            customer.setStatus("ACTIVE");
-            customer.setCustomerType("REGISTERED");
-            customer.setCreatedAt(OffsetDateTime.now());
-            customer.setUpdatedAt(OffsetDateTime.now());
-            
-            logger.debug("Customer object before insert - email: {}, firstName: {}, externalCustomerId: {}", 
-                customer.getEmail(), customer.getFirstName(), customer.getExternalCustomerId());
-            
-            customersDao.insert(customer);
-            
-            logger.info("Successfully created customer: {}", customer.getId());
-            
-            Map<String, Object> response = new HashMap<>();
-            response.put("success", true);
-            
-            Map<String, Object> data = new HashMap<>();
-            data.put("customerId", customer.getId().toString());
-            data.put("email", customer.getEmail());
-            data.put("name", customer.getFirstName());
-            data.put("externalCustomerRef", customer.getExternalCustomerId());
-            
-            response.put("data", data);
-            
-            return ResponseEntity.ok(response);
-            
-        } catch (DuplicateKeyException e) {
-            logger.warn("Duplicate customer email: {} for tenant: {}", request.getEmail(), tenantId);
-            
-            Map<String, Object> response = new HashMap<>();
-            response.put("success", false);
-            response.put("error", "DUPLICATE_EMAIL");
-            response.put("message", "A customer with this email already exists");
-            
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
-        } catch (Exception e) {
-            logger.error("Error creating customer", e);
-            
-            Map<String, Object> response = new HashMap<>();
-            response.put("success", false);
-            response.put("error", "INTERNAL_ERROR");
-            response.put("message", "Failed to create customer");
-            
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-        }
+        Customers customer = new Customers();
+        customer.setId(UUID.randomUUID());
+        customer.setTenantId(tenantId);
+        customer.setEmail(request.getEmail());
+        customer.setFirstName(request.getName());
+        customer.setExternalCustomerId(request.getExternalCustomerRef());
+        customer.setCustomAttrs(org.jooq.JSONB.valueOf("{}"));
+        customer.setStatus("ACTIVE");
+        customer.setCustomerType("REGISTERED");
+        customer.setCreatedAt(OffsetDateTime.now());
+        customer.setUpdatedAt(OffsetDateTime.now());
+        
+        logger.debug("Customer object before insert - email: {}, firstName: {}, externalCustomerId: {}", 
+            customer.getEmail(), customer.getFirstName(), customer.getExternalCustomerId());
+        
+        customersDao.insert(customer);
+        
+        logger.info("Successfully created customer: {}", customer.getId());
+        
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        
+        Map<String, Object> data = new HashMap<>();
+        data.put("customerId", customer.getId().toString());
+        data.put("email", customer.getEmail());
+        data.put("name", customer.getFirstName());
+        data.put("externalCustomerRef", customer.getExternalCustomerId());
+        
+        response.put("data", data);
+        
+        return ResponseEntity.ok(response);
     }
     
     /**

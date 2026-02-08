@@ -8,6 +8,22 @@ spring:
     baseline-on-migrate: true
     clean-disabled: false
   
+  # HikariCP connection pool configuration for parallel test execution
+  datasource:
+    hikari:
+      maximum-pool-size: 30           # Increased from default 10 for parallel tests
+      minimum-idle: 10                # Keep minimum connections ready
+      connection-timeout: 30000       # 30 seconds timeout
+      idle-timeout: 600000            # 10 minutes idle timeout
+      max-lifetime: 1800000           # 30 minutes max connection lifetime
+      leak-detection-threshold: 60000 # Detect connection leaks after 60 seconds
+  
+  # Disable ALL scheduled tasks in tests by default
+  # Tests that need scheduled tasks (WebhookDeliveryTest) must explicitly enable them
+  task:
+    scheduling:
+      enabled: false
+  
   # Security configuration for tests
   security:
     oauth2:

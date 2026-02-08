@@ -80,36 +80,23 @@ public class CustomerSubscriptionsController {
         logger.info("[CUSTOMER_SUBSCRIPTIONS_LIST] RequestId: {} - Getting subscriptions for customer {}", 
                    requestId, customerId);
         
-        try {
-            List<Map<String, Object>> subscriptions = subscriptionsService.getCustomerSubscriptions(customerId, limit);
-            
-            Map<String, Object> response = Map.of(
-                "success", true,
-                "data", Map.of(
-                    "subscriptions", subscriptions,
-                    "count", subscriptions.size(),
-                    "customerId", customerId.toString()
-                ),
-                "requestId", requestId,
-                "timestamp", System.currentTimeMillis()
-            );
-            
-            logger.info("[CUSTOMER_SUBSCRIPTIONS_LIST_SUCCESS] RequestId: {} - Retrieved {} subscriptions for customer {}", 
-                       requestId, subscriptions.size(), customerId);
-            
-            return ResponseEntity.ok(response);
-            
-        } catch (Exception e) {
-            logger.error("[CUSTOMER_SUBSCRIPTIONS_LIST_ERROR] RequestId: {} - Error: {}", 
-                        requestId, e.getMessage(), e);
-            
-            return ResponseEntity.status(500).body(Map.of(
-                "success", false,
-                "message", "Error retrieving customer subscriptions: " + e.getMessage(),
-                "requestId", requestId,
-                "timestamp", System.currentTimeMillis()
-            ));
-        }
+        List<Map<String, Object>> subscriptions = subscriptionsService.getCustomerSubscriptions(customerId, limit);
+        
+        Map<String, Object> response = Map.of(
+            "success", true,
+            "data", Map.of(
+                "subscriptions", subscriptions,
+                "count", subscriptions.size(),
+                "customerId", customerId.toString()
+            ),
+            "requestId", requestId,
+            "timestamp", System.currentTimeMillis()
+        );
+        
+        logger.info("[CUSTOMER_SUBSCRIPTIONS_LIST_SUCCESS] RequestId: {} - Retrieved {} subscriptions for customer {}", 
+                   requestId, subscriptions.size(), customerId);
+        
+        return ResponseEntity.ok(response);
     }
     
     /**
@@ -153,49 +140,36 @@ public class CustomerSubscriptionsController {
         logger.info("[SUBSCRIPTION_DASHBOARD] RequestId: {} - Getting dashboard for subscription {} customer {}", 
                    requestId, subscriptionId, customerId);
         
-        try {
-            Optional<Map<String, Object>> managementDetails = subscriptionManagementService
-                .getSubscriptionManagementDetails(subscriptionId, customerId);
-            
-            if (managementDetails.isEmpty()) {
-                logger.warn("[SUBSCRIPTION_DASHBOARD_NOT_FOUND] RequestId: {} - Subscription {} not found for customer {}", 
-                           requestId, subscriptionId, customerId);
-                return ResponseEntity.notFound().build();
-            }
-            
-            List<Map<String, Object>> upcomingDeliveries = deliveryManagementService
-                .getUpcomingDeliveries(customerId, 5);
-            
-            List<Map<String, Object>> subscriptionDeliveries = upcomingDeliveries.stream()
-                .filter(d -> subscriptionId.toString().equals(d.get("subscriptionId")))
-                .toList();
-            
-            Map<String, Object> dashboardData = new HashMap<>(managementDetails.get());
-            dashboardData.put("upcomingDeliveries", subscriptionDeliveries);
-            dashboardData.put("upcomingDeliveriesCount", subscriptionDeliveries.size());
-            
-            Map<String, Object> response = Map.of(
-                "success", true,
-                "data", dashboardData,
-                "requestId", requestId,
-                "timestamp", System.currentTimeMillis()
-            );
-            
-            logger.info("[SUBSCRIPTION_DASHBOARD_SUCCESS] RequestId: {} - Retrieved dashboard for subscription {}", 
-                       requestId, subscriptionId);
-            
-            return ResponseEntity.ok(response);
-            
-        } catch (Exception e) {
-            logger.error("[SUBSCRIPTION_DASHBOARD_ERROR] RequestId: {} - Error: {}", 
-                        requestId, e.getMessage(), e);
-            
-            return ResponseEntity.status(500).body(Map.of(
-                "success", false,
-                "message", "Error retrieving subscription dashboard: " + e.getMessage(),
-                "requestId", requestId,
-                "timestamp", System.currentTimeMillis()
-            ));
+        Optional<Map<String, Object>> managementDetails = subscriptionManagementService
+            .getSubscriptionManagementDetails(subscriptionId, customerId);
+        
+        if (managementDetails.isEmpty()) {
+            logger.warn("[SUBSCRIPTION_DASHBOARD_NOT_FOUND] RequestId: {} - Subscription {} not found for customer {}", 
+                       requestId, subscriptionId, customerId);
+            return ResponseEntity.notFound().build();
         }
+        
+        List<Map<String, Object>> upcomingDeliveries = deliveryManagementService
+            .getUpcomingDeliveries(customerId, 5);
+        
+        List<Map<String, Object>> subscriptionDeliveries = upcomingDeliveries.stream()
+            .filter(d -> subscriptionId.toString().equals(d.get("subscriptionId")))
+            .toList();
+        
+        Map<String, Object> dashboardData = new HashMap<>(managementDetails.get());
+        dashboardData.put("upcomingDeliveries", subscriptionDeliveries);
+        dashboardData.put("upcomingDeliveriesCount", subscriptionDeliveries.size());
+        
+        Map<String, Object> response = Map.of(
+            "success", true,
+            "data", dashboardData,
+            "requestId", requestId,
+            "timestamp", System.currentTimeMillis()
+        );
+        
+        logger.info("[SUBSCRIPTION_DASHBOARD_SUCCESS] RequestId: {} - Retrieved dashboard for subscription {}", 
+                   requestId, subscriptionId);
+        
+        return ResponseEntity.ok(response);
     }
 }

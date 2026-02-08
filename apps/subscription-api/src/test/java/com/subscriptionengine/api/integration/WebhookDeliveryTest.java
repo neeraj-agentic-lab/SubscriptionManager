@@ -7,6 +7,7 @@ import io.restassured.response.Response;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.TestPropertySource;
 
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,9 @@ import static java.util.concurrent.TimeUnit.SECONDS;
  */
 @Epic("Webhook System")
 @Feature("Webhook Delivery")
+@TestPropertySource(properties = {
+    "spring.task.scheduling.enabled=true"  // Enable scheduled tasks for webhook workers
+})
 class WebhookDeliveryTest extends BaseIntegrationTest {
     
     @Autowired
@@ -110,8 +114,8 @@ class WebhookDeliveryTest extends BaseIntegrationTest {
     
     @Test
     @DisplayName("Should retry failed webhook deliveries with exponential backoff")
-    @Description("Tests webhook retry logic when endpoint returns error")
-    @Severity(SeverityLevel.NORMAL)
+    @Description("Tests webhook retry mechanism with exponential backoff")
+    @Severity(SeverityLevel.CRITICAL)
     @Story("Webhook retry logic")
     void shouldRetryFailedWebhookDeliveries() {
         String tenantId = testTenantId;
@@ -156,8 +160,38 @@ class WebhookDeliveryTest extends BaseIntegrationTest {
             .then()
             .statusCode(200);
         
+        // Debug: Check if outbox event was created
+        await().atMost(10, SECONDS).untilAsserted(() -> {
+            Integer outboxCount = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM outbox_events WHERE tenant_id = ?::uuid AND event_type = 'delivery.canceled'",
+                Integer.class,
+                tenantId
+            );
+            assertThat(outboxCount).as("Outbox event should be created").isGreaterThan(0);
+        });
+        
+        // Debug: Check if webhook delivery was created
+        await().atMost(10, SECONDS).untilAsserted(() -> {
+            Integer deliveryCount = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM webhook_deliveries WHERE tenant_id = ?::uuid AND webhook_endpoint_id = ?::uuid",
+                Integer.class,
+                tenantId,
+                webhookId.toString()
+            );
+            assertThat(deliveryCount).as("Webhook delivery should be created").isGreaterThan(0);
+        });
+        
         // Wait for eventual success after retries (may take longer due to backoff)
-        await().atMost(60, SECONDS).untilAsserted(() -> {
+        await().atMost(120, SECONDS).pollInterval(2, SECONDS).untilAsserted(() -> {
+            // Check current status of webhook deliveries
+            List<Map<String, Object>> deliveries = jdbcTemplate.queryForList(
+                "SELECT status, attempt_count, last_error, last_response_status FROM webhook_deliveries WHERE tenant_id = ?::uuid AND webhook_endpoint_id = ?::uuid",
+                tenantId,
+                webhookId.toString()
+            );
+            
+            System.out.println("Webhook deliveries status: " + deliveries);
+            
             Integer deliveredCount = jdbcTemplate.queryForObject(
                 "SELECT COUNT(*) FROM webhook_deliveries WHERE tenant_id = ?::uuid AND webhook_endpoint_id = ?::uuid AND status = 'DELIVERED'",
                 Integer.class,

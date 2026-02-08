@@ -56,14 +56,14 @@ public class TenantsController {
     
     /**
      * Create a new tenant.
-     * This is a simple endpoint for testing - no authentication required.
+     * Requires JWT authentication with valid tenant context.
      */
     @PostMapping
     @Operation(
         summary = "Create a new tenant",
         description = "Creates a new tenant organization with complete data isolation. "
             + "Each tenant has separate customers, subscriptions, and billing. "
-            + "No authentication required for tenant creation (typically would be restricted in production)."
+            + "Requires JWT authentication. In production, this would typically be restricted to admin users only."
     )
     @ApiResponses(value = {
         @ApiResponse(
@@ -85,34 +85,25 @@ public class TenantsController {
         @Valid @RequestBody CreateTenantRequest request) {
         logger.info("Creating new tenant: {}", request.getName());
         
-        try {
-            Tenants tenant = new Tenants();
-            tenant.setId(request.getId() != null ? request.getId() : UUID.randomUUID());
-            tenant.setName(request.getName());
-            tenant.setSlug(request.getSlug());
-            tenant.setStatus(request.getStatus() != null ? request.getStatus() : "ACTIVE");
-            tenant.setCreatedAt(OffsetDateTime.now());
-            tenant.setUpdatedAt(OffsetDateTime.now());
-            
-            tenantsDao.insert(tenant);
-            
-            logger.info("Successfully created tenant: {}", tenant.getId());
-            
-            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
-                "id", tenant.getId().toString(),
-                "name", tenant.getName(),
-                "slug", tenant.getSlug(),
-                "status", tenant.getStatus(),
-                "createdAt", tenant.getCreatedAt().toString()
-            ));
-            
-        } catch (Exception e) {
-            logger.error("Error creating tenant: {}", e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
-                "error", "INTERNAL_ERROR",
-                "message", "Failed to create tenant"
-            ));
-        }
+        Tenants tenant = new Tenants();
+        tenant.setId(request.getId() != null ? request.getId() : UUID.randomUUID());
+        tenant.setName(request.getName());
+        tenant.setSlug(request.getSlug());
+        tenant.setStatus(request.getStatus() != null ? request.getStatus() : "ACTIVE");
+        tenant.setCreatedAt(OffsetDateTime.now());
+        tenant.setUpdatedAt(OffsetDateTime.now());
+        
+        tenantsDao.insert(tenant);
+        
+        logger.info("Successfully created tenant: {}", tenant.getId());
+        
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
+            "id", tenant.getId().toString(),
+            "name", tenant.getName(),
+            "slug", tenant.getSlug(),
+            "status", tenant.getStatus(),
+            "createdAt", tenant.getCreatedAt().toString()
+        ));
     }
     
     /**
@@ -135,29 +126,23 @@ public class TenantsController {
         @PageableDefault(size = 20) Pageable pageable) {
         logger.info("Fetching tenants with pagination: page={}, size={}", pageable.getPageNumber(), pageable.getPageSize());
         
-        try {
-            List<Tenants> tenants = dsl.selectFrom(TENANTS)
-                    .orderBy(TENANTS.CREATED_AT.desc())
-                    .limit(pageable.getPageSize())
-                    .offset((int) pageable.getOffset())
-                    .fetchInto(Tenants.class);
-            
-            long totalCount = dsl.selectCount()
-                    .from(TENANTS)
-                    .fetchOne(0, Long.class);
-            
-            List<TenantResponse> tenantResponses = tenants.stream()
-                    .map(this::mapToResponse)
-                    .collect(Collectors.toList());
-            
-            Page<TenantResponse> page = new PageImpl<>(tenantResponses, pageable, totalCount);
-            
-            return ResponseEntity.ok(page);
-            
-        } catch (Exception e) {
-            logger.error("Error fetching tenants: {}", e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+        List<Tenants> tenants = dsl.selectFrom(TENANTS)
+                .orderBy(TENANTS.CREATED_AT.desc())
+                .limit(pageable.getPageSize())
+                .offset((int) pageable.getOffset())
+                .fetchInto(Tenants.class);
+        
+        long totalCount = dsl.selectCount()
+                .from(TENANTS)
+                .fetchOne(0, Long.class);
+        
+        List<TenantResponse> tenantResponses = tenants.stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+        
+        Page<TenantResponse> page = new PageImpl<>(tenantResponses, pageable, totalCount);
+        
+        return ResponseEntity.ok(page);
     }
     
     /**
@@ -167,25 +152,16 @@ public class TenantsController {
     public ResponseEntity<Object> getTenantById(@PathVariable UUID tenantId) {
         logger.info("Fetching tenant: {}", tenantId);
         
-        try {
-            Tenants tenant = tenantsDao.fetchOneById(tenantId);
-            
-            if (tenant == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
-                    "error", "TENANT_NOT_FOUND",
-                    "message", "Tenant not found: " + tenantId
-                ));
-            }
-            
-            return ResponseEntity.ok(mapToResponse(tenant));
-            
-        } catch (Exception e) {
-            logger.error("Error fetching tenant {}: {}", tenantId, e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
-                "error", "INTERNAL_ERROR",
-                "message", "Failed to fetch tenant"
+        Tenants tenant = tenantsDao.fetchOneById(tenantId);
+        
+        if (tenant == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
+                "error", "TENANT_NOT_FOUND",
+                "message", "Tenant not found: " + tenantId
             ));
         }
+        
+        return ResponseEntity.ok(mapToResponse(tenant));
     }
     
     /**
@@ -196,36 +172,27 @@ public class TenantsController {
                                              @Valid @RequestBody UpdateTenantRequest request) {
         logger.info("Updating tenant: {}", tenantId);
         
-        try {
-            Tenants existingTenant = tenantsDao.fetchOneById(tenantId);
-            
-            if (existingTenant == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
-                    "error", "TENANT_NOT_FOUND",
-                    "message", "Tenant not found: " + tenantId
-                ));
-            }
-            
-            // Update fields
-            existingTenant.setName(request.getName());
-            existingTenant.setSlug(request.getSlug());
-            if (request.getStatus() != null) {
-                existingTenant.setStatus(request.getStatus());
-            }
-            existingTenant.setUpdatedAt(OffsetDateTime.now());
-            
-            tenantsDao.update(existingTenant);
-            
-            logger.info("Successfully updated tenant: {}", tenantId);
-            return ResponseEntity.ok(mapToResponse(existingTenant));
-            
-        } catch (Exception e) {
-            logger.error("Error updating tenant {}: {}", tenantId, e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
-                "error", "INTERNAL_ERROR",
-                "message", "Failed to update tenant"
+        Tenants existingTenant = tenantsDao.fetchOneById(tenantId);
+        
+        if (existingTenant == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
+                "error", "TENANT_NOT_FOUND",
+                "message", "Tenant not found: " + tenantId
             ));
         }
+        
+        // Update fields
+        existingTenant.setName(request.getName());
+        existingTenant.setSlug(request.getSlug());
+        if (request.getStatus() != null) {
+            existingTenant.setStatus(request.getStatus());
+        }
+        existingTenant.setUpdatedAt(OffsetDateTime.now());
+        
+        tenantsDao.update(existingTenant);
+        
+        logger.info("Successfully updated tenant: {}", tenantId);
+        return ResponseEntity.ok(mapToResponse(existingTenant));
     }
     
     /**
@@ -236,68 +203,37 @@ public class TenantsController {
     public ResponseEntity<Object> deleteTenant(@PathVariable UUID tenantId) {
         logger.info("Deleting tenant: {}", tenantId);
         
-        try {
-            Tenants existingTenant = tenantsDao.fetchOneById(tenantId);
-            
-            if (existingTenant == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
-                    "error", "TENANT_NOT_FOUND",
-                    "message", "Tenant not found: " + tenantId
-                ));
-            }
-            
-            // Check if tenant has any subscriptions
-            long subscriptionCount = dsl.selectCount()
-                    .from(SUBSCRIPTIONS)
-                    .where(SUBSCRIPTIONS.TENANT_ID.eq(tenantId))
-                    .fetchOne(0, Long.class);
-            
-            if (subscriptionCount > 0) {
-                logger.warn("Cannot delete tenant {} - has {} active subscriptions", tenantId, subscriptionCount);
-                return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of(
-                    "error", "TENANT_HAS_SUBSCRIPTIONS",
-                    "message", "Cannot delete tenant with active subscriptions. Found " + subscriptionCount + " subscription(s).",
-                    "subscriptionCount", subscriptionCount
-                ));
-            }
-            
-            // Check for other related data (plans, customers, etc.)
-            long planCount = dsl.selectCount()
-                    .from(com.subscriptionengine.generated.tables.Plans.PLANS)
-                    .where(com.subscriptionengine.generated.tables.Plans.PLANS.TENANT_ID.eq(tenantId))
-                    .fetchOne(0, Long.class);
-            
-            long customerCount = dsl.selectCount()
-                    .from(com.subscriptionengine.generated.tables.Customers.CUSTOMERS)
-                    .where(com.subscriptionengine.generated.tables.Customers.CUSTOMERS.TENANT_ID.eq(tenantId))
-                    .fetchOne(0, Long.class);
-            
-            if (planCount > 0 || customerCount > 0) {
-                logger.warn("Cannot delete tenant {} - has related data: {} plans, {} customers", 
-                           tenantId, planCount, customerCount);
-                return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of(
-                    "error", "TENANT_HAS_RELATED_DATA",
-                    "message", "Cannot delete tenant with related data. Found " + planCount + " plan(s) and " + customerCount + " customer(s).",
-                    "planCount", planCount,
-                    "customerCount", customerCount
-                ));
-            }
-            
-            tenantsDao.deleteById(tenantId);
-            
-            logger.info("Successfully deleted tenant: {}", tenantId);
-            return ResponseEntity.ok(Map.of(
-                "message", "Tenant deleted successfully",
-                "tenantId", tenantId.toString()
-            ));
-            
-        } catch (Exception e) {
-            logger.error("Error deleting tenant {}: {}", tenantId, e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
-                "error", "INTERNAL_ERROR",
-                "message", "Failed to delete tenant"
+        Tenants existingTenant = tenantsDao.fetchOneById(tenantId);
+        
+        if (existingTenant == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
+                "error", "TENANT_NOT_FOUND",
+                "message", "Tenant not found: " + tenantId
             ));
         }
+        
+        // Check for active subscriptions
+        long activeSubscriptions = dsl.selectCount()
+                .from(SUBSCRIPTIONS)
+                .where(SUBSCRIPTIONS.TENANT_ID.eq(tenantId))
+                .and(SUBSCRIPTIONS.STATUS.in("ACTIVE", "TRIALING"))
+                .fetchOne(0, Long.class);
+        
+        if (activeSubscriptions > 0) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of(
+                "error", "TENANT_HAS_SUBSCRIPTIONS",
+                "message", "Cannot delete tenant with active subscriptions. Please cancel all subscriptions first.",
+                "activeSubscriptions", activeSubscriptions
+            ));
+        }
+        
+        tenantsDao.deleteById(tenantId);
+        
+        logger.info("Successfully deleted tenant: {}", tenantId);
+        return ResponseEntity.ok(Map.of(
+            "message", "Tenant deleted successfully",
+            "tenantId", tenantId.toString()
+        ));
     }
     
     /**

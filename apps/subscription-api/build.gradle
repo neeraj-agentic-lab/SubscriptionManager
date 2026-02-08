@@ -95,7 +95,32 @@ test {
     testLogging {
         events "passed", "skipped", "failed"
         exceptionFormat "full"
+        showStandardStreams = false  // Don't flood console, logs go to file
     }
+    
+    // Write test output to centralized logs folder at project root
+    // Create a new timestamped log file for each run
+    def timestamp = new Date().format('yyyyMMdd-HHmmss')
+    def testLogFile = file("${rootProject.projectDir}/logs/test-output-${timestamp}.log")
+    doFirst {
+        testLogFile.parentFile.mkdirs()
+        testLogFile.text = ""  // Create the file
+    }
+    onOutput { descriptor, event ->
+        testLogFile.append(event.message)
+    }
+    
+    // Sequential execution to prevent database connection pool exhaustion
+    // Each test class creates its own Spring context with separate connection pool
+    maxParallelForks = 1
     systemProperty 'junit.jupiter.execution.parallel.enabled', 'true'
     systemProperty 'junit.jupiter.execution.parallel.config.strategy', 'dynamic'
+    systemProperty 'junit.jupiter.execution.parallel.config.dynamic.factor', '0.5'
+    
+    // Memory and timeout settings
+    minHeapSize = "512m"
+    maxHeapSize = "2048m"
+    
+    // Prevent test hanging
+    timeout = java.time.Duration.ofMinutes(60)
 }

@@ -14,8 +14,8 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
+
+import java.util.UUID;
 
 /**
  * Base class for integration tests.
@@ -27,15 +27,10 @@ import org.testcontainers.junit.jupiter.Testcontainers;
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
     properties = "spring.profiles.active=test"
 )
-@Testcontainers
 public abstract class BaseIntegrationTest {
     
-    @Container
-    protected static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15-alpine")
-        .withDatabaseName("subscription_engine_test")
-        .withUsername("test")
-        .withPassword("test")
-        .withReuse(true);
+    // Use singleton container that survives across all test classes
+    protected static final PostgreSQLContainer<?> postgres = PostgresTestContainer.getInstance();
     
     @LocalServerPort
     protected int port;
@@ -84,5 +79,13 @@ public abstract class BaseIntegrationTest {
      */
     protected RequestSpecification given() {
         return RestAssured.given(requestSpec);
+    }
+    
+    /**
+     * Generate a unique tenant ID for test isolation.
+     * Each test class should use this to avoid database state pollution.
+     */
+    protected String generateUniqueTenantId() {
+        return UUID.randomUUID().toString();
     }
 }

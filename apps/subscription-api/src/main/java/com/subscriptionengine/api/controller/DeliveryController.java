@@ -74,37 +74,23 @@ public class DeliveryController {
         logger.info("[DELIVERY_API_UPCOMING] RequestId: {} - Getting upcoming deliveries for customer {}", 
                    requestId, customerId);
         
-        try {
-            List<Map<String, Object>> deliveries = deliveryManagementService.getUpcomingDeliveries(customerId, limit);
-            
-            Map<String, Object> response = Map.of(
-                "success", true,
-                "data", Map.of(
-                    "deliveries", deliveries,
-                    "count", deliveries.size(),
-                    "limit", limit
-                ),
-                "timestamp", System.currentTimeMillis(),
-                "requestId", requestId
-            );
-            
-            logger.info("[DELIVERY_API_UPCOMING_SUCCESS] RequestId: {} - Retrieved {} upcoming deliveries for customer {}", 
-                       requestId, deliveries.size(), customerId);
-            
-            return ResponseEntity.ok(response);
-            
-        } catch (Exception e) {
-            logger.error("[DELIVERY_API_UPCOMING_ERROR] RequestId: {} - Error getting upcoming deliveries for customer {}: {}", 
-                        requestId, customerId, e.getMessage(), e);
-            
-            return ResponseEntity.status(500).body(Map.of(
-                "success", false,
-                "message", "Error retrieving upcoming deliveries: " + e.getMessage(),
-                "timestamp", System.currentTimeMillis(),
-                "requestId", requestId,
-                "errorClass", e.getClass().getName()
-            ));
-        }
+        List<Map<String, Object>> deliveries = deliveryManagementService.getUpcomingDeliveries(customerId, limit);
+        
+        Map<String, Object> response = Map.of(
+            "success", true,
+            "data", Map.of(
+                "deliveries", deliveries,
+                "count", deliveries.size(),
+                "limit", limit
+            ),
+            "timestamp", System.currentTimeMillis(),
+            "requestId", requestId
+        );
+        
+        logger.info("[DELIVERY_API_UPCOMING_SUCCESS] RequestId: {} - Retrieved {} upcoming deliveries for customer {}", 
+                   requestId, deliveries.size(), customerId);
+        
+        return ResponseEntity.ok(response);
     }
     
     /**
@@ -146,45 +132,31 @@ public class DeliveryController {
         logger.info("[DELIVERY_API_DETAILS] RequestId: {} - Getting delivery details {} for customer {}", 
                    requestId, deliveryId, customerId);
         
-        try {
-            Optional<Map<String, Object>> deliveryOpt = deliveryManagementService.getDeliveryDetails(deliveryId, customerId);
+        Optional<Map<String, Object>> deliveryOpt = deliveryManagementService.getDeliveryDetails(deliveryId, customerId);
+        
+        if (deliveryOpt.isEmpty()) {
+            logger.warn("[DELIVERY_API_DETAILS_NOT_FOUND] RequestId: {} - Delivery {} not found for customer {}", 
+                       requestId, deliveryId, customerId);
             
-            if (deliveryOpt.isEmpty()) {
-                logger.warn("[DELIVERY_API_DETAILS_NOT_FOUND] RequestId: {} - Delivery {} not found for customer {}", 
-                           requestId, deliveryId, customerId);
-                
-                return ResponseEntity.status(404).body(Map.of(
-                    "success", false,
-                    "message", "Delivery not found or not accessible",
-                    "timestamp", System.currentTimeMillis(),
-                    "requestId", requestId
-                ));
-            }
-            
-            Map<String, Object> response = Map.of(
-                "success", true,
-                "data", deliveryOpt.get(),
+            return ResponseEntity.status(404).body(Map.of(
+                "success", false,
+                "message", "Delivery not found or not accessible",
                 "timestamp", System.currentTimeMillis(),
                 "requestId", requestId
-            );
-            
-            logger.info("[DELIVERY_API_DETAILS_SUCCESS] RequestId: {} - Retrieved delivery details for {}", 
-                       requestId, deliveryId);
-            
-            return ResponseEntity.ok(response);
-            
-        } catch (Exception e) {
-            logger.error("[DELIVERY_API_DETAILS_ERROR] RequestId: {} - Error getting delivery details {} for customer {}: {}", 
-                        requestId, deliveryId, customerId, e.getMessage(), e);
-            
-            return ResponseEntity.status(500).body(Map.of(
-                "success", false,
-                "message", "Error retrieving delivery details: " + e.getMessage(),
-                "timestamp", System.currentTimeMillis(),
-                "requestId", requestId,
-                "errorClass", e.getClass().getName()
             ));
         }
+        
+        Map<String, Object> response = Map.of(
+            "success", true,
+            "data", deliveryOpt.get(),
+            "timestamp", System.currentTimeMillis(),
+            "requestId", requestId
+        );
+        
+        logger.info("[DELIVERY_API_DETAILS_SUCCESS] RequestId: {} - Retrieved delivery details for {}", 
+                   requestId, deliveryId);
+        
+        return ResponseEntity.ok(response);
     }
     
     /**
@@ -207,51 +179,37 @@ public class DeliveryController {
         logger.info("[DELIVERY_API_CANCEL] RequestId: {} - Cancelling delivery {} for customer {} (reason: {})", 
                    requestId, deliveryId, customerId, reason);
         
-        try {
-            boolean cancelled = deliveryManagementService.cancelDelivery(deliveryId, customerId, reason);
-            
-            if (!cancelled) {
-                logger.warn("[DELIVERY_API_CANCEL_FAILED] RequestId: {} - Failed to cancel delivery {} for customer {}", 
-                           requestId, deliveryId, customerId);
-                
-                return ResponseEntity.status(400).body(Map.of(
-                    "success", false,
-                    "message", "Cannot cancel delivery - either not found, not owned by customer, or already in processing",
-                    "timestamp", System.currentTimeMillis(),
-                    "requestId", requestId
-                ));
-            }
-            
-            Map<String, Object> response = Map.of(
-                "success", true,
-                "message", "Delivery cancelled successfully",
-                "data", Map.of(
-                    "deliveryId", deliveryId.toString(),
-                    "customerId", customerId.toString(),
-                    "reason", reason,
-                    "cancelledAt", System.currentTimeMillis()
-                ),
-                "timestamp", System.currentTimeMillis(),
-                "requestId", requestId
-            );
-            
-            logger.info("[DELIVERY_API_CANCEL_SUCCESS] RequestId: {} - Successfully cancelled delivery {} for customer {}", 
+        boolean cancelled = deliveryManagementService.cancelDelivery(deliveryId, customerId, reason);
+        
+        if (!cancelled) {
+            logger.warn("[DELIVERY_API_CANCEL_FAILED] RequestId: {} - Failed to cancel delivery {} for customer {}", 
                        requestId, deliveryId, customerId);
             
-            return ResponseEntity.ok(response);
-            
-        } catch (Exception e) {
-            logger.error("[DELIVERY_API_CANCEL_ERROR] RequestId: {} - Error cancelling delivery {} for customer {}: {}", 
-                        requestId, deliveryId, customerId, e.getMessage(), e);
-            
-            return ResponseEntity.status(500).body(Map.of(
+            return ResponseEntity.status(400).body(Map.of(
                 "success", false,
-                "message", "Error cancelling delivery: " + e.getMessage(),
+                "message", "Cannot cancel delivery - either not found, not owned by customer, or already in processing",
                 "timestamp", System.currentTimeMillis(),
-                "requestId", requestId,
-                "errorClass", e.getClass().getName()
+                "requestId", requestId
             ));
         }
+        
+        Map<String, Object> response = Map.of(
+            "success", true,
+            "message", "Delivery cancelled successfully",
+            "data", Map.of(
+                "deliveryId", deliveryId.toString(),
+                "customerId", customerId.toString(),
+                "reason", reason,
+                "cancelledAt", System.currentTimeMillis()
+            ),
+            "timestamp", System.currentTimeMillis(),
+            "requestId", requestId
+        );
+        
+        logger.info("[DELIVERY_API_CANCEL_SUCCESS] RequestId: {} - Successfully cancelled delivery {} for customer {}", 
+                   requestId, deliveryId, customerId);
+        
+        return ResponseEntity.ok(response);
     }
     
     /**
@@ -271,64 +229,50 @@ public class DeliveryController {
         logger.info("[DELIVERY_API_CAN_CANCEL] RequestId: {} - Checking cancellation eligibility for delivery {} (customer: {})", 
                    requestId, deliveryId, customerId);
         
-        try {
-            Optional<Map<String, Object>> deliveryOpt = deliveryManagementService.getDeliveryDetails(deliveryId, customerId);
+        Optional<Map<String, Object>> deliveryOpt = deliveryManagementService.getDeliveryDetails(deliveryId, customerId);
+        
+        if (deliveryOpt.isEmpty()) {
+            logger.warn("[DELIVERY_API_CAN_CANCEL_NOT_FOUND] RequestId: {} - Delivery {} not found for customer {}", 
+                       requestId, deliveryId, customerId);
             
-            if (deliveryOpt.isEmpty()) {
-                logger.warn("[DELIVERY_API_CAN_CANCEL_NOT_FOUND] RequestId: {} - Delivery {} not found for customer {}", 
-                           requestId, deliveryId, customerId);
-                
-                return ResponseEntity.status(404).body(Map.of(
-                    "success", false,
-                    "message", "Delivery not found or not accessible",
-                    "timestamp", System.currentTimeMillis(),
-                    "requestId", requestId
-                ));
-            }
-            
-            Map<String, Object> delivery = deliveryOpt.get();
-            boolean canCancel = (Boolean) delivery.get("canCancel");
-            String status = (String) delivery.get("status");
-            String externalOrderRef = (String) delivery.get("externalOrderRef");
-            
-            String reason = "";
-            if (!canCancel) {
-                if (!"PENDING".equals(status)) {
-                    reason = "Delivery is already in " + status + " status";
-                } else if (externalOrderRef != null && !externalOrderRef.trim().isEmpty()) {
-                    reason = "Order has already been created with external system";
-                }
-            }
-            
-            Map<String, Object> response = Map.of(
-                "success", true,
-                "data", Map.of(
-                    "deliveryId", deliveryId.toString(),
-                    "canCancel", canCancel,
-                    "status", status,
-                    "reason", reason,
-                    "externalOrderRef", externalOrderRef != null ? externalOrderRef : ""
-                ),
+            return ResponseEntity.status(404).body(Map.of(
+                "success", false,
+                "message", "Delivery not found or not accessible",
                 "timestamp", System.currentTimeMillis(),
                 "requestId", requestId
-            );
-            
-            logger.info("[DELIVERY_API_CAN_CANCEL_SUCCESS] RequestId: {} - Delivery {} cancellation eligibility: {}", 
-                       requestId, deliveryId, canCancel);
-            
-            return ResponseEntity.ok(response);
-            
-        } catch (Exception e) {
-            logger.error("[DELIVERY_API_CAN_CANCEL_ERROR] RequestId: {} - Error checking cancellation eligibility for delivery {} (customer: {}): {}", 
-                        requestId, deliveryId, customerId, e.getMessage(), e);
-            
-            return ResponseEntity.status(500).body(Map.of(
-                "success", false,
-                "message", "Error checking cancellation eligibility: " + e.getMessage(),
-                "timestamp", System.currentTimeMillis(),
-                "requestId", requestId,
-                "errorClass", e.getClass().getName()
             ));
         }
+        
+        Map<String, Object> delivery = deliveryOpt.get();
+        boolean canCancel = (Boolean) delivery.get("canCancel");
+        String status = (String) delivery.get("status");
+        String externalOrderRef = (String) delivery.get("externalOrderRef");
+        
+        String reason = "";
+        if (!canCancel) {
+            if (!"PENDING".equals(status)) {
+                reason = "Delivery is already in " + status + " status";
+            } else if (externalOrderRef != null && !externalOrderRef.trim().isEmpty()) {
+                reason = "Order has already been created with external system";
+            }
+        }
+        
+        Map<String, Object> response = Map.of(
+            "success", true,
+            "data", Map.of(
+                "deliveryId", deliveryId.toString(),
+                "canCancel", canCancel,
+                "status", status,
+                "reason", reason,
+                "externalOrderRef", externalOrderRef != null ? externalOrderRef : ""
+            ),
+            "timestamp", System.currentTimeMillis(),
+            "requestId", requestId
+        );
+        
+        logger.info("[DELIVERY_API_CAN_CANCEL_SUCCESS] RequestId: {} - Delivery {} cancellation eligibility: {}", 
+                   requestId, deliveryId, canCancel);
+        
+        return ResponseEntity.ok(response);
     }
 }

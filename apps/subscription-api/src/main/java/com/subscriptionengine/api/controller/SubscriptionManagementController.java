@@ -81,39 +81,26 @@ public class SubscriptionManagementController {
         logger.info("[SUBSCRIPTION_MGMT_API_START] RequestId: {} - Getting management details for subscription {} customer {}", 
                    requestId, subscriptionId, customerId);
         
-        try {
-            Optional<Map<String, Object>> details = subscriptionManagementService
-                .getSubscriptionManagementDetails(subscriptionId, customerId);
-            
-            if (details.isEmpty()) {
-                logger.warn("[SUBSCRIPTION_MGMT_API_NOT_FOUND] RequestId: {} - Subscription {} not found for customer {}", 
-                           requestId, subscriptionId, customerId);
-                return ResponseEntity.notFound().build();
-            }
-            
-            Map<String, Object> response = Map.of(
-                "success", true,
-                "data", details.get(),
-                "requestId", requestId,
-                "timestamp", System.currentTimeMillis()
-            );
-            
-            logger.info("[SUBSCRIPTION_MGMT_API_SUCCESS] RequestId: {} - Retrieved management details for subscription {}", 
-                       requestId, subscriptionId);
-            
-            return ResponseEntity.ok(response);
-            
-        } catch (Exception e) {
-            logger.error("[SUBSCRIPTION_MGMT_API_ERROR] RequestId: {} - Error getting management details: {}", 
-                        requestId, e.getMessage(), e);
-            
-            return ResponseEntity.status(500).body(Map.of(
-                "success", false,
-                "message", "Error retrieving subscription management details: " + e.getMessage(),
-                "requestId", requestId,
-                "timestamp", System.currentTimeMillis()
-            ));
+        Optional<Map<String, Object>> details = subscriptionManagementService
+            .getSubscriptionManagementDetails(subscriptionId, customerId);
+        
+        if (details.isEmpty()) {
+            logger.warn("[SUBSCRIPTION_MGMT_API_NOT_FOUND] RequestId: {} - Subscription {} not found for customer {}", 
+                       requestId, subscriptionId, customerId);
+            return ResponseEntity.notFound().build();
         }
+        
+        Map<String, Object> response = Map.of(
+            "success", true,
+            "data", details.get(),
+            "requestId", requestId,
+            "timestamp", System.currentTimeMillis()
+        );
+        
+        logger.info("[SUBSCRIPTION_MGMT_API_SUCCESS] RequestId: {} - Retrieved management details for subscription {}", 
+                   requestId, subscriptionId);
+        
+        return ResponseEntity.ok(response);
     }
     
     /**
@@ -160,12 +147,11 @@ public class SubscriptionManagementController {
         logger.info("[SUBSCRIPTION_UPDATE_START] RequestId: {} - Operation {} for subscription {}", 
                    requestId, request.getOperation(), subscriptionId);
         
-        try {
-            boolean success = false;
-            String message = "";
-            Map<String, Object> data = Map.of("subscriptionId", subscriptionId.toString());
-            
-            switch (request.getOperation().toUpperCase()) {
+        boolean success = false;
+        String message = "";
+        Map<String, Object> data = Map.of("subscriptionId", subscriptionId.toString());
+        
+        switch (request.getOperation().toUpperCase()) {
                 case "PAUSE":
                     success = subscriptionManagementService.pauseSubscription(
                         subscriptionId, request.getCustomerId(), request.getReason());
@@ -266,17 +252,6 @@ public class SubscriptionManagementController {
                        requestId, request.getOperation(), subscriptionId);
             
             return ResponseEntity.ok(response);
-            
-        } catch (Exception e) {
-            logger.error("[SUBSCRIPTION_UPDATE_ERROR] RequestId: {} - Error: {}", requestId, e.getMessage(), e);
-            
-            return ResponseEntity.status(500).body(Map.of(
-                "success", false,
-                "message", "Error updating subscription: " + e.getMessage(),
-                "requestId", requestId,
-                "timestamp", System.currentTimeMillis()
-            ));
-        }
     }
     
     /**

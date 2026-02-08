@@ -86,16 +86,10 @@ public class SubscriptionsController {
         logger.info("Creating new subscription for plan: {} and customer: {}", 
                    request.getPlanId(), request.getCustomerEmail());
         
-        try {
-            SubscriptionResponse subscription = subscriptionsService.createSubscription(request);
-            
-            logger.info("Successfully created subscription with ID: {}", subscription.getId());
-            return ResponseEntity.status(HttpStatus.CREATED).body(subscription);
-            
-        } catch (IllegalArgumentException e) {
-            logger.warn("Invalid subscription creation request: {}", e.getMessage());
-            return ResponseEntity.badRequest().build();
-        }
+        SubscriptionResponse subscription = subscriptionsService.createSubscription(request);
+        
+        logger.info("Successfully created subscription with ID: {}", subscription.getId());
+        return ResponseEntity.status(HttpStatus.CREATED).body(subscription);
     }
     
     /**

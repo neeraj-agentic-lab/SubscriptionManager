@@ -76,48 +76,33 @@ public class WebhooksController {
         logger.info("[WEBHOOK_REGISTER_API] RequestId: {} - Registering webhook at URL: {}", 
                    requestId, request.url);
         
-        try {
-            WebhookEndpoints webhook = webhookService.registerWebhook(
-                request.url,
-                request.events != null ? request.events : new String[0],
-                request.description
-            );
-            
-            Map<String, Object> response = new HashMap<>();
-            response.put("requestId", requestId);
-            response.put("timestamp", System.currentTimeMillis());
-            response.put("success", true);
-            response.put("message", "Webhook registered successfully");
-            
-            Map<String, Object> webhookData = new HashMap<>();
-            webhookData.put("webhookId", webhook.getId().toString());
-            webhookData.put("url", webhook.getUrl());
-            webhookData.put("secret", webhook.getSecret());
-            webhookData.put("events", webhook.getEvents());
-            webhookData.put("status", webhook.getStatus());
-            webhookData.put("description", webhook.getDescription());
-            webhookData.put("createdAt", webhook.getCreatedAt().toString());
-            
-            response.put("data", webhookData);
-            
-            logger.info("[WEBHOOK_REGISTER_API_SUCCESS] RequestId: {} - Registered webhook {}", 
-                       requestId, webhook.getId());
-            
-            return ResponseEntity.ok(response);
-            
-        } catch (Exception e) {
-            logger.error("[WEBHOOK_REGISTER_API_ERROR] RequestId: {} - Failed to register webhook", 
-                        requestId, e);
-            
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("requestId", requestId);
-            errorResponse.put("timestamp", System.currentTimeMillis());
-            errorResponse.put("success", false);
-            errorResponse.put("message", "Failed to register webhook: " + e.getMessage());
-            errorResponse.put("errorClass", e.getClass().getSimpleName());
-            
-            return ResponseEntity.status(500).body(errorResponse);
-        }
+        WebhookEndpoints webhook = webhookService.registerWebhook(
+            request.url,
+            request.events != null ? request.events : new String[0],
+            request.description
+        );
+        
+        Map<String, Object> response = new HashMap<>();
+        response.put("requestId", requestId);
+        response.put("timestamp", System.currentTimeMillis());
+        response.put("success", true);
+        response.put("message", "Webhook registered successfully");
+        
+        Map<String, Object> webhookData = new HashMap<>();
+        webhookData.put("webhookId", webhook.getId().toString());
+        webhookData.put("url", webhook.getUrl());
+        webhookData.put("secret", webhook.getSecret());
+        webhookData.put("events", webhook.getEvents());
+        webhookData.put("status", webhook.getStatus());
+        webhookData.put("description", webhook.getDescription());
+        webhookData.put("createdAt", webhook.getCreatedAt().toString());
+        
+        response.put("data", webhookData);
+        
+        logger.info("[WEBHOOK_REGISTER_API_SUCCESS] RequestId: {} - Registered webhook {}", 
+                   requestId, webhook.getId());
+        
+        return ResponseEntity.ok(response);
     }
     
     /**
@@ -146,47 +131,32 @@ public class WebhooksController {
         
         logger.info("[WEBHOOK_LIST_API] RequestId: {} - Listing webhooks", requestId);
         
-        try {
-            List<WebhookEndpoints> webhooks = webhookService.getAllWebhooks();
-            
-            List<Map<String, Object>> webhookList = webhooks.stream()
-                .map(webhook -> {
-                    Map<String, Object> webhookData = new HashMap<>();
-                    webhookData.put("webhookId", webhook.getId().toString());
-                    webhookData.put("url", webhook.getUrl());
-                    webhookData.put("events", webhook.getEvents());
-                    webhookData.put("status", webhook.getStatus());
-                    webhookData.put("description", webhook.getDescription());
-                    webhookData.put("createdAt", webhook.getCreatedAt().toString());
-                    webhookData.put("updatedAt", webhook.getUpdatedAt().toString());
-                    return webhookData;
-                })
-                .toList();
-            
-            Map<String, Object> response = new HashMap<>();
-            response.put("requestId", requestId);
-            response.put("timestamp", System.currentTimeMillis());
-            response.put("success", true);
-            response.put("data", Map.of("webhooks", webhookList, "count", webhookList.size()));
-            
-            logger.info("[WEBHOOK_LIST_API_SUCCESS] RequestId: {} - Listed {} webhooks", 
-                       requestId, webhookList.size());
-            
-            return ResponseEntity.ok(response);
-            
-        } catch (Exception e) {
-            logger.error("[WEBHOOK_LIST_API_ERROR] RequestId: {} - Failed to list webhooks", 
-                        requestId, e);
-            
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("requestId", requestId);
-            errorResponse.put("timestamp", System.currentTimeMillis());
-            errorResponse.put("success", false);
-            errorResponse.put("message", "Failed to list webhooks: " + e.getMessage());
-            errorResponse.put("errorClass", e.getClass().getSimpleName());
-            
-            return ResponseEntity.status(500).body(errorResponse);
-        }
+        List<WebhookEndpoints> webhooks = webhookService.getAllWebhooks();
+        
+        List<Map<String, Object>> webhookList = webhooks.stream()
+            .map(webhook -> {
+                Map<String, Object> webhookData = new HashMap<>();
+                webhookData.put("webhookId", webhook.getId().toString());
+                webhookData.put("url", webhook.getUrl());
+                webhookData.put("events", webhook.getEvents());
+                webhookData.put("status", webhook.getStatus());
+                webhookData.put("description", webhook.getDescription());
+                webhookData.put("createdAt", webhook.getCreatedAt().toString());
+                webhookData.put("updatedAt", webhook.getUpdatedAt().toString());
+                return webhookData;
+            })
+            .toList();
+        
+        Map<String, Object> response = new HashMap<>();
+        response.put("requestId", requestId);
+        response.put("timestamp", System.currentTimeMillis());
+        response.put("success", true);
+        response.put("data", Map.of("webhooks", webhookList, "count", webhookList.size()));
+        
+        logger.info("[WEBHOOK_LIST_API_SUCCESS] RequestId: {} - Listed {} webhooks", 
+                   requestId, webhookList.size());
+        
+        return ResponseEntity.ok(response);
     }
     
     /**
@@ -223,46 +193,19 @@ public class WebhooksController {
         logger.info("[WEBHOOK_UPDATE_API] RequestId: {} - Updating webhook {} status to {}", 
                    requestId, webhookId, request.status);
         
-        try {
-            webhookService.updateWebhookStatus(webhookId, request.status);
-            
-            Map<String, Object> response = new HashMap<>();
-            response.put("requestId", requestId);
-            response.put("timestamp", System.currentTimeMillis());
-            response.put("success", true);
-            response.put("message", "Webhook status updated successfully");
-            response.put("data", Map.of("webhookId", webhookId.toString(), "status", request.status));
-            
-            logger.info("[WEBHOOK_UPDATE_API_SUCCESS] RequestId: {} - Updated webhook {} status", 
-                       requestId, webhookId);
-            
-            return ResponseEntity.ok(response);
-            
-        } catch (IllegalArgumentException e) {
-            logger.warn("[WEBHOOK_UPDATE_API_ERROR] RequestId: {} - Webhook not found: {}", 
-                       requestId, webhookId);
-            
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("requestId", requestId);
-            errorResponse.put("timestamp", System.currentTimeMillis());
-            errorResponse.put("success", false);
-            errorResponse.put("message", e.getMessage());
-            
-            return ResponseEntity.status(404).body(errorResponse);
-            
-        } catch (Exception e) {
-            logger.error("[WEBHOOK_UPDATE_API_ERROR] RequestId: {} - Failed to update webhook status", 
-                        requestId, e);
-            
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("requestId", requestId);
-            errorResponse.put("timestamp", System.currentTimeMillis());
-            errorResponse.put("success", false);
-            errorResponse.put("message", "Failed to update webhook status: " + e.getMessage());
-            errorResponse.put("errorClass", e.getClass().getSimpleName());
-            
-            return ResponseEntity.status(500).body(errorResponse);
-        }
+        webhookService.updateWebhookStatus(webhookId, request.status);
+        
+        Map<String, Object> response = new HashMap<>();
+        response.put("requestId", requestId);
+        response.put("timestamp", System.currentTimeMillis());
+        response.put("success", true);
+        response.put("message", "Webhook status updated successfully");
+        response.put("data", Map.of("webhookId", webhookId.toString(), "status", request.status));
+        
+        logger.info("[WEBHOOK_UPDATE_API_SUCCESS] RequestId: {} - Updated webhook {} status", 
+                   requestId, webhookId);
+        
+        return ResponseEntity.ok(response);
     }
     
     /**
@@ -276,46 +219,19 @@ public class WebhooksController {
         
         logger.info("[WEBHOOK_DELETE_API] RequestId: {} - Deleting webhook {}", requestId, webhookId);
         
-        try {
-            webhookService.deleteWebhook(webhookId);
-            
-            Map<String, Object> response = new HashMap<>();
-            response.put("requestId", requestId);
-            response.put("timestamp", System.currentTimeMillis());
-            response.put("success", true);
-            response.put("message", "Webhook deleted successfully");
-            response.put("data", Map.of("webhookId", webhookId.toString()));
-            
-            logger.info("[WEBHOOK_DELETE_API_SUCCESS] RequestId: {} - Deleted webhook {}", 
-                       requestId, webhookId);
-            
-            return ResponseEntity.ok(response);
-            
-        } catch (IllegalArgumentException e) {
-            logger.warn("[WEBHOOK_DELETE_API_ERROR] RequestId: {} - Webhook not found: {}", 
-                       requestId, webhookId);
-            
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("requestId", requestId);
-            errorResponse.put("timestamp", System.currentTimeMillis());
-            errorResponse.put("success", false);
-            errorResponse.put("message", e.getMessage());
-            
-            return ResponseEntity.status(404).body(errorResponse);
-            
-        } catch (Exception e) {
-            logger.error("[WEBHOOK_DELETE_API_ERROR] RequestId: {} - Failed to delete webhook", 
-                        requestId, e);
-            
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("requestId", requestId);
-            errorResponse.put("timestamp", System.currentTimeMillis());
-            errorResponse.put("success", false);
-            errorResponse.put("message", "Failed to delete webhook: " + e.getMessage());
-            errorResponse.put("errorClass", e.getClass().getSimpleName());
-            
-            return ResponseEntity.status(500).body(errorResponse);
-        }
+        webhookService.deleteWebhook(webhookId);
+        
+        Map<String, Object> response = new HashMap<>();
+        response.put("requestId", requestId);
+        response.put("timestamp", System.currentTimeMillis());
+        response.put("success", true);
+        response.put("message", "Webhook deleted successfully");
+        response.put("data", Map.of("webhookId", webhookId.toString()));
+        
+        logger.info("[WEBHOOK_DELETE_API_SUCCESS] RequestId: {} - Deleted webhook {}", 
+                   requestId, webhookId);
+        
+        return ResponseEntity.ok(response);
     }
     
     // DTOs

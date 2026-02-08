@@ -96,25 +96,10 @@ public class EcommerceSubscriptionsController {
         
         logger.info("Creating ecommerce subscription for {} products", request.getProducts().size());
         
-        try {
-            SubscriptionResponse subscription = ecommerceSubscriptionService.createEcommerceSubscription(request);
-            
-            logger.info("Successfully created ecommerce subscription: {}", subscription.getId());
-            return ResponseEntity.status(HttpStatus.CREATED).body(subscription);
-            
-        } catch (IllegalArgumentException e) {
-            logger.warn("Invalid ecommerce subscription request: {}", e.getMessage());
-            return ResponseEntity.badRequest().body(Map.of(
-                "error", "INVALID_REQUEST",
-                "message", e.getMessage()
-            ));
-        } catch (Exception e) {
-            logger.error("Error creating ecommerce subscription: {}", e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
-                "error", "INTERNAL_ERROR",
-                "message", "Failed to create subscription"
-            ));
-        }
+        SubscriptionResponse subscription = ecommerceSubscriptionService.createEcommerceSubscription(request);
+        
+        logger.info("Successfully created ecommerce subscription: {}", subscription.getId());
+        return ResponseEntity.status(HttpStatus.CREATED).body(subscription);
     }
     
 }
