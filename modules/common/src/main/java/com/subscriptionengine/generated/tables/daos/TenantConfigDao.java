@@ -195,4 +195,34 @@ public class TenantConfigDao extends DAOImpl<TenantConfigRecord, com.subscriptio
     public List<com.subscriptionengine.generated.tables.pojos.TenantConfig> fetchByUpdatedAt(OffsetDateTime... values) {
         return fetch(TenantConfig.TENANT_CONFIG.UPDATED_AT, values);
     }
+
+    /**
+     * Fetch records that have <code>created_by BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.TenantConfig> fetchRangeOfCreatedBy(UUID lowerInclusive, UUID upperInclusive) {
+        return fetchRange(TenantConfig.TENANT_CONFIG.CREATED_BY, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>created_by IN (values)</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.TenantConfig> fetchByCreatedBy(UUID... values) {
+        return fetch(TenantConfig.TENANT_CONFIG.CREATED_BY, values);
+    }
+
+    /**
+     * Fetch records that have <code>updated_by BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.TenantConfig> fetchRangeOfUpdatedBy(UUID lowerInclusive, UUID upperInclusive) {
+        return fetchRange(TenantConfig.TENANT_CONFIG.UPDATED_BY, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>updated_by IN (values)</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.TenantConfig> fetchByUpdatedBy(UUID... values) {
+        return fetch(TenantConfig.TENANT_CONFIG.UPDATED_BY, values);
+    }
 }

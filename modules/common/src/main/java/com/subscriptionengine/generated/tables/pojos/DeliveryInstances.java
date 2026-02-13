@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
@@ -39,6 +40,11 @@ public class DeliveryInstances implements Serializable {
     private OffsetDateTime updatedAt;
     private OffsetDateTime cancelledAt;
     private String cancellationReason;
+    private UUID createdBy;
+    private UUID updatedBy;
+    private UUID rescheduledBy;
+    private String rescheduleReason;
+    private LocalDateTime rescheduledAt;
 
     public DeliveryInstances() {}
 
@@ -60,6 +66,11 @@ public class DeliveryInstances implements Serializable {
         this.updatedAt = value.updatedAt;
         this.cancelledAt = value.cancelledAt;
         this.cancellationReason = value.cancellationReason;
+        this.createdBy = value.createdBy;
+        this.updatedBy = value.updatedBy;
+        this.rescheduledBy = value.rescheduledBy;
+        this.rescheduleReason = value.rescheduleReason;
+        this.rescheduledAt = value.rescheduledAt;
     }
 
     public DeliveryInstances(
@@ -79,7 +90,12 @@ public class DeliveryInstances implements Serializable {
         OffsetDateTime createdAt,
         OffsetDateTime updatedAt,
         OffsetDateTime cancelledAt,
-        String cancellationReason
+        String cancellationReason,
+        UUID createdBy,
+        UUID updatedBy,
+        UUID rescheduledBy,
+        String rescheduleReason,
+        LocalDateTime rescheduledAt
     ) {
         this.id = id;
         this.tenantId = tenantId;
@@ -98,6 +114,11 @@ public class DeliveryInstances implements Serializable {
         this.updatedAt = updatedAt;
         this.cancelledAt = cancelledAt;
         this.cancellationReason = cancellationReason;
+        this.createdBy = createdBy;
+        this.updatedBy = updatedBy;
+        this.rescheduledBy = rescheduledBy;
+        this.rescheduleReason = rescheduleReason;
+        this.rescheduledAt = rescheduledAt;
     }
 
     /**
@@ -368,6 +389,91 @@ public class DeliveryInstances implements Serializable {
         return this;
     }
 
+    /**
+     * Getter for <code>public.delivery_instances.created_by</code>. User who
+     * created this delivery (usually system)
+     */
+    public UUID getCreatedBy() {
+        return this.createdBy;
+    }
+
+    /**
+     * Setter for <code>public.delivery_instances.created_by</code>. User who
+     * created this delivery (usually system)
+     */
+    public DeliveryInstances setCreatedBy(UUID createdBy) {
+        this.createdBy = createdBy;
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.delivery_instances.updated_by</code>. User who
+     * last updated this delivery (skip, reschedule, fulfill)
+     */
+    public UUID getUpdatedBy() {
+        return this.updatedBy;
+    }
+
+    /**
+     * Setter for <code>public.delivery_instances.updated_by</code>. User who
+     * last updated this delivery (skip, reschedule, fulfill)
+     */
+    public DeliveryInstances setUpdatedBy(UUID updatedBy) {
+        this.updatedBy = updatedBy;
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.delivery_instances.rescheduled_by</code>. User
+     * who rescheduled the delivery
+     */
+    public UUID getRescheduledBy() {
+        return this.rescheduledBy;
+    }
+
+    /**
+     * Setter for <code>public.delivery_instances.rescheduled_by</code>. User
+     * who rescheduled the delivery
+     */
+    public DeliveryInstances setRescheduledBy(UUID rescheduledBy) {
+        this.rescheduledBy = rescheduledBy;
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.delivery_instances.reschedule_reason</code>.
+     * Reason for rescheduling the delivery
+     */
+    public String getRescheduleReason() {
+        return this.rescheduleReason;
+    }
+
+    /**
+     * Setter for <code>public.delivery_instances.reschedule_reason</code>.
+     * Reason for rescheduling the delivery
+     */
+    public DeliveryInstances setRescheduleReason(String rescheduleReason) {
+        this.rescheduleReason = rescheduleReason;
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.delivery_instances.rescheduled_at</code>. When
+     * the delivery was rescheduled
+     */
+    public LocalDateTime getRescheduledAt() {
+        return this.rescheduledAt;
+    }
+
+    /**
+     * Setter for <code>public.delivery_instances.rescheduled_at</code>. When
+     * the delivery was rescheduled
+     */
+    public DeliveryInstances setRescheduledAt(LocalDateTime rescheduledAt) {
+        this.rescheduledAt = rescheduledAt;
+        return this;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -479,6 +585,36 @@ public class DeliveryInstances implements Serializable {
         }
         else if (!this.cancellationReason.equals(other.cancellationReason))
             return false;
+        if (this.createdBy == null) {
+            if (other.createdBy != null)
+                return false;
+        }
+        else if (!this.createdBy.equals(other.createdBy))
+            return false;
+        if (this.updatedBy == null) {
+            if (other.updatedBy != null)
+                return false;
+        }
+        else if (!this.updatedBy.equals(other.updatedBy))
+            return false;
+        if (this.rescheduledBy == null) {
+            if (other.rescheduledBy != null)
+                return false;
+        }
+        else if (!this.rescheduledBy.equals(other.rescheduledBy))
+            return false;
+        if (this.rescheduleReason == null) {
+            if (other.rescheduleReason != null)
+                return false;
+        }
+        else if (!this.rescheduleReason.equals(other.rescheduleReason))
+            return false;
+        if (this.rescheduledAt == null) {
+            if (other.rescheduledAt != null)
+                return false;
+        }
+        else if (!this.rescheduledAt.equals(other.rescheduledAt))
+            return false;
         return true;
     }
 
@@ -503,6 +639,11 @@ public class DeliveryInstances implements Serializable {
         result = prime * result + ((this.updatedAt == null) ? 0 : this.updatedAt.hashCode());
         result = prime * result + ((this.cancelledAt == null) ? 0 : this.cancelledAt.hashCode());
         result = prime * result + ((this.cancellationReason == null) ? 0 : this.cancellationReason.hashCode());
+        result = prime * result + ((this.createdBy == null) ? 0 : this.createdBy.hashCode());
+        result = prime * result + ((this.updatedBy == null) ? 0 : this.updatedBy.hashCode());
+        result = prime * result + ((this.rescheduledBy == null) ? 0 : this.rescheduledBy.hashCode());
+        result = prime * result + ((this.rescheduleReason == null) ? 0 : this.rescheduleReason.hashCode());
+        result = prime * result + ((this.rescheduledAt == null) ? 0 : this.rescheduledAt.hashCode());
         return result;
     }
 
@@ -527,6 +668,11 @@ public class DeliveryInstances implements Serializable {
         sb.append(", ").append(updatedAt);
         sb.append(", ").append(cancelledAt);
         sb.append(", ").append(cancellationReason);
+        sb.append(", ").append(createdBy);
+        sb.append(", ").append(updatedBy);
+        sb.append(", ").append(rescheduledBy);
+        sb.append(", ").append(rescheduleReason);
+        sb.append(", ").append(rescheduledAt);
 
         sb.append(")");
         return sb.toString();

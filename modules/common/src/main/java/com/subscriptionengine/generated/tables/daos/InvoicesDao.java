@@ -329,4 +329,34 @@ public class InvoicesDao extends DAOImpl<InvoicesRecord, com.subscriptionengine.
     public List<com.subscriptionengine.generated.tables.pojos.Invoices> fetchByUpdatedAt(OffsetDateTime... values) {
         return fetch(Invoices.INVOICES.UPDATED_AT, values);
     }
+
+    /**
+     * Fetch records that have <code>created_by BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.Invoices> fetchRangeOfCreatedBy(UUID lowerInclusive, UUID upperInclusive) {
+        return fetchRange(Invoices.INVOICES.CREATED_BY, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>created_by IN (values)</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.Invoices> fetchByCreatedBy(UUID... values) {
+        return fetch(Invoices.INVOICES.CREATED_BY, values);
+    }
+
+    /**
+     * Fetch records that have <code>updated_by BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.Invoices> fetchRangeOfUpdatedBy(UUID lowerInclusive, UUID upperInclusive) {
+        return fetchRange(Invoices.INVOICES.UPDATED_BY, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>updated_by IN (values)</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.Invoices> fetchByUpdatedBy(UUID... values) {
+        return fetch(Invoices.INVOICES.UPDATED_BY, values);
+    }
 }

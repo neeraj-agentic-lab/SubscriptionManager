@@ -10,7 +10,7 @@ source "$SCRIPT_DIR/../common/docker-build.sh"
 source "$SCRIPT_DIR/config.sh"
 
 deploy_worker() {
-    section "Deploying Worker to Cloud Run Jobs"
+    section "Deploying Worker to Cloud Run Service"
     
     # Build Docker image
     log "Building Worker Docker image..."
@@ -69,86 +69,53 @@ deploy_worker() {
     # Build database URL for Cloud SQL
     DB_URL="jdbc:postgresql:///${GCP_DB_NAME}?cloudSqlInstance=${GCP_PROJECT_ID}:${GCP_REGION}:${GCP_DB_INSTANCE_NAME}&socketFactory=com.google.cloud.sql.postgres.SocketFactory"
     
-    # Check if job exists
-    if gcloud run jobs describe "$GCP_WORKER_JOB_NAME" \
+    # Deploy Worker as Cloud Run Service (always-on for @Scheduled jobs)
+    log "Deploying Worker as Cloud Run Service (always-on)..."
+    gcloud run deploy "$GCP_WORKER_SERVICE_NAME" \
+        --image="$REMOTE_IMAGE" \
         --project="$GCP_PROJECT_ID" \
-        --region="$GCP_REGION" &>/dev/null; then
-        log "Updating existing Cloud Run Job..."
-        
-        gcloud run jobs update "$GCP_WORKER_JOB_NAME" \
-            --image="$REMOTE_IMAGE" \
-            --project="$GCP_PROJECT_ID" \
-            --region="$GCP_REGION" \
-            --cpu="$CPU" \
-            --memory="$MEMORY" \
-            --max-retries=3 \
-            --task-timeout=3600 \
-            --set-cloudsql-instances="${GCP_PROJECT_ID}:${GCP_REGION}:${GCP_DB_INSTANCE_NAME}" \
-            --set-env-vars="DATABASE_URL=${DB_URL}" \
-            --set-env-vars="DATABASE_USER=${GCP_DB_USER}" \
-            --set-env-vars="SPRING_PROFILES_ACTIVE=${ENVIRONMENT:-production}" \
-            --update-secrets="DATABASE_PASSWORD=${GCP_DB_PASSWORD_SECRET}:latest"
-    else
-        log "Creating new Cloud Run Job..."
-        
-        gcloud run jobs create "$GCP_WORKER_JOB_NAME" \
-            --image="$REMOTE_IMAGE" \
-            --project="$GCP_PROJECT_ID" \
-            --region="$GCP_REGION" \
-            --cpu="$CPU" \
-            --memory="$MEMORY" \
-            --max-retries=3 \
-            --task-timeout=3600 \
-            --set-cloudsql-instances="${GCP_PROJECT_ID}:${GCP_REGION}:${GCP_DB_INSTANCE_NAME}" \
-            --set-env-vars="DATABASE_URL=${DB_URL}" \
-            --set-env-vars="DATABASE_USER=${GCP_DB_USER}" \
-            --set-env-vars="SPRING_PROFILES_ACTIVE=${ENVIRONMENT:-production}" \
-            --update-secrets="DATABASE_PASSWORD=${GCP_DB_PASSWORD_SECRET}:latest"
-    fi
+        --region="$GCP_REGION" \
+        --platform=managed \
+        --no-allow-unauthenticated \
+        --ingress=internal \
+        --port=8081 \
+        --cpu="$CPU" \
+        --memory="$MEMORY" \
+        --min-instances=1 \
+        --max-instances=1 \
+        --add-cloudsql-instances="${GCP_PROJECT_ID}:${GCP_REGION}:${GCP_DB_INSTANCE_NAME}" \
+        --set-env-vars="DATABASE_URL=${DB_URL}" \
+        --set-env-vars="DATABASE_USER=${GCP_DB_USER}" \
+        --set-env-vars="SPRING_PROFILES_ACTIVE=${ENVIRONMENT:-production}" \
+        --update-secrets="DATABASE_PASSWORD=${GCP_DB_PASSWORD_SECRET}:latest"
     
-    # Create Cloud Scheduler job for periodic execution
-    SCHEDULER_JOB_NAME="${GCP_WORKER_JOB_NAME}-scheduler"
-    SCHEDULE="${WORKER_SCHEDULE:-0 */1 * * *}"
-    
-    log "Setting up Cloud Scheduler..."
-    
-    if gcloud scheduler jobs describe "$SCHEDULER_JOB_NAME" \
+    # Get service URL (for internal access only)
+    SERVICE_URL=$(gcloud run services describe "$GCP_WORKER_SERVICE_NAME" \
         --project="$GCP_PROJECT_ID" \
-        --location="$GCP_REGION" &>/dev/null; then
-        log "Updating existing scheduler job..."
-        
-        gcloud scheduler jobs update http "$SCHEDULER_JOB_NAME" \
-            --project="$GCP_PROJECT_ID" \
-            --location="$GCP_REGION" \
-            --schedule="$SCHEDULE" \
-            --uri="https://${GCP_REGION}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${GCP_PROJECT_ID}/jobs/${GCP_WORKER_JOB_NAME}:run" \
-            --http-method=POST \
-            --oauth-service-account-email="${GCP_PROJECT_ID}@appspot.gserviceaccount.com" \
-            2>/dev/null || warn "Scheduler update may have failed"
-    else
-        log "Creating new scheduler job..."
-        
-        gcloud scheduler jobs create http "$SCHEDULER_JOB_NAME" \
-            --project="$GCP_PROJECT_ID" \
-            --location="$GCP_REGION" \
-            --schedule="$SCHEDULE" \
-            --uri="https://${GCP_REGION}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${GCP_PROJECT_ID}/jobs/${GCP_WORKER_JOB_NAME}:run" \
-            --http-method=POST \
-            --oauth-service-account-email="${GCP_PROJECT_ID}@appspot.gserviceaccount.com" \
-            2>/dev/null || warn "Scheduler creation may have failed"
-    fi
+        --region="$GCP_REGION" \
+        --format="value(status.url)" 2>/dev/null || echo "N/A")
     
-    success "Worker deployed to Cloud Run Jobs!"
+    success "Worker deployed to Cloud Run Service!"
     echo ""
     log "Worker Details:"
-    log "  Job: $GCP_WORKER_JOB_NAME"
+    log "  Service: $GCP_WORKER_SERVICE_NAME"
+    log "  URL (internal): $SERVICE_URL"
     log "  Region: $GCP_REGION"
     log "  CPU: $CPU"
     log "  Memory: $MEMORY"
-    log "  Schedule: $SCHEDULE"
+    log "  Min Instances: 1 (always running)"
+    log "  Max Instances: 1 (single instance)"
+    log "  Ingress: internal (no public access)"
     echo ""
-    log "Manual execution:"
-    log "  gcloud run jobs execute $GCP_WORKER_JOB_NAME --project=$GCP_PROJECT_ID --region=$GCP_REGION"
+    log "Worker runs continuously and executes @Scheduled jobs:"
+    log "  - Task processing (every 30 seconds)"
+    log "  - Lock cleanup (every 5 minutes)"
+    log "  - Nonce cleanup (every 5 minutes)"
+    log "  - Rate limit cleanup (every 1 hour)"
+    log "  - Webhook delivery (every 5-10 seconds)"
+    echo ""
+    log "Health check:"
+    log "  Internal URL: ${SERVICE_URL}/actuator/health"
     echo ""
 }
 

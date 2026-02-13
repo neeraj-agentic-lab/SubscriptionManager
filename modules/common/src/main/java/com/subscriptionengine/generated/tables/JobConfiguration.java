@@ -130,6 +130,18 @@ public class JobConfiguration extends TableImpl<JobConfigurationRecord> {
      */
     public final TableField<JobConfigurationRecord, JSONB> JOB_CONFIG = createField(DSL.name("job_config"), SQLDataType.JSONB.defaultValue(DSL.field(DSL.raw("'{}'::jsonb"), SQLDataType.JSONB)), this, "Additional job-specific configuration in JSON format");
 
+    /**
+     * The column <code>public.job_configuration.created_by_user_id</code>. User
+     * who created this job configuration
+     */
+    public final TableField<JobConfigurationRecord, UUID> CREATED_BY_USER_ID = createField(DSL.name("created_by_user_id"), SQLDataType.UUID, this, "User who created this job configuration");
+
+    /**
+     * The column <code>public.job_configuration.updated_by_user_id</code>. User
+     * who last updated this job configuration
+     */
+    public final TableField<JobConfigurationRecord, UUID> UPDATED_BY_USER_ID = createField(DSL.name("updated_by_user_id"), SQLDataType.UUID, this, "User who last updated this job configuration");
+
     private JobConfiguration(Name alias, Table<JobConfigurationRecord> aliased) {
         this(alias, aliased, null);
     }
@@ -170,7 +182,7 @@ public class JobConfiguration extends TableImpl<JobConfigurationRecord> {
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.asList(Indexes.IDX_JOB_CONFIGURATION_ENABLED, Indexes.IDX_JOB_CONFIGURATION_JOB_NAME, Indexes.IDX_JOB_CONFIGURATION_SCHEDULE_PRESET);
+        return Arrays.asList(Indexes.IDX_JOB_CONFIGURATION_CREATED_BY, Indexes.IDX_JOB_CONFIGURATION_ENABLED, Indexes.IDX_JOB_CONFIGURATION_JOB_NAME, Indexes.IDX_JOB_CONFIGURATION_SCHEDULE_PRESET, Indexes.IDX_JOB_CONFIGURATION_UPDATED_BY);
     }
 
     @Override
@@ -181,6 +193,36 @@ public class JobConfiguration extends TableImpl<JobConfigurationRecord> {
     @Override
     public List<UniqueKey<JobConfigurationRecord>> getUniqueKeys() {
         return Arrays.asList(Keys.JOB_CONFIGURATION_JOB_NAME_KEY);
+    }
+
+    @Override
+    public List<ForeignKey<JobConfigurationRecord, ?>> getReferences() {
+        return Arrays.asList(Keys.JOB_CONFIGURATION__JOB_CONFIGURATION_CREATED_BY_USER_ID_FKEY, Keys.JOB_CONFIGURATION__JOB_CONFIGURATION_UPDATED_BY_USER_ID_FKEY);
+    }
+
+    private transient Users _jobConfigurationCreatedByUserIdFkey;
+    private transient Users _jobConfigurationUpdatedByUserIdFkey;
+
+    /**
+     * Get the implicit join path to the <code>public.users</code> table, via
+     * the <code>job_configuration_created_by_user_id_fkey</code> key.
+     */
+    public Users jobConfigurationCreatedByUserIdFkey() {
+        if (_jobConfigurationCreatedByUserIdFkey == null)
+            _jobConfigurationCreatedByUserIdFkey = new Users(this, Keys.JOB_CONFIGURATION__JOB_CONFIGURATION_CREATED_BY_USER_ID_FKEY);
+
+        return _jobConfigurationCreatedByUserIdFkey;
+    }
+
+    /**
+     * Get the implicit join path to the <code>public.users</code> table, via
+     * the <code>job_configuration_updated_by_user_id_fkey</code> key.
+     */
+    public Users jobConfigurationUpdatedByUserIdFkey() {
+        if (_jobConfigurationUpdatedByUserIdFkey == null)
+            _jobConfigurationUpdatedByUserIdFkey = new Users(this, Keys.JOB_CONFIGURATION__JOB_CONFIGURATION_UPDATED_BY_USER_ID_FKEY);
+
+        return _jobConfigurationUpdatedByUserIdFkey;
     }
 
     @Override

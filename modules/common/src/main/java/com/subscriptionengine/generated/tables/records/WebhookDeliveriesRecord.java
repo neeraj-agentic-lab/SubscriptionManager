@@ -286,6 +286,36 @@ public class WebhookDeliveriesRecord extends UpdatableRecordImpl<WebhookDeliveri
         return (OffsetDateTime) get(16);
     }
 
+    /**
+     * Setter for <code>public.webhook_deliveries.created_by</code>.
+     */
+    public WebhookDeliveriesRecord setCreatedBy(UUID value) {
+        set(17, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.webhook_deliveries.created_by</code>.
+     */
+    public UUID getCreatedBy() {
+        return (UUID) get(17);
+    }
+
+    /**
+     * Setter for <code>public.webhook_deliveries.updated_by</code>.
+     */
+    public WebhookDeliveriesRecord setUpdatedBy(UUID value) {
+        set(18, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.webhook_deliveries.updated_by</code>.
+     */
+    public UUID getUpdatedBy() {
+        return (UUID) get(18);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -309,7 +339,7 @@ public class WebhookDeliveriesRecord extends UpdatableRecordImpl<WebhookDeliveri
     /**
      * Create a detached, initialised WebhookDeliveriesRecord
      */
-    public WebhookDeliveriesRecord(UUID id, UUID tenantId, UUID webhookEndpointId, UUID outboxEventId, String eventType, JSONB payload, String status, Integer attemptCount, Integer maxAttempts, OffsetDateTime nextAttemptAt, Integer lastResponseStatus, String lastResponseBody, String lastError, OffsetDateTime deliveredAt, JSONB customAttrs, OffsetDateTime createdAt, OffsetDateTime updatedAt) {
+    public WebhookDeliveriesRecord(UUID id, UUID tenantId, UUID webhookEndpointId, UUID outboxEventId, String eventType, JSONB payload, String status, Integer attemptCount, Integer maxAttempts, OffsetDateTime nextAttemptAt, Integer lastResponseStatus, String lastResponseBody, String lastError, OffsetDateTime deliveredAt, JSONB customAttrs, OffsetDateTime createdAt, OffsetDateTime updatedAt, UUID createdBy, UUID updatedBy) {
         super(WebhookDeliveries.WEBHOOK_DELIVERIES);
 
         setId(id);
@@ -329,6 +359,8 @@ public class WebhookDeliveriesRecord extends UpdatableRecordImpl<WebhookDeliveri
         setCustomAttrs(customAttrs);
         setCreatedAt(createdAt);
         setUpdatedAt(updatedAt);
+        setCreatedBy(createdBy);
+        setUpdatedBy(updatedBy);
         resetChangedOnNotNull();
     }
 
@@ -356,6 +388,8 @@ public class WebhookDeliveriesRecord extends UpdatableRecordImpl<WebhookDeliveri
             setCustomAttrs(value.getCustomAttrs());
             setCreatedAt(value.getCreatedAt());
             setUpdatedAt(value.getUpdatedAt());
+            setCreatedBy(value.getCreatedBy());
+            setUpdatedBy(value.getUpdatedBy());
             resetChangedOnNotNull();
         }
     }

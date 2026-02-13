@@ -284,4 +284,94 @@ public class PlansDao extends DAOImpl<PlansRecord, com.subscriptionengine.genera
     public List<com.subscriptionengine.generated.tables.pojos.Plans> fetchByUpdatedAt(OffsetDateTime... values) {
         return fetch(Plans.PLANS.UPDATED_AT, values);
     }
+
+    /**
+     * Fetch records that have <code>created_by BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.Plans> fetchRangeOfCreatedBy(UUID lowerInclusive, UUID upperInclusive) {
+        return fetchRange(Plans.PLANS.CREATED_BY, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>created_by IN (values)</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.Plans> fetchByCreatedBy(UUID... values) {
+        return fetch(Plans.PLANS.CREATED_BY, values);
+    }
+
+    /**
+     * Fetch records that have <code>updated_by BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.Plans> fetchRangeOfUpdatedBy(UUID lowerInclusive, UUID upperInclusive) {
+        return fetchRange(Plans.PLANS.UPDATED_BY, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>updated_by IN (values)</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.Plans> fetchByUpdatedBy(UUID... values) {
+        return fetch(Plans.PLANS.UPDATED_BY, values);
+    }
+
+    /**
+     * Fetch records that have <code>plan_category BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.Plans> fetchRangeOfPlanCategory(String lowerInclusive, String upperInclusive) {
+        return fetchRange(Plans.PLANS.PLAN_CATEGORY, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>plan_category IN (values)</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.Plans> fetchByPlanCategory(String... values) {
+        return fetch(Plans.PLANS.PLAN_CATEGORY, values);
+    }
+
+    /**
+     * Fetch records that have <code>requires_products BETWEEN lowerInclusive
+     * AND upperInclusive</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.Plans> fetchRangeOfRequiresProducts(Boolean lowerInclusive, Boolean upperInclusive) {
+        return fetchRange(Plans.PLANS.REQUIRES_PRODUCTS, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>requires_products IN (values)</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.Plans> fetchByRequiresProducts(Boolean... values) {
+        return fetch(Plans.PLANS.REQUIRES_PRODUCTS, values);
+    }
+
+    /**
+     * Fetch records that have <code>allows_products BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.Plans> fetchRangeOfAllowsProducts(Boolean lowerInclusive, Boolean upperInclusive) {
+        return fetchRange(Plans.PLANS.ALLOWS_PRODUCTS, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>allows_products IN (values)</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.Plans> fetchByAllowsProducts(Boolean... values) {
+        return fetch(Plans.PLANS.ALLOWS_PRODUCTS, values);
+    }
+
+    /**
+     * Fetch records that have <code>base_price_required BETWEEN lowerInclusive
+     * AND upperInclusive</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.Plans> fetchRangeOfBasePriceRequired(Boolean lowerInclusive, Boolean upperInclusive) {
+        return fetchRange(Plans.PLANS.BASE_PRICE_REQUIRED, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>base_price_required IN (values)</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.Plans> fetchByBasePriceRequired(Boolean... values) {
+        return fetch(Plans.PLANS.BASE_PRICE_REQUIRED, values);
+    }
 }

@@ -314,4 +314,34 @@ public class PaymentAttemptsDao extends DAOImpl<PaymentAttemptsRecord, com.subsc
     public List<com.subscriptionengine.generated.tables.pojos.PaymentAttempts> fetchByUpdatedAt(OffsetDateTime... values) {
         return fetch(PaymentAttempts.PAYMENT_ATTEMPTS.UPDATED_AT, values);
     }
+
+    /**
+     * Fetch records that have <code>created_by BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.PaymentAttempts> fetchRangeOfCreatedBy(UUID lowerInclusive, UUID upperInclusive) {
+        return fetchRange(PaymentAttempts.PAYMENT_ATTEMPTS.CREATED_BY, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>created_by IN (values)</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.PaymentAttempts> fetchByCreatedBy(UUID... values) {
+        return fetch(PaymentAttempts.PAYMENT_ATTEMPTS.CREATED_BY, values);
+    }
+
+    /**
+     * Fetch records that have <code>updated_by BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.PaymentAttempts> fetchRangeOfUpdatedBy(UUID lowerInclusive, UUID upperInclusive) {
+        return fetchRange(PaymentAttempts.PAYMENT_ATTEMPTS.UPDATED_BY, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>updated_by IN (values)</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.PaymentAttempts> fetchByUpdatedBy(UUID... values) {
+        return fetch(PaymentAttempts.PAYMENT_ATTEMPTS.UPDATED_BY, values);
+    }
 }

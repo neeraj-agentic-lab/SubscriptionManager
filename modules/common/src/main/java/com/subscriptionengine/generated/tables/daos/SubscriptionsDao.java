@@ -7,6 +7,7 @@ package com.subscriptionengine.generated.tables.daos;
 import com.subscriptionengine.generated.tables.Subscriptions;
 import com.subscriptionengine.generated.tables.records.SubscriptionsRecord;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -373,5 +374,80 @@ public class SubscriptionsDao extends DAOImpl<SubscriptionsRecord, com.subscript
      */
     public List<com.subscriptionengine.generated.tables.pojos.Subscriptions> fetchByUpdatedAt(OffsetDateTime... values) {
         return fetch(Subscriptions.SUBSCRIPTIONS.UPDATED_AT, values);
+    }
+
+    /**
+     * Fetch records that have <code>created_by BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.Subscriptions> fetchRangeOfCreatedBy(UUID lowerInclusive, UUID upperInclusive) {
+        return fetchRange(Subscriptions.SUBSCRIPTIONS.CREATED_BY, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>created_by IN (values)</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.Subscriptions> fetchByCreatedBy(UUID... values) {
+        return fetch(Subscriptions.SUBSCRIPTIONS.CREATED_BY, values);
+    }
+
+    /**
+     * Fetch records that have <code>updated_by BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.Subscriptions> fetchRangeOfUpdatedBy(UUID lowerInclusive, UUID upperInclusive) {
+        return fetchRange(Subscriptions.SUBSCRIPTIONS.UPDATED_BY, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>updated_by IN (values)</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.Subscriptions> fetchByUpdatedBy(UUID... values) {
+        return fetch(Subscriptions.SUBSCRIPTIONS.UPDATED_BY, values);
+    }
+
+    /**
+     * Fetch records that have <code>admin_notes BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.Subscriptions> fetchRangeOfAdminNotes(String lowerInclusive, String upperInclusive) {
+        return fetchRange(Subscriptions.SUBSCRIPTIONS.ADMIN_NOTES, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>admin_notes IN (values)</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.Subscriptions> fetchByAdminNotes(String... values) {
+        return fetch(Subscriptions.SUBSCRIPTIONS.ADMIN_NOTES, values);
+    }
+
+    /**
+     * Fetch records that have <code>archived_at BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.Subscriptions> fetchRangeOfArchivedAt(LocalDateTime lowerInclusive, LocalDateTime upperInclusive) {
+        return fetchRange(Subscriptions.SUBSCRIPTIONS.ARCHIVED_AT, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>archived_at IN (values)</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.Subscriptions> fetchByArchivedAt(LocalDateTime... values) {
+        return fetch(Subscriptions.SUBSCRIPTIONS.ARCHIVED_AT, values);
+    }
+
+    /**
+     * Fetch records that have <code>archived_by BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.Subscriptions> fetchRangeOfArchivedBy(UUID lowerInclusive, UUID upperInclusive) {
+        return fetchRange(Subscriptions.SUBSCRIPTIONS.ARCHIVED_BY, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>archived_by IN (values)</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.Subscriptions> fetchByArchivedBy(UUID... values) {
+        return fetch(Subscriptions.SUBSCRIPTIONS.ARCHIVED_BY, values);
     }
 }

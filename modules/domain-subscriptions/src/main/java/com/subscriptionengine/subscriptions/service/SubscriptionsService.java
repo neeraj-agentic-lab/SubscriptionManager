@@ -5,12 +5,16 @@ import com.subscriptionengine.auth.TenantContext;
 import com.subscriptionengine.generated.tables.daos.CustomersDao;
 import com.subscriptionengine.generated.tables.daos.PlansDao;
 import com.subscriptionengine.generated.tables.daos.SubscriptionsDao;
+import com.subscriptionengine.generated.tables.daos.SubscriptionItemsDao;
 import com.subscriptionengine.generated.tables.pojos.Customers;
 import com.subscriptionengine.generated.tables.pojos.Plans;
 import com.subscriptionengine.generated.tables.pojos.Subscriptions;
+import com.subscriptionengine.generated.tables.pojos.SubscriptionItems;
 import com.subscriptionengine.subscriptions.dto.CreateSubscriptionRequest;
+import com.subscriptionengine.subscriptions.dto.ProductItem;
 import com.subscriptionengine.subscriptions.dto.SubscriptionResponse;
 import com.subscriptionengine.scheduler.service.ScheduledTaskService;
+import com.subscriptionengine.plans.service.PlanValidationService;
 import org.jooq.DSLContext;
 import org.jooq.JSONB;
 import org.slf4j.Logger;
@@ -43,41 +47,58 @@ public class SubscriptionsService {
     
     private final DSLContext dsl;
     private final SubscriptionsDao subscriptionsDao;
+    private final SubscriptionItemsDao subscriptionItemsDao;
     private final CustomersDao customersDao;
     private final PlansDao plansDao;
     private final ScheduledTaskService scheduledTaskService;
     private final ObjectMapper objectMapper;
+    private final SubscriptionHistoryService subscriptionHistoryService;
+    private final PlanValidationService planValidationService;
     
-    public SubscriptionsService(DSLContext dsl, SubscriptionsDao subscriptionsDao, 
+    public SubscriptionsService(DSLContext dsl, SubscriptionsDao subscriptionsDao,
+                               SubscriptionItemsDao subscriptionItemsDao,
                                CustomersDao customersDao, PlansDao plansDao,
                                ScheduledTaskService scheduledTaskService,
-                               ObjectMapper objectMapper) {
+                               ObjectMapper objectMapper,
+                               SubscriptionHistoryService subscriptionHistoryService,
+                               PlanValidationService planValidationService) {
         this.dsl = dsl;
         this.subscriptionsDao = subscriptionsDao;
+        this.subscriptionItemsDao = subscriptionItemsDao;
         this.customersDao = customersDao;
         this.plansDao = plansDao;
         this.scheduledTaskService = scheduledTaskService;
         this.objectMapper = objectMapper;
+        this.subscriptionHistoryService = subscriptionHistoryService;
+        this.planValidationService = planValidationService;
     }
     
     /**
      * Create a new subscription for the current tenant.
+     * Supports both simple SaaS subscriptions and ecommerce subscriptions with products.
      * Validates plan exists, upserts customer, and creates subscription with proper scheduling.
      * 
-     * @param request the subscription creation request
+     * @param request the subscription creation request (with optional products array)
      * @return the created subscription
      */
     @Transactional
     public SubscriptionResponse createSubscription(CreateSubscriptionRequest request) {
         UUID tenantId = TenantContext.getRequiredTenantId();
+        boolean isEcommerce = request.hasProducts();
         
-        logger.info("Creating subscription for plan {} and customer {} (tenant: {})", 
+        logger.info("Creating {} subscription for plan {} and customer {} (tenant: {})", 
+                   isEcommerce ? "ecommerce" : "simple", 
                    request.getPlanId(), request.getCustomerEmail(), tenantId);
         
         // 1. Validate plan exists and is active
         Plans plan = validateAndGetPlan(request.getPlanId(), tenantId);
         
-        // 2. Upsert customer
+        // 2. Validate products if this is an ecommerce subscription
+        if (isEcommerce) {
+            validateProductsAgainstPlan(request.getProducts(), plan, tenantId);
+        }
+        
+        // 3. Upsert customer
         Customers customer = upsertCustomer(request, tenantId);
         
         // 3. Calculate subscription periods
@@ -110,30 +131,77 @@ public class SubscriptionsService {
         
         // Store plan snapshot (immutable reference to plan details at subscription creation)
         try {
-            Map<String, Object> planSnapshot = Map.of(
-                "planId", plan.getId().toString(),
-                "planName", plan.getName(),
-                "basePriceCents", plan.getBasePriceCents(),
-                "currency", plan.getCurrency(),
-                "billingInterval", plan.getBillingInterval(),
-                "billingIntervalCount", plan.getBillingIntervalCount(),
-                "planType", plan.getPlanType(),
-                "trialPeriodDays", plan.getTrialPeriodDays() != null ? plan.getTrialPeriodDays() : 0,
-                "snapshotAt", now.toString()
-            );
+            Map<String, Object> planSnapshot;
+            if (isEcommerce) {
+                planSnapshot = Map.of(
+                    "subscriptionType", "ECOMMERCE",
+                    "planId", plan.getId().toString(),
+                    "planName", plan.getName(),
+                    "productCount", request.getProducts().size(),
+                    "billingInterval", plan.getBillingInterval(),
+                    "billingIntervalCount", plan.getBillingIntervalCount(),
+                    "snapshotAt", now.toString()
+                );
+            } else {
+                planSnapshot = Map.of(
+                    "subscriptionType", "SIMPLE",
+                    "planId", plan.getId().toString(),
+                    "planName", plan.getName(),
+                    "basePriceCents", plan.getBasePriceCents(),
+                    "currency", plan.getCurrency(),
+                    "billingInterval", plan.getBillingInterval(),
+                    "billingIntervalCount", plan.getBillingIntervalCount(),
+                    "planType", plan.getPlanType(),
+                    "trialPeriodDays", plan.getTrialPeriodDays() != null ? plan.getTrialPeriodDays() : 0,
+                    "snapshotAt", now.toString()
+                );
+            }
             subscription.setPlanSnapshot(JSONB.valueOf(objectMapper.writeValueAsString(planSnapshot)));
         } catch (Exception e) {
             throw new RuntimeException("Failed to create plan snapshot", e);
         }
         
+        // Store shipping address if provided (for ecommerce subscriptions)
+        if (request.getShippingAddress() != null) {
+            try {
+                subscription.setShippingAddress(JSONB.valueOf(objectMapper.writeValueAsString(request.getShippingAddress())));
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to store shipping address", e);
+            }
+        }
+        
         // Insert subscription
         subscriptionsDao.insert(subscription);
         
-        // 5. Schedule renewal and trial end tasks
+        // Get current user ID from security context
+        UUID performedBy = com.subscriptionengine.auth.UserContext.getUserId();
+        String performedByType = determinePerformedByType();
+        
+        // Record subscription creation in history
+        subscriptionHistoryService.recordCreation(tenantId, subscription.getId(), performedBy, performedByType);
+        
+        // 5. Create subscription items for ecommerce products
+        if (isEcommerce) {
+            createSubscriptionItems(subscription.getId(), request.getProducts(), tenantId, now);
+            subscriptionHistoryService.recordProductsUpdate(tenantId, subscription.getId(), performedBy, performedByType, request.getProducts().size());
+        }
+        
+        // 6. Schedule renewal and trial end tasks
         if (trialEnd != null) {
             scheduledTaskService.scheduleTrialEnd(subscription.getId(), trialEnd);
         }
-        scheduledTaskService.scheduleSubscriptionRenewal(subscription.getId(), nextRenewalAt);
+        
+        if (isEcommerce) {
+            // For ecommerce, schedule individual product renewals
+            for (ProductItem product : request.getProducts()) {
+                OffsetDateTime productRenewalAt = calculatePeriodEnd(currentPeriodStart, plan.getBillingInterval());
+                scheduledTaskService.scheduleProductRenewal(subscription.getId(), product.getProductId(), 
+                    plan.getId(), productRenewalAt);
+            }
+        } else {
+            // For simple subscriptions, schedule single renewal
+            scheduledTaskService.scheduleSubscriptionRenewal(subscription.getId(), nextRenewalAt);
+        }
         
         logger.info("Successfully created subscription {} for customer {} (tenant: {})", 
                    subscription.getId(), customer.getId(), tenantId);
@@ -349,6 +417,63 @@ public class SubscriptionsService {
     }
     
     /**
+     * Validate products against plan rules.
+     */
+    private void validateProductsAgainstPlan(List<ProductItem> products, Plans plan, UUID tenantId) {
+        if (products == null || products.isEmpty()) {
+            return;
+        }
+        
+        // Validate subscription request against plan rules
+        PlanValidationService.ValidationResult validationResult = 
+            planValidationService.validateSubscriptionRequest(plan, true, products.size());
+        
+        if (!validationResult.isValid()) {
+            logger.error("Product validation failed: {}", validationResult.getErrorMessage());
+            throw new IllegalArgumentException("Product validation failed: " + validationResult.getErrorMessage());
+        }
+        
+        logger.debug("Validated {} products against plan {}", products.size(), plan.getId());
+    }
+    
+    /**
+     * Create subscription items for product-based subscriptions.
+     */
+    private void createSubscriptionItems(UUID subscriptionId, List<ProductItem> products, 
+                                        UUID tenantId, OffsetDateTime now) {
+        for (ProductItem product : products) {
+            SubscriptionItems item = new SubscriptionItems();
+            item.setId(UUID.randomUUID());
+            item.setSubscriptionId(subscriptionId);
+            item.setTenantId(tenantId);
+            item.setPlanId(UUID.randomUUID()); // Placeholder - products don't need plans
+            item.setQuantity(product.getQuantity());
+            item.setUnitPriceCents(product.getUnitPriceCents());
+            item.setCurrency(product.getCurrency());
+            
+            // Store product details in item_config JSONB
+            try {
+                Map<String, Object> itemConfig = Map.of(
+                    "productId", product.getProductId(),
+                    "productName", product.getProductName(),
+                    "type", "PRODUCT"
+                );
+                item.setItemConfig(JSONB.valueOf(objectMapper.writeValueAsString(itemConfig)));
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to create item config", e);
+            }
+            
+            item.setCreatedAt(now);
+            item.setUpdatedAt(now);
+            
+            subscriptionItemsDao.insert(item);
+            
+            logger.debug("Created subscription item for product {} (subscription: {})", 
+                        product.getProductId(), subscriptionId);
+        }
+    }
+    
+    /**
      * Calculate period end based on billing interval.
      * Expects database format: DAILY, WEEKLY, MONTHLY, QUARTERLY, YEARLY
      */
@@ -372,6 +497,27 @@ public class SubscriptionsService {
     /**
      * Map entities to response DTO.
      */
+    /**
+     * Determine the performed_by_type based on the current user's role.
+     */
+    private String determinePerformedByType() {
+        String role = com.subscriptionengine.auth.UserContext.getUserRole();
+        if (role == null) {
+            return "SYSTEM";
+        }
+        
+        switch (role) {
+            case "CUSTOMER":
+                return "CUSTOMER";
+            case "SUPER_ADMIN":
+            case "TENANT_ADMIN":
+            case "STAFF":
+                return "ADMIN";
+            default:
+                return "SYSTEM";
+        }
+    }
+    
     private SubscriptionResponse mapToResponse(Subscriptions subscription, Customers customer, Plans plan) {
         SubscriptionResponse response = new SubscriptionResponse();
         

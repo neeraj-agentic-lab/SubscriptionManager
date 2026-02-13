@@ -108,6 +108,16 @@ public class SubscriptionItems extends TableImpl<SubscriptionItemsRecord> {
      */
     public final TableField<SubscriptionItemsRecord, OffsetDateTime> UPDATED_AT = createField(DSL.name("updated_at"), SQLDataType.TIMESTAMPWITHTIMEZONE(6).nullable(false).defaultValue(DSL.field(DSL.raw("now()"), SQLDataType.TIMESTAMPWITHTIMEZONE)), this, "");
 
+    /**
+     * The column <code>public.subscription_items.created_by</code>.
+     */
+    public final TableField<SubscriptionItemsRecord, UUID> CREATED_BY = createField(DSL.name("created_by"), SQLDataType.UUID, this, "");
+
+    /**
+     * The column <code>public.subscription_items.updated_by</code>.
+     */
+    public final TableField<SubscriptionItemsRecord, UUID> UPDATED_BY = createField(DSL.name("updated_by"), SQLDataType.UUID, this, "");
+
     private SubscriptionItems(Name alias, Table<SubscriptionItemsRecord> aliased) {
         this(alias, aliased, null);
     }
@@ -148,7 +158,7 @@ public class SubscriptionItems extends TableImpl<SubscriptionItemsRecord> {
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.asList(Indexes.IDX_SUBSCRIPTION_ITEMS_PLAN_ID, Indexes.IDX_SUBSCRIPTION_ITEMS_SUBSCRIPTION_ID, Indexes.IDX_SUBSCRIPTION_ITEMS_TENANT_ID);
+        return Arrays.asList(Indexes.IDX_SUBSCRIPTION_ITEMS_CREATED_BY, Indexes.IDX_SUBSCRIPTION_ITEMS_PLAN_ID, Indexes.IDX_SUBSCRIPTION_ITEMS_SUBSCRIPTION_ID, Indexes.IDX_SUBSCRIPTION_ITEMS_TENANT_ID, Indexes.IDX_SUBSCRIPTION_ITEMS_UPDATED_BY);
     }
 
     @Override
@@ -158,12 +168,14 @@ public class SubscriptionItems extends TableImpl<SubscriptionItemsRecord> {
 
     @Override
     public List<ForeignKey<SubscriptionItemsRecord, ?>> getReferences() {
-        return Arrays.asList(Keys.SUBSCRIPTION_ITEMS__SUBSCRIPTION_ITEMS_TENANT_ID_FKEY, Keys.SUBSCRIPTION_ITEMS__SUBSCRIPTION_ITEMS_SUBSCRIPTION_ID_FKEY, Keys.SUBSCRIPTION_ITEMS__SUBSCRIPTION_ITEMS_PLAN_ID_FKEY);
+        return Arrays.asList(Keys.SUBSCRIPTION_ITEMS__SUBSCRIPTION_ITEMS_TENANT_ID_FKEY, Keys.SUBSCRIPTION_ITEMS__SUBSCRIPTION_ITEMS_SUBSCRIPTION_ID_FKEY, Keys.SUBSCRIPTION_ITEMS__SUBSCRIPTION_ITEMS_PLAN_ID_FKEY, Keys.SUBSCRIPTION_ITEMS__SUBSCRIPTION_ITEMS_CREATED_BY_FKEY, Keys.SUBSCRIPTION_ITEMS__SUBSCRIPTION_ITEMS_UPDATED_BY_FKEY);
     }
 
     private transient Tenants _tenants;
     private transient Subscriptions _subscriptions;
     private transient Plans _plans;
+    private transient Users _subscriptionItemsCreatedByFkey;
+    private transient Users _subscriptionItemsUpdatedByFkey;
 
     /**
      * Get the implicit join path to the <code>public.tenants</code> table.
@@ -194,6 +206,28 @@ public class SubscriptionItems extends TableImpl<SubscriptionItemsRecord> {
             _plans = new Plans(this, Keys.SUBSCRIPTION_ITEMS__SUBSCRIPTION_ITEMS_PLAN_ID_FKEY);
 
         return _plans;
+    }
+
+    /**
+     * Get the implicit join path to the <code>public.users</code> table, via
+     * the <code>subscription_items_created_by_fkey</code> key.
+     */
+    public Users subscriptionItemsCreatedByFkey() {
+        if (_subscriptionItemsCreatedByFkey == null)
+            _subscriptionItemsCreatedByFkey = new Users(this, Keys.SUBSCRIPTION_ITEMS__SUBSCRIPTION_ITEMS_CREATED_BY_FKEY);
+
+        return _subscriptionItemsCreatedByFkey;
+    }
+
+    /**
+     * Get the implicit join path to the <code>public.users</code> table, via
+     * the <code>subscription_items_updated_by_fkey</code> key.
+     */
+    public Users subscriptionItemsUpdatedByFkey() {
+        if (_subscriptionItemsUpdatedByFkey == null)
+            _subscriptionItemsUpdatedByFkey = new Users(this, Keys.SUBSCRIPTION_ITEMS__SUBSCRIPTION_ITEMS_UPDATED_BY_FKEY);
+
+        return _subscriptionItemsUpdatedByFkey;
     }
 
     @Override

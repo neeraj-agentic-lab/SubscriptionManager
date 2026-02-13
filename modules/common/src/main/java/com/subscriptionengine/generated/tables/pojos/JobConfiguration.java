@@ -37,6 +37,8 @@ public class JobConfiguration implements Serializable {
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
     private JSONB jobConfig;
+    private UUID createdByUserId;
+    private UUID updatedByUserId;
 
     public JobConfiguration() {}
 
@@ -56,6 +58,8 @@ public class JobConfiguration implements Serializable {
         this.createdAt = value.createdAt;
         this.updatedAt = value.updatedAt;
         this.jobConfig = value.jobConfig;
+        this.createdByUserId = value.createdByUserId;
+        this.updatedByUserId = value.updatedByUserId;
     }
 
     public JobConfiguration(
@@ -73,7 +77,9 @@ public class JobConfiguration implements Serializable {
         String updatedBy,
         OffsetDateTime createdAt,
         OffsetDateTime updatedAt,
-        JSONB jobConfig
+        JSONB jobConfig,
+        UUID createdByUserId,
+        UUID updatedByUserId
     ) {
         this.id = id;
         this.jobName = jobName;
@@ -90,6 +96,8 @@ public class JobConfiguration implements Serializable {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.jobConfig = jobConfig;
+        this.createdByUserId = createdByUserId;
+        this.updatedByUserId = updatedByUserId;
     }
 
     /**
@@ -335,6 +343,40 @@ public class JobConfiguration implements Serializable {
         return this;
     }
 
+    /**
+     * Getter for <code>public.job_configuration.created_by_user_id</code>. User
+     * who created this job configuration
+     */
+    public UUID getCreatedByUserId() {
+        return this.createdByUserId;
+    }
+
+    /**
+     * Setter for <code>public.job_configuration.created_by_user_id</code>. User
+     * who created this job configuration
+     */
+    public JobConfiguration setCreatedByUserId(UUID createdByUserId) {
+        this.createdByUserId = createdByUserId;
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.job_configuration.updated_by_user_id</code>. User
+     * who last updated this job configuration
+     */
+    public UUID getUpdatedByUserId() {
+        return this.updatedByUserId;
+    }
+
+    /**
+     * Setter for <code>public.job_configuration.updated_by_user_id</code>. User
+     * who last updated this job configuration
+     */
+    public JobConfiguration setUpdatedByUserId(UUID updatedByUserId) {
+        this.updatedByUserId = updatedByUserId;
+        return this;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -434,6 +476,18 @@ public class JobConfiguration implements Serializable {
         }
         else if (!this.jobConfig.equals(other.jobConfig))
             return false;
+        if (this.createdByUserId == null) {
+            if (other.createdByUserId != null)
+                return false;
+        }
+        else if (!this.createdByUserId.equals(other.createdByUserId))
+            return false;
+        if (this.updatedByUserId == null) {
+            if (other.updatedByUserId != null)
+                return false;
+        }
+        else if (!this.updatedByUserId.equals(other.updatedByUserId))
+            return false;
         return true;
     }
 
@@ -456,6 +510,8 @@ public class JobConfiguration implements Serializable {
         result = prime * result + ((this.createdAt == null) ? 0 : this.createdAt.hashCode());
         result = prime * result + ((this.updatedAt == null) ? 0 : this.updatedAt.hashCode());
         result = prime * result + ((this.jobConfig == null) ? 0 : this.jobConfig.hashCode());
+        result = prime * result + ((this.createdByUserId == null) ? 0 : this.createdByUserId.hashCode());
+        result = prime * result + ((this.updatedByUserId == null) ? 0 : this.updatedByUserId.hashCode());
         return result;
     }
 
@@ -478,6 +534,8 @@ public class JobConfiguration implements Serializable {
         sb.append(", ").append(createdAt);
         sb.append(", ").append(updatedAt);
         sb.append(", ").append(jobConfig);
+        sb.append(", ").append(createdByUserId);
+        sb.append(", ").append(updatedByUserId);
 
         sb.append(")");
         return sb.toString();

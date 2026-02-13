@@ -4,6 +4,10 @@
 package com.subscriptionengine.generated;
 
 
+import com.subscriptionengine.generated.tables.AdminSessions;
+import com.subscriptionengine.generated.tables.ApiClientScopes;
+import com.subscriptionengine.generated.tables.ApiClients;
+import com.subscriptionengine.generated.tables.ApiUsageLogs;
 import com.subscriptionengine.generated.tables.Customers;
 import com.subscriptionengine.generated.tables.DeliveryInstances;
 import com.subscriptionengine.generated.tables.Entitlements;
@@ -12,14 +16,21 @@ import com.subscriptionengine.generated.tables.InvoiceLines;
 import com.subscriptionengine.generated.tables.Invoices;
 import com.subscriptionengine.generated.tables.JobConfiguration;
 import com.subscriptionengine.generated.tables.JobExecutionHistory;
+import com.subscriptionengine.generated.tables.OauthAccessTokens;
 import com.subscriptionengine.generated.tables.OutboxEvents;
 import com.subscriptionengine.generated.tables.PaymentAttempts;
 import com.subscriptionengine.generated.tables.Plans;
+import com.subscriptionengine.generated.tables.RateLimitBuckets;
+import com.subscriptionengine.generated.tables.RequestNonces;
 import com.subscriptionengine.generated.tables.ScheduledTasks;
+import com.subscriptionengine.generated.tables.SensitiveOperationsLog;
+import com.subscriptionengine.generated.tables.SubscriptionHistory;
 import com.subscriptionengine.generated.tables.SubscriptionItems;
 import com.subscriptionengine.generated.tables.Subscriptions;
 import com.subscriptionengine.generated.tables.TenantConfig;
 import com.subscriptionengine.generated.tables.Tenants;
+import com.subscriptionengine.generated.tables.UserTenants;
+import com.subscriptionengine.generated.tables.Users;
 import com.subscriptionengine.generated.tables.WebhookDeliveries;
 import com.subscriptionengine.generated.tables.WebhookEndpoints;
 
@@ -29,6 +40,26 @@ import com.subscriptionengine.generated.tables.WebhookEndpoints;
  */
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Tables {
+
+    /**
+     * Tracks active admin/staff JWT sessions for revocation and auditing
+     */
+    public static final AdminSessions ADMIN_SESSIONS = AdminSessions.ADMIN_SESSIONS;
+
+    /**
+     * Available scopes for API clients with granular permissions
+     */
+    public static final ApiClientScopes API_CLIENT_SCOPES = ApiClientScopes.API_CLIENT_SCOPES;
+
+    /**
+     * API clients for multi-tier authentication (API Key, OAuth, mTLS)
+     */
+    public static final ApiClients API_CLIENTS = ApiClients.API_CLIENTS;
+
+    /**
+     * API request logs for rate limiting, analytics, and debugging
+     */
+    public static final ApiUsageLogs API_USAGE_LOGS = ApiUsageLogs.API_USAGE_LOGS;
 
     /**
      * The table <code>public.customers</code>.
@@ -72,6 +103,11 @@ public class Tables {
     public static final JobExecutionHistory JOB_EXECUTION_HISTORY = JobExecutionHistory.JOB_EXECUTION_HISTORY;
 
     /**
+     * OAuth 2.0 access and refresh tokens with PKCE support
+     */
+    public static final OauthAccessTokens OAUTH_ACCESS_TOKENS = OauthAccessTokens.OAUTH_ACCESS_TOKENS;
+
+    /**
      * The table <code>public.outbox_events</code>.
      */
     public static final OutboxEvents OUTBOX_EVENTS = OutboxEvents.OUTBOX_EVENTS;
@@ -87,9 +123,30 @@ public class Tables {
     public static final Plans PLANS = Plans.PLANS;
 
     /**
+     * Rate limiting buckets using sliding window algorithm
+     */
+    public static final RateLimitBuckets RATE_LIMIT_BUCKETS = RateLimitBuckets.RATE_LIMIT_BUCKETS;
+
+    /**
+     * Nonce cache for replay attack prevention (10 minute TTL)
+     */
+    public static final RequestNonces REQUEST_NONCES = RequestNonces.REQUEST_NONCES;
+
+    /**
      * The table <code>public.scheduled_tasks</code>.
      */
     public static final ScheduledTasks SCHEDULED_TASKS = ScheduledTasks.SCHEDULED_TASKS;
+
+    /**
+     * Audit log for sensitive operations like user management, API client
+     * creation, etc.
+     */
+    public static final SensitiveOperationsLog SENSITIVE_OPERATIONS_LOG = SensitiveOperationsLog.SENSITIVE_OPERATIONS_LOG;
+
+    /**
+     * Audit trail for all subscription changes
+     */
+    public static final SubscriptionHistory SUBSCRIPTION_HISTORY = SubscriptionHistory.SUBSCRIPTION_HISTORY;
 
     /**
      * The table <code>public.subscription_items</code>.
@@ -110,6 +167,17 @@ public class Tables {
      * The table <code>public.tenants</code>.
      */
     public static final Tenants TENANTS = Tenants.TENANTS;
+
+    /**
+     * Maps users to tenants with specific roles for multi-tenant access
+     */
+    public static final UserTenants USER_TENANTS = UserTenants.USER_TENANTS;
+
+    /**
+     * Bootstrap super admin created: admin@subscriptionengine.com /
+     * ChangeMe123! (MUST CHANGE ON FIRST LOGIN)
+     */
+    public static final Users USERS = Users.USERS;
 
     /**
      * The table <code>public.webhook_deliveries</code>.

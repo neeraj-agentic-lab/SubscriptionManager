@@ -88,6 +88,18 @@ public class Tenants extends TableImpl<TenantsRecord> {
      */
     public final TableField<TenantsRecord, OffsetDateTime> UPDATED_AT = createField(DSL.name("updated_at"), SQLDataType.TIMESTAMPWITHTIMEZONE(6).nullable(false).defaultValue(DSL.field(DSL.raw("now()"), SQLDataType.TIMESTAMPWITHTIMEZONE)), this, "");
 
+    /**
+     * The column <code>public.tenants.created_by</code>. User who created this
+     * tenant
+     */
+    public final TableField<TenantsRecord, UUID> CREATED_BY = createField(DSL.name("created_by"), SQLDataType.UUID, this, "User who created this tenant");
+
+    /**
+     * The column <code>public.tenants.updated_by</code>. User who last updated
+     * this tenant
+     */
+    public final TableField<TenantsRecord, UUID> UPDATED_BY = createField(DSL.name("updated_by"), SQLDataType.UUID, this, "User who last updated this tenant");
+
     private Tenants(Name alias, Table<TenantsRecord> aliased) {
         this(alias, aliased, null);
     }
@@ -128,7 +140,7 @@ public class Tenants extends TableImpl<TenantsRecord> {
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.asList(Indexes.IDX_TENANTS_SLUG, Indexes.IDX_TENANTS_STATUS);
+        return Arrays.asList(Indexes.IDX_TENANTS_CREATED_BY, Indexes.IDX_TENANTS_SLUG, Indexes.IDX_TENANTS_STATUS, Indexes.IDX_TENANTS_UPDATED_BY);
     }
 
     @Override
@@ -139,6 +151,36 @@ public class Tenants extends TableImpl<TenantsRecord> {
     @Override
     public List<UniqueKey<TenantsRecord>> getUniqueKeys() {
         return Arrays.asList(Keys.TENANTS_SLUG_KEY);
+    }
+
+    @Override
+    public List<ForeignKey<TenantsRecord, ?>> getReferences() {
+        return Arrays.asList(Keys.TENANTS__TENANTS_CREATED_BY_FKEY, Keys.TENANTS__TENANTS_UPDATED_BY_FKEY);
+    }
+
+    private transient Users _tenantsCreatedByFkey;
+    private transient Users _tenantsUpdatedByFkey;
+
+    /**
+     * Get the implicit join path to the <code>public.users</code> table, via
+     * the <code>tenants_created_by_fkey</code> key.
+     */
+    public Users tenantsCreatedByFkey() {
+        if (_tenantsCreatedByFkey == null)
+            _tenantsCreatedByFkey = new Users(this, Keys.TENANTS__TENANTS_CREATED_BY_FKEY);
+
+        return _tenantsCreatedByFkey;
+    }
+
+    /**
+     * Get the implicit join path to the <code>public.users</code> table, via
+     * the <code>tenants_updated_by_fkey</code> key.
+     */
+    public Users tenantsUpdatedByFkey() {
+        if (_tenantsUpdatedByFkey == null)
+            _tenantsUpdatedByFkey = new Users(this, Keys.TENANTS__TENANTS_UPDATED_BY_FKEY);
+
+        return _tenantsUpdatedByFkey;
     }
 
     @Override

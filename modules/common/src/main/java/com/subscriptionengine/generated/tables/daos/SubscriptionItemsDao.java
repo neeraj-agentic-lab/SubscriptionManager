@@ -224,4 +224,34 @@ public class SubscriptionItemsDao extends DAOImpl<SubscriptionItemsRecord, com.s
     public List<com.subscriptionengine.generated.tables.pojos.SubscriptionItems> fetchByUpdatedAt(OffsetDateTime... values) {
         return fetch(SubscriptionItems.SUBSCRIPTION_ITEMS.UPDATED_AT, values);
     }
+
+    /**
+     * Fetch records that have <code>created_by BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.SubscriptionItems> fetchRangeOfCreatedBy(UUID lowerInclusive, UUID upperInclusive) {
+        return fetchRange(SubscriptionItems.SUBSCRIPTION_ITEMS.CREATED_BY, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>created_by IN (values)</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.SubscriptionItems> fetchByCreatedBy(UUID... values) {
+        return fetch(SubscriptionItems.SUBSCRIPTION_ITEMS.CREATED_BY, values);
+    }
+
+    /**
+     * Fetch records that have <code>updated_by BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.SubscriptionItems> fetchRangeOfUpdatedBy(UUID lowerInclusive, UUID upperInclusive) {
+        return fetchRange(SubscriptionItems.SUBSCRIPTION_ITEMS.UPDATED_BY, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>updated_by IN (values)</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.SubscriptionItems> fetchByUpdatedBy(UUID... values) {
+        return fetch(SubscriptionItems.SUBSCRIPTION_ITEMS.UPDATED_BY, values);
+    }
 }

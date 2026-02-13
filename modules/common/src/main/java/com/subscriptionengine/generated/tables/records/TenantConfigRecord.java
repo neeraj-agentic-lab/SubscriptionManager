@@ -164,6 +164,36 @@ public class TenantConfigRecord extends UpdatableRecordImpl<TenantConfigRecord> 
         return (OffsetDateTime) get(8);
     }
 
+    /**
+     * Setter for <code>public.tenant_config.created_by</code>.
+     */
+    public TenantConfigRecord setCreatedBy(UUID value) {
+        set(9, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.tenant_config.created_by</code>.
+     */
+    public UUID getCreatedBy() {
+        return (UUID) get(9);
+    }
+
+    /**
+     * Setter for <code>public.tenant_config.updated_by</code>.
+     */
+    public TenantConfigRecord setUpdatedBy(UUID value) {
+        set(10, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.tenant_config.updated_by</code>.
+     */
+    public UUID getUpdatedBy() {
+        return (UUID) get(10);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -187,7 +217,7 @@ public class TenantConfigRecord extends UpdatableRecordImpl<TenantConfigRecord> 
     /**
      * Create a detached, initialised TenantConfigRecord
      */
-    public TenantConfigRecord(UUID tenantId, String timezone, String currency, Integer defaultPaymentTermsDays, String webhookSecret, JSONB configData, JSONB customAttrs, OffsetDateTime createdAt, OffsetDateTime updatedAt) {
+    public TenantConfigRecord(UUID tenantId, String timezone, String currency, Integer defaultPaymentTermsDays, String webhookSecret, JSONB configData, JSONB customAttrs, OffsetDateTime createdAt, OffsetDateTime updatedAt, UUID createdBy, UUID updatedBy) {
         super(TenantConfig.TENANT_CONFIG);
 
         setTenantId(tenantId);
@@ -199,6 +229,8 @@ public class TenantConfigRecord extends UpdatableRecordImpl<TenantConfigRecord> 
         setCustomAttrs(customAttrs);
         setCreatedAt(createdAt);
         setUpdatedAt(updatedAt);
+        setCreatedBy(createdBy);
+        setUpdatedBy(updatedBy);
         resetChangedOnNotNull();
     }
 
@@ -218,6 +250,8 @@ public class TenantConfigRecord extends UpdatableRecordImpl<TenantConfigRecord> 
             setCustomAttrs(value.getCustomAttrs());
             setCreatedAt(value.getCreatedAt());
             setUpdatedAt(value.getUpdatedAt());
+            setCreatedBy(value.getCreatedBy());
+            setUpdatedBy(value.getUpdatedBy());
             resetChangedOnNotNull();
         }
     }

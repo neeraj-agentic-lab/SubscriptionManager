@@ -268,6 +268,40 @@ public class JobConfigurationRecord extends UpdatableRecordImpl<JobConfiguration
         return (JSONB) get(14);
     }
 
+    /**
+     * Setter for <code>public.job_configuration.created_by_user_id</code>. User
+     * who created this job configuration
+     */
+    public JobConfigurationRecord setCreatedByUserId(UUID value) {
+        set(15, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.job_configuration.created_by_user_id</code>. User
+     * who created this job configuration
+     */
+    public UUID getCreatedByUserId() {
+        return (UUID) get(15);
+    }
+
+    /**
+     * Setter for <code>public.job_configuration.updated_by_user_id</code>. User
+     * who last updated this job configuration
+     */
+    public JobConfigurationRecord setUpdatedByUserId(UUID value) {
+        set(16, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.job_configuration.updated_by_user_id</code>. User
+     * who last updated this job configuration
+     */
+    public UUID getUpdatedByUserId() {
+        return (UUID) get(16);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -291,7 +325,7 @@ public class JobConfigurationRecord extends UpdatableRecordImpl<JobConfiguration
     /**
      * Create a detached, initialised JobConfigurationRecord
      */
-    public JobConfigurationRecord(UUID id, String jobName, String jobDescription, String cronExpression, String scheduleType, String timeZone, Boolean enabled, Integer maxConcurrentExecutions, Integer timeoutMinutes, String schedulePreset, String createdBy, String updatedBy, OffsetDateTime createdAt, OffsetDateTime updatedAt, JSONB jobConfig) {
+    public JobConfigurationRecord(UUID id, String jobName, String jobDescription, String cronExpression, String scheduleType, String timeZone, Boolean enabled, Integer maxConcurrentExecutions, Integer timeoutMinutes, String schedulePreset, String createdBy, String updatedBy, OffsetDateTime createdAt, OffsetDateTime updatedAt, JSONB jobConfig, UUID createdByUserId, UUID updatedByUserId) {
         super(JobConfiguration.JOB_CONFIGURATION);
 
         setId(id);
@@ -309,6 +343,8 @@ public class JobConfigurationRecord extends UpdatableRecordImpl<JobConfiguration
         setCreatedAt(createdAt);
         setUpdatedAt(updatedAt);
         setJobConfig(jobConfig);
+        setCreatedByUserId(createdByUserId);
+        setUpdatedByUserId(updatedByUserId);
         resetChangedOnNotNull();
     }
 
@@ -334,6 +370,8 @@ public class JobConfigurationRecord extends UpdatableRecordImpl<JobConfiguration
             setCreatedAt(value.getCreatedAt());
             setUpdatedAt(value.getUpdatedAt());
             setJobConfig(value.getJobConfig());
+            setCreatedByUserId(value.getCreatedByUserId());
+            setUpdatedByUserId(value.getUpdatedByUserId());
             resetChangedOnNotNull();
         }
     }

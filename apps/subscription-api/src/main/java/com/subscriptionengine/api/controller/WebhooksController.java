@@ -27,9 +27,9 @@ import java.util.*;
  * @author Neeraj Yadav
  */
 @RestController
-@RequestMapping("/v1/webhooks")
+@RequestMapping("/v1/admin/webhooks")
 @TenantSecured
-@Tag(name = "Webhooks", description = "Webhook endpoint management APIs. Register and manage webhook endpoints to receive real-time event notifications for subscription lifecycle events.")
+@Tag(name = "Admin - Webhooks", description = "Admin endpoints for webhook management. Register and manage webhook endpoints to receive real-time event notifications for subscription lifecycle events.")
 public class WebhooksController {
     
     private static final Logger logger = LoggerFactory.getLogger(WebhooksController.class);

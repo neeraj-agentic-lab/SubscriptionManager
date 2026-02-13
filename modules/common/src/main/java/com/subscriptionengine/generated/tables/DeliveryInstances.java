@@ -9,6 +9,7 @@ import com.subscriptionengine.generated.Keys;
 import com.subscriptionengine.generated.Public;
 import com.subscriptionengine.generated.tables.records.DeliveryInstancesRecord;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -140,6 +141,36 @@ public class DeliveryInstances extends TableImpl<DeliveryInstancesRecord> {
      */
     public final TableField<DeliveryInstancesRecord, String> CANCELLATION_REASON = createField(DSL.name("cancellation_reason"), SQLDataType.CLOB, this, "Reason provided by customer for cancelling the delivery");
 
+    /**
+     * The column <code>public.delivery_instances.created_by</code>. User who
+     * created this delivery (usually system)
+     */
+    public final TableField<DeliveryInstancesRecord, UUID> CREATED_BY = createField(DSL.name("created_by"), SQLDataType.UUID, this, "User who created this delivery (usually system)");
+
+    /**
+     * The column <code>public.delivery_instances.updated_by</code>. User who
+     * last updated this delivery (skip, reschedule, fulfill)
+     */
+    public final TableField<DeliveryInstancesRecord, UUID> UPDATED_BY = createField(DSL.name("updated_by"), SQLDataType.UUID, this, "User who last updated this delivery (skip, reschedule, fulfill)");
+
+    /**
+     * The column <code>public.delivery_instances.rescheduled_by</code>. User
+     * who rescheduled the delivery
+     */
+    public final TableField<DeliveryInstancesRecord, UUID> RESCHEDULED_BY = createField(DSL.name("rescheduled_by"), SQLDataType.UUID, this, "User who rescheduled the delivery");
+
+    /**
+     * The column <code>public.delivery_instances.reschedule_reason</code>.
+     * Reason for rescheduling the delivery
+     */
+    public final TableField<DeliveryInstancesRecord, String> RESCHEDULE_REASON = createField(DSL.name("reschedule_reason"), SQLDataType.CLOB, this, "Reason for rescheduling the delivery");
+
+    /**
+     * The column <code>public.delivery_instances.rescheduled_at</code>. When
+     * the delivery was rescheduled
+     */
+    public final TableField<DeliveryInstancesRecord, LocalDateTime> RESCHEDULED_AT = createField(DSL.name("rescheduled_at"), SQLDataType.LOCALDATETIME(6), this, "When the delivery was rescheduled");
+
     private DeliveryInstances(Name alias, Table<DeliveryInstancesRecord> aliased) {
         this(alias, aliased, null);
     }
@@ -180,7 +211,7 @@ public class DeliveryInstances extends TableImpl<DeliveryInstancesRecord> {
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.asList(Indexes.IDX_DELIVERY_INSTANCES_CANCELLED, Indexes.IDX_DELIVERY_INSTANCES_EXTERNAL_ORDER, Indexes.IDX_DELIVERY_INSTANCES_INVOICE_ID, Indexes.IDX_DELIVERY_INSTANCES_SCHEDULED, Indexes.IDX_DELIVERY_INSTANCES_STATUS, Indexes.IDX_DELIVERY_INSTANCES_SUBSCRIPTION_ID, Indexes.IDX_DELIVERY_INSTANCES_TENANT_ID);
+        return Arrays.asList(Indexes.IDX_DELIVERY_INSTANCES_CANCELLED, Indexes.IDX_DELIVERY_INSTANCES_CREATED_BY, Indexes.IDX_DELIVERY_INSTANCES_EXTERNAL_ORDER, Indexes.IDX_DELIVERY_INSTANCES_INVOICE_ID, Indexes.IDX_DELIVERY_INSTANCES_RESCHEDULED, Indexes.IDX_DELIVERY_INSTANCES_SCHEDULED, Indexes.IDX_DELIVERY_INSTANCES_STATUS, Indexes.IDX_DELIVERY_INSTANCES_SUBSCRIPTION_ID, Indexes.IDX_DELIVERY_INSTANCES_TENANT_ID, Indexes.IDX_DELIVERY_INSTANCES_UPDATED_BY);
     }
 
     @Override
@@ -195,12 +226,15 @@ public class DeliveryInstances extends TableImpl<DeliveryInstancesRecord> {
 
     @Override
     public List<ForeignKey<DeliveryInstancesRecord, ?>> getReferences() {
-        return Arrays.asList(Keys.DELIVERY_INSTANCES__DELIVERY_INSTANCES_TENANT_ID_FKEY, Keys.DELIVERY_INSTANCES__DELIVERY_INSTANCES_SUBSCRIPTION_ID_FKEY, Keys.DELIVERY_INSTANCES__DELIVERY_INSTANCES_INVOICE_ID_FKEY);
+        return Arrays.asList(Keys.DELIVERY_INSTANCES__DELIVERY_INSTANCES_TENANT_ID_FKEY, Keys.DELIVERY_INSTANCES__DELIVERY_INSTANCES_SUBSCRIPTION_ID_FKEY, Keys.DELIVERY_INSTANCES__DELIVERY_INSTANCES_INVOICE_ID_FKEY, Keys.DELIVERY_INSTANCES__DELIVERY_INSTANCES_CREATED_BY_FKEY, Keys.DELIVERY_INSTANCES__DELIVERY_INSTANCES_UPDATED_BY_FKEY, Keys.DELIVERY_INSTANCES__DELIVERY_INSTANCES_RESCHEDULED_BY_FKEY);
     }
 
     private transient Tenants _tenants;
     private transient Subscriptions _subscriptions;
     private transient Invoices _invoices;
+    private transient Users _deliveryInstancesCreatedByFkey;
+    private transient Users _deliveryInstancesUpdatedByFkey;
+    private transient Users _deliveryInstancesRescheduledByFkey;
 
     /**
      * Get the implicit join path to the <code>public.tenants</code> table.
@@ -231,6 +265,39 @@ public class DeliveryInstances extends TableImpl<DeliveryInstancesRecord> {
             _invoices = new Invoices(this, Keys.DELIVERY_INSTANCES__DELIVERY_INSTANCES_INVOICE_ID_FKEY);
 
         return _invoices;
+    }
+
+    /**
+     * Get the implicit join path to the <code>public.users</code> table, via
+     * the <code>delivery_instances_created_by_fkey</code> key.
+     */
+    public Users deliveryInstancesCreatedByFkey() {
+        if (_deliveryInstancesCreatedByFkey == null)
+            _deliveryInstancesCreatedByFkey = new Users(this, Keys.DELIVERY_INSTANCES__DELIVERY_INSTANCES_CREATED_BY_FKEY);
+
+        return _deliveryInstancesCreatedByFkey;
+    }
+
+    /**
+     * Get the implicit join path to the <code>public.users</code> table, via
+     * the <code>delivery_instances_updated_by_fkey</code> key.
+     */
+    public Users deliveryInstancesUpdatedByFkey() {
+        if (_deliveryInstancesUpdatedByFkey == null)
+            _deliveryInstancesUpdatedByFkey = new Users(this, Keys.DELIVERY_INSTANCES__DELIVERY_INSTANCES_UPDATED_BY_FKEY);
+
+        return _deliveryInstancesUpdatedByFkey;
+    }
+
+    /**
+     * Get the implicit join path to the <code>public.users</code> table, via
+     * the <code>delivery_instances_rescheduled_by_fkey</code> key.
+     */
+    public Users deliveryInstancesRescheduledByFkey() {
+        if (_deliveryInstancesRescheduledByFkey == null)
+            _deliveryInstancesRescheduledByFkey = new Users(this, Keys.DELIVERY_INSTANCES__DELIVERY_INSTANCES_RESCHEDULED_BY_FKEY);
+
+        return _deliveryInstancesRescheduledByFkey;
     }
 
     @Override

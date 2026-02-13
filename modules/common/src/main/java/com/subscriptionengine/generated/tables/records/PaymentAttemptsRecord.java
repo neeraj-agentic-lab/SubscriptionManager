@@ -291,6 +291,36 @@ public class PaymentAttemptsRecord extends UpdatableRecordImpl<PaymentAttemptsRe
         return (OffsetDateTime) get(16);
     }
 
+    /**
+     * Setter for <code>public.payment_attempts.created_by</code>.
+     */
+    public PaymentAttemptsRecord setCreatedBy(UUID value) {
+        set(17, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.payment_attempts.created_by</code>.
+     */
+    public UUID getCreatedBy() {
+        return (UUID) get(17);
+    }
+
+    /**
+     * Setter for <code>public.payment_attempts.updated_by</code>.
+     */
+    public PaymentAttemptsRecord setUpdatedBy(UUID value) {
+        set(18, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.payment_attempts.updated_by</code>.
+     */
+    public UUID getUpdatedBy() {
+        return (UUID) get(18);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -314,7 +344,7 @@ public class PaymentAttemptsRecord extends UpdatableRecordImpl<PaymentAttemptsRe
     /**
      * Create a detached, initialised PaymentAttemptsRecord
      */
-    public PaymentAttemptsRecord(UUID id, UUID tenantId, UUID invoiceId, Long amountCents, String currency, String paymentMethodRef, Integer attemptNumber, String status, String externalPaymentId, String externalChargeId, String failureReason, String failureCode, OffsetDateTime attemptedAt, OffsetDateTime completedAt, JSONB customAttrs, OffsetDateTime createdAt, OffsetDateTime updatedAt) {
+    public PaymentAttemptsRecord(UUID id, UUID tenantId, UUID invoiceId, Long amountCents, String currency, String paymentMethodRef, Integer attemptNumber, String status, String externalPaymentId, String externalChargeId, String failureReason, String failureCode, OffsetDateTime attemptedAt, OffsetDateTime completedAt, JSONB customAttrs, OffsetDateTime createdAt, OffsetDateTime updatedAt, UUID createdBy, UUID updatedBy) {
         super(PaymentAttempts.PAYMENT_ATTEMPTS);
 
         setId(id);
@@ -334,6 +364,8 @@ public class PaymentAttemptsRecord extends UpdatableRecordImpl<PaymentAttemptsRe
         setCustomAttrs(customAttrs);
         setCreatedAt(createdAt);
         setUpdatedAt(updatedAt);
+        setCreatedBy(createdBy);
+        setUpdatedBy(updatedBy);
         resetChangedOnNotNull();
     }
 
@@ -361,6 +393,8 @@ public class PaymentAttemptsRecord extends UpdatableRecordImpl<PaymentAttemptsRe
             setCustomAttrs(value.getCustomAttrs());
             setCreatedAt(value.getCreatedAt());
             setUpdatedAt(value.getUpdatedAt());
+            setCreatedBy(value.getCreatedBy());
+            setUpdatedBy(value.getUpdatedBy());
             resetChangedOnNotNull();
         }
     }

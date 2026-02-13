@@ -31,9 +31,9 @@ import java.util.UUID;
  * Allows creating customers independently of subscriptions.
  */
 @RestController
-@RequestMapping("/v1/customers")
+@RequestMapping("/v1/admin/customers")
 @TenantSecured
-@Tag(name = "Customers", description = "Customer management APIs. Create and manage customer records independently of subscriptions.")
+@Tag(name = "Admin - Customers", description = "Admin endpoints for customer management. Create and manage customer records independently of subscriptions.")
 public class CustomersController {
     
     private static final Logger logger = LoggerFactory.getLogger(CustomersController.class);

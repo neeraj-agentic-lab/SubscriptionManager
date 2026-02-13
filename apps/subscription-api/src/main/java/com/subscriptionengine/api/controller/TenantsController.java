@@ -40,8 +40,8 @@ import static com.subscriptionengine.generated.tables.Subscriptions.SUBSCRIPTION
  * @author Neeraj Yadav
  */
 @RestController
-@RequestMapping("/v1/tenants")
-@Tag(name = "Tenants", description = "Multi-tenant management APIs. Create and manage tenant organizations for complete data isolation.")
+@RequestMapping("/v1/admin/tenants")
+@Tag(name = "Admin - Tenants", description = "Admin endpoints for multi-tenant management. Create and manage tenant organizations for complete data isolation.")
 public class TenantsController {
     
     private static final Logger logger = LoggerFactory.getLogger(TenantsController.class);

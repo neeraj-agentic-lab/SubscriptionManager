@@ -233,6 +233,40 @@ public class CustomersRecord extends UpdatableRecordImpl<CustomersRecord> {
         return (String) get(12);
     }
 
+    /**
+     * Setter for <code>public.customers.created_by</code>. User who created
+     * this customer (admin or self-registered)
+     */
+    public CustomersRecord setCreatedBy(UUID value) {
+        set(13, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.customers.created_by</code>. User who created
+     * this customer (admin or self-registered)
+     */
+    public UUID getCreatedBy() {
+        return (UUID) get(13);
+    }
+
+    /**
+     * Setter for <code>public.customers.updated_by</code>. User who last
+     * updated this customer
+     */
+    public CustomersRecord setUpdatedBy(UUID value) {
+        set(14, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.customers.updated_by</code>. User who last
+     * updated this customer
+     */
+    public UUID getUpdatedBy() {
+        return (UUID) get(14);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -256,7 +290,7 @@ public class CustomersRecord extends UpdatableRecordImpl<CustomersRecord> {
     /**
      * Create a detached, initialised CustomersRecord
      */
-    public CustomersRecord(UUID id, UUID tenantId, String externalCustomerId, String email, String firstName, String lastName, String phone, String status, JSONB customAttrs, OffsetDateTime createdAt, OffsetDateTime updatedAt, String guestId, String customerType) {
+    public CustomersRecord(UUID id, UUID tenantId, String externalCustomerId, String email, String firstName, String lastName, String phone, String status, JSONB customAttrs, OffsetDateTime createdAt, OffsetDateTime updatedAt, String guestId, String customerType, UUID createdBy, UUID updatedBy) {
         super(Customers.CUSTOMERS);
 
         setId(id);
@@ -272,6 +306,8 @@ public class CustomersRecord extends UpdatableRecordImpl<CustomersRecord> {
         setUpdatedAt(updatedAt);
         setGuestId(guestId);
         setCustomerType(customerType);
+        setCreatedBy(createdBy);
+        setUpdatedBy(updatedBy);
         resetChangedOnNotNull();
     }
 
@@ -295,6 +331,8 @@ public class CustomersRecord extends UpdatableRecordImpl<CustomersRecord> {
             setUpdatedAt(value.getUpdatedAt());
             setGuestId(value.getGuestId());
             setCustomerType(value.getCustomerType());
+            setCreatedBy(value.getCreatedBy());
+            setUpdatedBy(value.getUpdatedBy());
             resetChangedOnNotNull();
         }
     }

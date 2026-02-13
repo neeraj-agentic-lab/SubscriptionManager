@@ -178,4 +178,34 @@ public class TenantsDao extends DAOImpl<TenantsRecord, com.subscriptionengine.ge
     public List<com.subscriptionengine.generated.tables.pojos.Tenants> fetchByUpdatedAt(OffsetDateTime... values) {
         return fetch(Tenants.TENANTS.UPDATED_AT, values);
     }
+
+    /**
+     * Fetch records that have <code>created_by BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.Tenants> fetchRangeOfCreatedBy(UUID lowerInclusive, UUID upperInclusive) {
+        return fetchRange(Tenants.TENANTS.CREATED_BY, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>created_by IN (values)</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.Tenants> fetchByCreatedBy(UUID... values) {
+        return fetch(Tenants.TENANTS.CREATED_BY, values);
+    }
+
+    /**
+     * Fetch records that have <code>updated_by BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.Tenants> fetchRangeOfUpdatedBy(UUID lowerInclusive, UUID upperInclusive) {
+        return fetchRange(Tenants.TENANTS.UPDATED_BY, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>updated_by IN (values)</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.Tenants> fetchByUpdatedBy(UUID... values) {
+        return fetch(Tenants.TENANTS.UPDATED_BY, values);
+    }
 }

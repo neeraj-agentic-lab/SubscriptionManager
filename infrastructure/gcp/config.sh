@@ -15,8 +15,8 @@ export GCP_API_SERVICE_NAME="${API_NAME:-subscription-api}"
 export GCP_API_IMAGE="gcr.io/${GCP_PROJECT_ID}/${GCP_API_SERVICE_NAME}"
 
 # Worker Configuration
-export GCP_WORKER_JOB_NAME="${WORKER_NAME:-subscription-worker}"
-export GCP_WORKER_IMAGE="gcr.io/${GCP_PROJECT_ID}/${GCP_WORKER_JOB_NAME}"
+export GCP_WORKER_SERVICE_NAME="${WORKER_NAME:-subscription-worker}"
+export GCP_WORKER_IMAGE="gcr.io/${GCP_PROJECT_ID}/${GCP_WORKER_SERVICE_NAME}"
 
 # Secret Manager
 export GCP_DB_PASSWORD_SECRET="db-password"
@@ -35,4 +35,4 @@ echo "  Project ID: $GCP_PROJECT_ID"
 echo "  Region: $GCP_REGION"
 echo "  Database Instance: $GCP_DB_INSTANCE_NAME"
 echo "  API Service: $GCP_API_SERVICE_NAME"
-echo "  Worker Job: $GCP_WORKER_JOB_NAME"
+echo "  Worker Service: $GCP_WORKER_SERVICE_NAME"

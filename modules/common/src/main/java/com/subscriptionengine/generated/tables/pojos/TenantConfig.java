@@ -31,6 +31,8 @@ public class TenantConfig implements Serializable {
     private JSONB customAttrs;
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
+    private UUID createdBy;
+    private UUID updatedBy;
 
     public TenantConfig() {}
 
@@ -44,6 +46,8 @@ public class TenantConfig implements Serializable {
         this.customAttrs = value.customAttrs;
         this.createdAt = value.createdAt;
         this.updatedAt = value.updatedAt;
+        this.createdBy = value.createdBy;
+        this.updatedBy = value.updatedBy;
     }
 
     public TenantConfig(
@@ -55,7 +59,9 @@ public class TenantConfig implements Serializable {
         JSONB configData,
         JSONB customAttrs,
         OffsetDateTime createdAt,
-        OffsetDateTime updatedAt
+        OffsetDateTime updatedAt,
+        UUID createdBy,
+        UUID updatedBy
     ) {
         this.tenantId = tenantId;
         this.timezone = timezone;
@@ -66,6 +72,8 @@ public class TenantConfig implements Serializable {
         this.customAttrs = customAttrs;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.createdBy = createdBy;
+        this.updatedBy = updatedBy;
     }
 
     /**
@@ -207,6 +215,36 @@ public class TenantConfig implements Serializable {
         return this;
     }
 
+    /**
+     * Getter for <code>public.tenant_config.created_by</code>.
+     */
+    public UUID getCreatedBy() {
+        return this.createdBy;
+    }
+
+    /**
+     * Setter for <code>public.tenant_config.created_by</code>.
+     */
+    public TenantConfig setCreatedBy(UUID createdBy) {
+        this.createdBy = createdBy;
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.tenant_config.updated_by</code>.
+     */
+    public UUID getUpdatedBy() {
+        return this.updatedBy;
+    }
+
+    /**
+     * Setter for <code>public.tenant_config.updated_by</code>.
+     */
+    public TenantConfig setUpdatedBy(UUID updatedBy) {
+        this.updatedBy = updatedBy;
+        return this;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -270,6 +308,18 @@ public class TenantConfig implements Serializable {
         }
         else if (!this.updatedAt.equals(other.updatedAt))
             return false;
+        if (this.createdBy == null) {
+            if (other.createdBy != null)
+                return false;
+        }
+        else if (!this.createdBy.equals(other.createdBy))
+            return false;
+        if (this.updatedBy == null) {
+            if (other.updatedBy != null)
+                return false;
+        }
+        else if (!this.updatedBy.equals(other.updatedBy))
+            return false;
         return true;
     }
 
@@ -286,6 +336,8 @@ public class TenantConfig implements Serializable {
         result = prime * result + ((this.customAttrs == null) ? 0 : this.customAttrs.hashCode());
         result = prime * result + ((this.createdAt == null) ? 0 : this.createdAt.hashCode());
         result = prime * result + ((this.updatedAt == null) ? 0 : this.updatedAt.hashCode());
+        result = prime * result + ((this.createdBy == null) ? 0 : this.createdBy.hashCode());
+        result = prime * result + ((this.updatedBy == null) ? 0 : this.updatedBy.hashCode());
         return result;
     }
 
@@ -302,6 +354,8 @@ public class TenantConfig implements Serializable {
         sb.append(", ").append(customAttrs);
         sb.append(", ").append(createdAt);
         sb.append(", ").append(updatedAt);
+        sb.append(", ").append(createdBy);
+        sb.append(", ").append(updatedBy);
 
         sb.append(")");
         return sb.toString();

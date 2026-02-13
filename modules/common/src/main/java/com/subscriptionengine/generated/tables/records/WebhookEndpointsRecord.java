@@ -182,6 +182,40 @@ public class WebhookEndpointsRecord extends UpdatableRecordImpl<WebhookEndpoints
         return (OffsetDateTime) get(9);
     }
 
+    /**
+     * Setter for <code>public.webhook_endpoints.created_by</code>. User who
+     * registered this webhook endpoint
+     */
+    public WebhookEndpointsRecord setCreatedBy(UUID value) {
+        set(10, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.webhook_endpoints.created_by</code>. User who
+     * registered this webhook endpoint
+     */
+    public UUID getCreatedBy() {
+        return (UUID) get(10);
+    }
+
+    /**
+     * Setter for <code>public.webhook_endpoints.updated_by</code>. User who
+     * last updated this webhook endpoint
+     */
+    public WebhookEndpointsRecord setUpdatedBy(UUID value) {
+        set(11, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.webhook_endpoints.updated_by</code>. User who
+     * last updated this webhook endpoint
+     */
+    public UUID getUpdatedBy() {
+        return (UUID) get(11);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -205,7 +239,7 @@ public class WebhookEndpointsRecord extends UpdatableRecordImpl<WebhookEndpoints
     /**
      * Create a detached, initialised WebhookEndpointsRecord
      */
-    public WebhookEndpointsRecord(UUID id, UUID tenantId, String url, String secret, String[] events, String status, String description, JSONB customAttrs, OffsetDateTime createdAt, OffsetDateTime updatedAt) {
+    public WebhookEndpointsRecord(UUID id, UUID tenantId, String url, String secret, String[] events, String status, String description, JSONB customAttrs, OffsetDateTime createdAt, OffsetDateTime updatedAt, UUID createdBy, UUID updatedBy) {
         super(WebhookEndpoints.WEBHOOK_ENDPOINTS);
 
         setId(id);
@@ -218,6 +252,8 @@ public class WebhookEndpointsRecord extends UpdatableRecordImpl<WebhookEndpoints
         setCustomAttrs(customAttrs);
         setCreatedAt(createdAt);
         setUpdatedAt(updatedAt);
+        setCreatedBy(createdBy);
+        setUpdatedBy(updatedBy);
         resetChangedOnNotNull();
     }
 
@@ -238,6 +274,8 @@ public class WebhookEndpointsRecord extends UpdatableRecordImpl<WebhookEndpoints
             setCustomAttrs(value.getCustomAttrs());
             setCreatedAt(value.getCreatedAt());
             setUpdatedAt(value.getUpdatedAt());
+            setCreatedBy(value.getCreatedBy());
+            setUpdatedBy(value.getUpdatedBy());
             resetChangedOnNotNull();
         }
     }

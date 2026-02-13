@@ -19,6 +19,16 @@ dependencies {
     // Web for filters
     implementation 'org.springframework.boot:spring-boot-starter-web'
     
+    // jOOQ for database access
+    implementation 'org.springframework.boot:spring-boot-starter-jooq'
+    
+    // BCrypt for password encoding
+    implementation 'org.springframework.security:spring-security-crypto'
+    
+    // AspectJ for AOP-based authorization
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+    implementation 'org.aspectj:aspectjweaver'
+    
     // Testing
     testImplementation 'org.springframework.security:spring-security-test'
 }

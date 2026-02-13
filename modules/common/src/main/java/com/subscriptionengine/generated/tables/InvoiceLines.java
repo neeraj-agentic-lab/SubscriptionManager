@@ -118,6 +118,16 @@ public class InvoiceLines extends TableImpl<InvoiceLinesRecord> {
      */
     public final TableField<InvoiceLinesRecord, OffsetDateTime> CREATED_AT = createField(DSL.name("created_at"), SQLDataType.TIMESTAMPWITHTIMEZONE(6).nullable(false).defaultValue(DSL.field(DSL.raw("now()"), SQLDataType.TIMESTAMPWITHTIMEZONE)), this, "");
 
+    /**
+     * The column <code>public.invoice_lines.created_by</code>.
+     */
+    public final TableField<InvoiceLinesRecord, UUID> CREATED_BY = createField(DSL.name("created_by"), SQLDataType.UUID, this, "");
+
+    /**
+     * The column <code>public.invoice_lines.updated_by</code>.
+     */
+    public final TableField<InvoiceLinesRecord, UUID> UPDATED_BY = createField(DSL.name("updated_by"), SQLDataType.UUID, this, "");
+
     private InvoiceLines(Name alias, Table<InvoiceLinesRecord> aliased) {
         this(alias, aliased, null);
     }
@@ -158,7 +168,7 @@ public class InvoiceLines extends TableImpl<InvoiceLinesRecord> {
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.asList(Indexes.IDX_INVOICE_LINES_INVOICE_ID, Indexes.IDX_INVOICE_LINES_SUBSCRIPTION_ITEM_ID, Indexes.IDX_INVOICE_LINES_TENANT_ID);
+        return Arrays.asList(Indexes.IDX_INVOICE_LINES_CREATED_BY, Indexes.IDX_INVOICE_LINES_INVOICE_ID, Indexes.IDX_INVOICE_LINES_SUBSCRIPTION_ITEM_ID, Indexes.IDX_INVOICE_LINES_TENANT_ID, Indexes.IDX_INVOICE_LINES_UPDATED_BY);
     }
 
     @Override
@@ -168,12 +178,14 @@ public class InvoiceLines extends TableImpl<InvoiceLinesRecord> {
 
     @Override
     public List<ForeignKey<InvoiceLinesRecord, ?>> getReferences() {
-        return Arrays.asList(Keys.INVOICE_LINES__INVOICE_LINES_TENANT_ID_FKEY, Keys.INVOICE_LINES__INVOICE_LINES_INVOICE_ID_FKEY, Keys.INVOICE_LINES__INVOICE_LINES_SUBSCRIPTION_ITEM_ID_FKEY);
+        return Arrays.asList(Keys.INVOICE_LINES__INVOICE_LINES_TENANT_ID_FKEY, Keys.INVOICE_LINES__INVOICE_LINES_INVOICE_ID_FKEY, Keys.INVOICE_LINES__INVOICE_LINES_SUBSCRIPTION_ITEM_ID_FKEY, Keys.INVOICE_LINES__INVOICE_LINES_CREATED_BY_FKEY, Keys.INVOICE_LINES__INVOICE_LINES_UPDATED_BY_FKEY);
     }
 
     private transient Tenants _tenants;
     private transient Invoices _invoices;
     private transient SubscriptionItems _subscriptionItems;
+    private transient Users _invoiceLinesCreatedByFkey;
+    private transient Users _invoiceLinesUpdatedByFkey;
 
     /**
      * Get the implicit join path to the <code>public.tenants</code> table.
@@ -204,6 +216,28 @@ public class InvoiceLines extends TableImpl<InvoiceLinesRecord> {
             _subscriptionItems = new SubscriptionItems(this, Keys.INVOICE_LINES__INVOICE_LINES_SUBSCRIPTION_ITEM_ID_FKEY);
 
         return _subscriptionItems;
+    }
+
+    /**
+     * Get the implicit join path to the <code>public.users</code> table, via
+     * the <code>invoice_lines_created_by_fkey</code> key.
+     */
+    public Users invoiceLinesCreatedByFkey() {
+        if (_invoiceLinesCreatedByFkey == null)
+            _invoiceLinesCreatedByFkey = new Users(this, Keys.INVOICE_LINES__INVOICE_LINES_CREATED_BY_FKEY);
+
+        return _invoiceLinesCreatedByFkey;
+    }
+
+    /**
+     * Get the implicit join path to the <code>public.users</code> table, via
+     * the <code>invoice_lines_updated_by_fkey</code> key.
+     */
+    public Users invoiceLinesUpdatedByFkey() {
+        if (_invoiceLinesUpdatedByFkey == null)
+            _invoiceLinesUpdatedByFkey = new Users(this, Keys.INVOICE_LINES__INVOICE_LINES_UPDATED_BY_FKEY);
+
+        return _invoiceLinesUpdatedByFkey;
     }
 
     @Override

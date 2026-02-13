@@ -37,6 +37,12 @@ public class Plans implements Serializable {
     private JSONB customAttrs;
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
+    private UUID createdBy;
+    private UUID updatedBy;
+    private String planCategory;
+    private Boolean requiresProducts;
+    private Boolean allowsProducts;
+    private Boolean basePriceRequired;
 
     public Plans() {}
 
@@ -56,6 +62,12 @@ public class Plans implements Serializable {
         this.customAttrs = value.customAttrs;
         this.createdAt = value.createdAt;
         this.updatedAt = value.updatedAt;
+        this.createdBy = value.createdBy;
+        this.updatedBy = value.updatedBy;
+        this.planCategory = value.planCategory;
+        this.requiresProducts = value.requiresProducts;
+        this.allowsProducts = value.allowsProducts;
+        this.basePriceRequired = value.basePriceRequired;
     }
 
     public Plans(
@@ -73,7 +85,13 @@ public class Plans implements Serializable {
         JSONB planConfig,
         JSONB customAttrs,
         OffsetDateTime createdAt,
-        OffsetDateTime updatedAt
+        OffsetDateTime updatedAt,
+        UUID createdBy,
+        UUID updatedBy,
+        String planCategory,
+        Boolean requiresProducts,
+        Boolean allowsProducts,
+        Boolean basePriceRequired
     ) {
         this.id = id;
         this.tenantId = tenantId;
@@ -90,6 +108,12 @@ public class Plans implements Serializable {
         this.customAttrs = customAttrs;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.createdBy = createdBy;
+        this.updatedBy = updatedBy;
+        this.planCategory = planCategory;
+        this.requiresProducts = requiresProducts;
+        this.allowsProducts = allowsProducts;
+        this.basePriceRequired = basePriceRequired;
     }
 
     /**
@@ -326,6 +350,109 @@ public class Plans implements Serializable {
         return this;
     }
 
+    /**
+     * Getter for <code>public.plans.created_by</code>. User who created this
+     * plan
+     */
+    public UUID getCreatedBy() {
+        return this.createdBy;
+    }
+
+    /**
+     * Setter for <code>public.plans.created_by</code>. User who created this
+     * plan
+     */
+    public Plans setCreatedBy(UUID createdBy) {
+        this.createdBy = createdBy;
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.plans.updated_by</code>. User who last updated
+     * this plan
+     */
+    public UUID getUpdatedBy() {
+        return this.updatedBy;
+    }
+
+    /**
+     * Setter for <code>public.plans.updated_by</code>. User who last updated
+     * this plan
+     */
+    public Plans setUpdatedBy(UUID updatedBy) {
+        this.updatedBy = updatedBy;
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.plans.plan_category</code>. DIGITAL,
+     * PRODUCT_BASED, or HYBRID - determines subscription behavior
+     */
+    @Size(max = 50)
+    public String getPlanCategory() {
+        return this.planCategory;
+    }
+
+    /**
+     * Setter for <code>public.plans.plan_category</code>. DIGITAL,
+     * PRODUCT_BASED, or HYBRID - determines subscription behavior
+     */
+    public Plans setPlanCategory(String planCategory) {
+        this.planCategory = planCategory;
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.plans.requires_products</code>. Whether
+     * subscription MUST include products (true for PRODUCT_BASED)
+     */
+    public Boolean getRequiresProducts() {
+        return this.requiresProducts;
+    }
+
+    /**
+     * Setter for <code>public.plans.requires_products</code>. Whether
+     * subscription MUST include products (true for PRODUCT_BASED)
+     */
+    public Plans setRequiresProducts(Boolean requiresProducts) {
+        this.requiresProducts = requiresProducts;
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.plans.allows_products</code>. Whether
+     * subscription CAN include products (true for PRODUCT_BASED and HYBRID)
+     */
+    public Boolean getAllowsProducts() {
+        return this.allowsProducts;
+    }
+
+    /**
+     * Setter for <code>public.plans.allows_products</code>. Whether
+     * subscription CAN include products (true for PRODUCT_BASED and HYBRID)
+     */
+    public Plans setAllowsProducts(Boolean allowsProducts) {
+        this.allowsProducts = allowsProducts;
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.plans.base_price_required</code>. Whether plan
+     * must have base price &gt; 0 (true for DIGITAL and HYBRID)
+     */
+    public Boolean getBasePriceRequired() {
+        return this.basePriceRequired;
+    }
+
+    /**
+     * Setter for <code>public.plans.base_price_required</code>. Whether plan
+     * must have base price &gt; 0 (true for DIGITAL and HYBRID)
+     */
+    public Plans setBasePriceRequired(Boolean basePriceRequired) {
+        this.basePriceRequired = basePriceRequired;
+        return this;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -425,6 +552,42 @@ public class Plans implements Serializable {
         }
         else if (!this.updatedAt.equals(other.updatedAt))
             return false;
+        if (this.createdBy == null) {
+            if (other.createdBy != null)
+                return false;
+        }
+        else if (!this.createdBy.equals(other.createdBy))
+            return false;
+        if (this.updatedBy == null) {
+            if (other.updatedBy != null)
+                return false;
+        }
+        else if (!this.updatedBy.equals(other.updatedBy))
+            return false;
+        if (this.planCategory == null) {
+            if (other.planCategory != null)
+                return false;
+        }
+        else if (!this.planCategory.equals(other.planCategory))
+            return false;
+        if (this.requiresProducts == null) {
+            if (other.requiresProducts != null)
+                return false;
+        }
+        else if (!this.requiresProducts.equals(other.requiresProducts))
+            return false;
+        if (this.allowsProducts == null) {
+            if (other.allowsProducts != null)
+                return false;
+        }
+        else if (!this.allowsProducts.equals(other.allowsProducts))
+            return false;
+        if (this.basePriceRequired == null) {
+            if (other.basePriceRequired != null)
+                return false;
+        }
+        else if (!this.basePriceRequired.equals(other.basePriceRequired))
+            return false;
         return true;
     }
 
@@ -447,6 +610,12 @@ public class Plans implements Serializable {
         result = prime * result + ((this.customAttrs == null) ? 0 : this.customAttrs.hashCode());
         result = prime * result + ((this.createdAt == null) ? 0 : this.createdAt.hashCode());
         result = prime * result + ((this.updatedAt == null) ? 0 : this.updatedAt.hashCode());
+        result = prime * result + ((this.createdBy == null) ? 0 : this.createdBy.hashCode());
+        result = prime * result + ((this.updatedBy == null) ? 0 : this.updatedBy.hashCode());
+        result = prime * result + ((this.planCategory == null) ? 0 : this.planCategory.hashCode());
+        result = prime * result + ((this.requiresProducts == null) ? 0 : this.requiresProducts.hashCode());
+        result = prime * result + ((this.allowsProducts == null) ? 0 : this.allowsProducts.hashCode());
+        result = prime * result + ((this.basePriceRequired == null) ? 0 : this.basePriceRequired.hashCode());
         return result;
     }
 
@@ -469,6 +638,12 @@ public class Plans implements Serializable {
         sb.append(", ").append(customAttrs);
         sb.append(", ").append(createdAt);
         sb.append(", ").append(updatedAt);
+        sb.append(", ").append(createdBy);
+        sb.append(", ").append(updatedBy);
+        sb.append(", ").append(planCategory);
+        sb.append(", ").append(requiresProducts);
+        sb.append(", ").append(allowsProducts);
+        sb.append(", ").append(basePriceRequired);
 
         sb.append(")");
         return sb.toString();

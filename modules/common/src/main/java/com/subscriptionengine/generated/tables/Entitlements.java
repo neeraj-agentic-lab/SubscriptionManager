@@ -123,6 +123,16 @@ public class Entitlements extends TableImpl<EntitlementsRecord> {
      */
     public final TableField<EntitlementsRecord, OffsetDateTime> UPDATED_AT = createField(DSL.name("updated_at"), SQLDataType.TIMESTAMPWITHTIMEZONE(6).nullable(false).defaultValue(DSL.field(DSL.raw("now()"), SQLDataType.TIMESTAMPWITHTIMEZONE)), this, "");
 
+    /**
+     * The column <code>public.entitlements.created_by</code>.
+     */
+    public final TableField<EntitlementsRecord, UUID> CREATED_BY = createField(DSL.name("created_by"), SQLDataType.UUID, this, "");
+
+    /**
+     * The column <code>public.entitlements.updated_by</code>.
+     */
+    public final TableField<EntitlementsRecord, UUID> UPDATED_BY = createField(DSL.name("updated_by"), SQLDataType.UUID, this, "");
+
     private Entitlements(Name alias, Table<EntitlementsRecord> aliased) {
         this(alias, aliased, null);
     }
@@ -163,7 +173,7 @@ public class Entitlements extends TableImpl<EntitlementsRecord> {
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.asList(Indexes.IDX_ENTITLEMENTS_CUSTOMER_ID, Indexes.IDX_ENTITLEMENTS_EXTERNAL_REF, Indexes.IDX_ENTITLEMENTS_STATUS, Indexes.IDX_ENTITLEMENTS_SUBSCRIPTION_ID, Indexes.IDX_ENTITLEMENTS_TENANT_ID, Indexes.IDX_ENTITLEMENTS_TYPE, Indexes.IDX_ENTITLEMENTS_VALIDITY);
+        return Arrays.asList(Indexes.IDX_ENTITLEMENTS_CREATED_BY, Indexes.IDX_ENTITLEMENTS_CUSTOMER_ID, Indexes.IDX_ENTITLEMENTS_EXTERNAL_REF, Indexes.IDX_ENTITLEMENTS_STATUS, Indexes.IDX_ENTITLEMENTS_SUBSCRIPTION_ID, Indexes.IDX_ENTITLEMENTS_TENANT_ID, Indexes.IDX_ENTITLEMENTS_TYPE, Indexes.IDX_ENTITLEMENTS_UPDATED_BY, Indexes.IDX_ENTITLEMENTS_VALIDITY);
     }
 
     @Override
@@ -178,12 +188,14 @@ public class Entitlements extends TableImpl<EntitlementsRecord> {
 
     @Override
     public List<ForeignKey<EntitlementsRecord, ?>> getReferences() {
-        return Arrays.asList(Keys.ENTITLEMENTS__ENTITLEMENTS_TENANT_ID_FKEY, Keys.ENTITLEMENTS__ENTITLEMENTS_SUBSCRIPTION_ID_FKEY, Keys.ENTITLEMENTS__ENTITLEMENTS_CUSTOMER_ID_FKEY);
+        return Arrays.asList(Keys.ENTITLEMENTS__ENTITLEMENTS_TENANT_ID_FKEY, Keys.ENTITLEMENTS__ENTITLEMENTS_SUBSCRIPTION_ID_FKEY, Keys.ENTITLEMENTS__ENTITLEMENTS_CUSTOMER_ID_FKEY, Keys.ENTITLEMENTS__ENTITLEMENTS_CREATED_BY_FKEY, Keys.ENTITLEMENTS__ENTITLEMENTS_UPDATED_BY_FKEY);
     }
 
     private transient Tenants _tenants;
     private transient Subscriptions _subscriptions;
     private transient Customers _customers;
+    private transient Users _entitlementsCreatedByFkey;
+    private transient Users _entitlementsUpdatedByFkey;
 
     /**
      * Get the implicit join path to the <code>public.tenants</code> table.
@@ -214,6 +226,28 @@ public class Entitlements extends TableImpl<EntitlementsRecord> {
             _customers = new Customers(this, Keys.ENTITLEMENTS__ENTITLEMENTS_CUSTOMER_ID_FKEY);
 
         return _customers;
+    }
+
+    /**
+     * Get the implicit join path to the <code>public.users</code> table, via
+     * the <code>entitlements_created_by_fkey</code> key.
+     */
+    public Users entitlementsCreatedByFkey() {
+        if (_entitlementsCreatedByFkey == null)
+            _entitlementsCreatedByFkey = new Users(this, Keys.ENTITLEMENTS__ENTITLEMENTS_CREATED_BY_FKEY);
+
+        return _entitlementsCreatedByFkey;
+    }
+
+    /**
+     * Get the implicit join path to the <code>public.users</code> table, via
+     * the <code>entitlements_updated_by_fkey</code> key.
+     */
+    public Users entitlementsUpdatedByFkey() {
+        if (_entitlementsUpdatedByFkey == null)
+            _entitlementsUpdatedByFkey = new Users(this, Keys.ENTITLEMENTS__ENTITLEMENTS_UPDATED_BY_FKEY);
+
+        return _entitlementsUpdatedByFkey;
     }
 
     @Override

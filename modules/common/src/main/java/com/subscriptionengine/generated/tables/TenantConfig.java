@@ -96,6 +96,16 @@ public class TenantConfig extends TableImpl<TenantConfigRecord> {
      */
     public final TableField<TenantConfigRecord, OffsetDateTime> UPDATED_AT = createField(DSL.name("updated_at"), SQLDataType.TIMESTAMPWITHTIMEZONE(6).nullable(false).defaultValue(DSL.field(DSL.raw("now()"), SQLDataType.TIMESTAMPWITHTIMEZONE)), this, "");
 
+    /**
+     * The column <code>public.tenant_config.created_by</code>.
+     */
+    public final TableField<TenantConfigRecord, UUID> CREATED_BY = createField(DSL.name("created_by"), SQLDataType.UUID, this, "");
+
+    /**
+     * The column <code>public.tenant_config.updated_by</code>.
+     */
+    public final TableField<TenantConfigRecord, UUID> UPDATED_BY = createField(DSL.name("updated_by"), SQLDataType.UUID, this, "");
+
     private TenantConfig(Name alias, Table<TenantConfigRecord> aliased) {
         this(alias, aliased, null);
     }
@@ -136,7 +146,7 @@ public class TenantConfig extends TableImpl<TenantConfigRecord> {
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.asList(Indexes.IDX_TENANT_CONFIG_CURRENCY);
+        return Arrays.asList(Indexes.IDX_TENANT_CONFIG_CREATED_BY, Indexes.IDX_TENANT_CONFIG_CURRENCY, Indexes.IDX_TENANT_CONFIG_UPDATED_BY);
     }
 
     @Override
@@ -146,10 +156,12 @@ public class TenantConfig extends TableImpl<TenantConfigRecord> {
 
     @Override
     public List<ForeignKey<TenantConfigRecord, ?>> getReferences() {
-        return Arrays.asList(Keys.TENANT_CONFIG__TENANT_CONFIG_TENANT_ID_FKEY);
+        return Arrays.asList(Keys.TENANT_CONFIG__TENANT_CONFIG_TENANT_ID_FKEY, Keys.TENANT_CONFIG__TENANT_CONFIG_CREATED_BY_FKEY, Keys.TENANT_CONFIG__TENANT_CONFIG_UPDATED_BY_FKEY);
     }
 
     private transient Tenants _tenants;
+    private transient Users _tenantConfigCreatedByFkey;
+    private transient Users _tenantConfigUpdatedByFkey;
 
     /**
      * Get the implicit join path to the <code>public.tenants</code> table.
@@ -159,6 +171,28 @@ public class TenantConfig extends TableImpl<TenantConfigRecord> {
             _tenants = new Tenants(this, Keys.TENANT_CONFIG__TENANT_CONFIG_TENANT_ID_FKEY);
 
         return _tenants;
+    }
+
+    /**
+     * Get the implicit join path to the <code>public.users</code> table, via
+     * the <code>tenant_config_created_by_fkey</code> key.
+     */
+    public Users tenantConfigCreatedByFkey() {
+        if (_tenantConfigCreatedByFkey == null)
+            _tenantConfigCreatedByFkey = new Users(this, Keys.TENANT_CONFIG__TENANT_CONFIG_CREATED_BY_FKEY);
+
+        return _tenantConfigCreatedByFkey;
+    }
+
+    /**
+     * Get the implicit join path to the <code>public.users</code> table, via
+     * the <code>tenant_config_updated_by_fkey</code> key.
+     */
+    public Users tenantConfigUpdatedByFkey() {
+        if (_tenantConfigUpdatedByFkey == null)
+            _tenantConfigUpdatedByFkey = new Users(this, Keys.TENANT_CONFIG__TENANT_CONFIG_UPDATED_BY_FKEY);
+
+        return _tenantConfigUpdatedByFkey;
     }
 
     @Override

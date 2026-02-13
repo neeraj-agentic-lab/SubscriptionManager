@@ -15,8 +15,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
- * Spring Security configuration for OAuth 2.0 + JWT authentication.
- * Configures the application as an OAuth 2.0 Resource Server with JWT token validation.
+ * Spring Security configuration for multi-tier authentication.
+ * Supports: JWT (OAuth 2.0), API Key + HMAC, and mTLS.
  * 
  * @author Neeraj Yadav
  */
@@ -35,9 +35,13 @@ public class SecurityConfig {
     private String jwtSecret;
     
     private final JwtTenantAuthenticationFilter jwtTenantAuthenticationFilter;
+    private final ApiKeyAuthFilter apiKeyAuthFilter;
     
-    public SecurityConfig(JwtTenantAuthenticationFilter jwtTenantAuthenticationFilter) {
+    public SecurityConfig(
+            JwtTenantAuthenticationFilter jwtTenantAuthenticationFilter,
+            ApiKeyAuthFilter apiKeyAuthFilter) {
         this.jwtTenantAuthenticationFilter = jwtTenantAuthenticationFilter;
+        this.apiKeyAuthFilter = apiKeyAuthFilter;
     }
     
     @Bean
@@ -69,6 +73,10 @@ public class SecurityConfig {
                     .decoder(jwtDecoder())
                 )
             )
+            
+            // Add API Key authentication filter before JWT authentication
+            // This allows API Key auth to take precedence when X-Client-ID header is present
+            .addFilterBefore(apiKeyAuthFilter, UsernamePasswordAuthenticationFilter.class)
             
             // Add tenant extraction filter after OAuth2 JWT authentication
             .addFilterAfter(jwtTenantAuthenticationFilter, org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter.class);

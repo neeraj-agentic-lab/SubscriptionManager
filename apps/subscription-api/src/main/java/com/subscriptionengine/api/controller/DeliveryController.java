@@ -26,9 +26,9 @@ import java.util.UUID;
  * @author Neeraj Yadav
  */
 @RestController
-@RequestMapping("/v1/deliveries")
+@RequestMapping("/v1/admin/deliveries")
 @TenantSecured
-@Tag(name = "Deliveries", description = "Delivery management APIs. View upcoming deliveries, check delivery details, and manage delivery scheduling for subscription orders.")
+@Tag(name = "Admin - Deliveries", description = "Admin endpoints for delivery management. View upcoming deliveries, check delivery details, and manage delivery scheduling for subscription orders.")
 public class DeliveryController {
     
     private static final Logger logger = LoggerFactory.getLogger(DeliveryController.class);

@@ -254,4 +254,34 @@ public class InvoiceLinesDao extends DAOImpl<InvoiceLinesRecord, com.subscriptio
     public List<com.subscriptionengine.generated.tables.pojos.InvoiceLines> fetchByCreatedAt(OffsetDateTime... values) {
         return fetch(InvoiceLines.INVOICE_LINES.CREATED_AT, values);
     }
+
+    /**
+     * Fetch records that have <code>created_by BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.InvoiceLines> fetchRangeOfCreatedBy(UUID lowerInclusive, UUID upperInclusive) {
+        return fetchRange(InvoiceLines.INVOICE_LINES.CREATED_BY, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>created_by IN (values)</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.InvoiceLines> fetchByCreatedBy(UUID... values) {
+        return fetch(InvoiceLines.INVOICE_LINES.CREATED_BY, values);
+    }
+
+    /**
+     * Fetch records that have <code>updated_by BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.InvoiceLines> fetchRangeOfUpdatedBy(UUID lowerInclusive, UUID upperInclusive) {
+        return fetchRange(InvoiceLines.INVOICE_LINES.UPDATED_BY, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>updated_by IN (values)</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.InvoiceLines> fetchByUpdatedBy(UUID... values) {
+        return fetch(InvoiceLines.INVOICE_LINES.UPDATED_BY, values);
+    }
 }

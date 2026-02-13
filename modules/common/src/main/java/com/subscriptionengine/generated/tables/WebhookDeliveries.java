@@ -138,6 +138,16 @@ public class WebhookDeliveries extends TableImpl<WebhookDeliveriesRecord> {
      */
     public final TableField<WebhookDeliveriesRecord, OffsetDateTime> UPDATED_AT = createField(DSL.name("updated_at"), SQLDataType.TIMESTAMPWITHTIMEZONE(6).nullable(false).defaultValue(DSL.field(DSL.raw("now()"), SQLDataType.TIMESTAMPWITHTIMEZONE)), this, "");
 
+    /**
+     * The column <code>public.webhook_deliveries.created_by</code>.
+     */
+    public final TableField<WebhookDeliveriesRecord, UUID> CREATED_BY = createField(DSL.name("created_by"), SQLDataType.UUID, this, "");
+
+    /**
+     * The column <code>public.webhook_deliveries.updated_by</code>.
+     */
+    public final TableField<WebhookDeliveriesRecord, UUID> UPDATED_BY = createField(DSL.name("updated_by"), SQLDataType.UUID, this, "");
+
     private WebhookDeliveries(Name alias, Table<WebhookDeliveriesRecord> aliased) {
         this(alias, aliased, null);
     }
@@ -178,7 +188,7 @@ public class WebhookDeliveries extends TableImpl<WebhookDeliveriesRecord> {
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.asList(Indexes.IDX_WEBHOOK_DELIVERIES_ENDPOINT_ID, Indexes.IDX_WEBHOOK_DELIVERIES_OUTBOX_EVENT_ID, Indexes.IDX_WEBHOOK_DELIVERIES_RETRY, Indexes.IDX_WEBHOOK_DELIVERIES_STATUS, Indexes.IDX_WEBHOOK_DELIVERIES_TENANT_ID);
+        return Arrays.asList(Indexes.IDX_WEBHOOK_DELIVERIES_CREATED_BY, Indexes.IDX_WEBHOOK_DELIVERIES_ENDPOINT_ID, Indexes.IDX_WEBHOOK_DELIVERIES_OUTBOX_EVENT_ID, Indexes.IDX_WEBHOOK_DELIVERIES_RETRY, Indexes.IDX_WEBHOOK_DELIVERIES_STATUS, Indexes.IDX_WEBHOOK_DELIVERIES_TENANT_ID, Indexes.IDX_WEBHOOK_DELIVERIES_UPDATED_BY);
     }
 
     @Override
@@ -188,12 +198,14 @@ public class WebhookDeliveries extends TableImpl<WebhookDeliveriesRecord> {
 
     @Override
     public List<ForeignKey<WebhookDeliveriesRecord, ?>> getReferences() {
-        return Arrays.asList(Keys.WEBHOOK_DELIVERIES__WEBHOOK_DELIVERIES_TENANT_ID_FKEY, Keys.WEBHOOK_DELIVERIES__WEBHOOK_DELIVERIES_WEBHOOK_ENDPOINT_ID_FKEY, Keys.WEBHOOK_DELIVERIES__WEBHOOK_DELIVERIES_OUTBOX_EVENT_ID_FKEY);
+        return Arrays.asList(Keys.WEBHOOK_DELIVERIES__WEBHOOK_DELIVERIES_TENANT_ID_FKEY, Keys.WEBHOOK_DELIVERIES__WEBHOOK_DELIVERIES_WEBHOOK_ENDPOINT_ID_FKEY, Keys.WEBHOOK_DELIVERIES__WEBHOOK_DELIVERIES_OUTBOX_EVENT_ID_FKEY, Keys.WEBHOOK_DELIVERIES__WEBHOOK_DELIVERIES_CREATED_BY_FKEY, Keys.WEBHOOK_DELIVERIES__WEBHOOK_DELIVERIES_UPDATED_BY_FKEY);
     }
 
     private transient Tenants _tenants;
     private transient WebhookEndpoints _webhookEndpoints;
     private transient OutboxEvents _outboxEvents;
+    private transient Users _webhookDeliveriesCreatedByFkey;
+    private transient Users _webhookDeliveriesUpdatedByFkey;
 
     /**
      * Get the implicit join path to the <code>public.tenants</code> table.
@@ -225,6 +237,28 @@ public class WebhookDeliveries extends TableImpl<WebhookDeliveriesRecord> {
             _outboxEvents = new OutboxEvents(this, Keys.WEBHOOK_DELIVERIES__WEBHOOK_DELIVERIES_OUTBOX_EVENT_ID_FKEY);
 
         return _outboxEvents;
+    }
+
+    /**
+     * Get the implicit join path to the <code>public.users</code> table, via
+     * the <code>webhook_deliveries_created_by_fkey</code> key.
+     */
+    public Users webhookDeliveriesCreatedByFkey() {
+        if (_webhookDeliveriesCreatedByFkey == null)
+            _webhookDeliveriesCreatedByFkey = new Users(this, Keys.WEBHOOK_DELIVERIES__WEBHOOK_DELIVERIES_CREATED_BY_FKEY);
+
+        return _webhookDeliveriesCreatedByFkey;
+    }
+
+    /**
+     * Get the implicit join path to the <code>public.users</code> table, via
+     * the <code>webhook_deliveries_updated_by_fkey</code> key.
+     */
+    public Users webhookDeliveriesUpdatedByFkey() {
+        if (_webhookDeliveriesUpdatedByFkey == null)
+            _webhookDeliveriesUpdatedByFkey = new Users(this, Keys.WEBHOOK_DELIVERIES__WEBHOOK_DELIVERIES_UPDATED_BY_FKEY);
+
+        return _webhookDeliveriesUpdatedByFkey;
     }
 
     @Override

@@ -254,4 +254,34 @@ public class CustomersDao extends DAOImpl<CustomersRecord, com.subscriptionengin
     public List<com.subscriptionengine.generated.tables.pojos.Customers> fetchByCustomerType(String... values) {
         return fetch(Customers.CUSTOMERS.CUSTOMER_TYPE, values);
     }
+
+    /**
+     * Fetch records that have <code>created_by BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.Customers> fetchRangeOfCreatedBy(UUID lowerInclusive, UUID upperInclusive) {
+        return fetchRange(Customers.CUSTOMERS.CREATED_BY, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>created_by IN (values)</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.Customers> fetchByCreatedBy(UUID... values) {
+        return fetch(Customers.CUSTOMERS.CREATED_BY, values);
+    }
+
+    /**
+     * Fetch records that have <code>updated_by BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.Customers> fetchRangeOfUpdatedBy(UUID lowerInclusive, UUID upperInclusive) {
+        return fetchRange(Customers.CUSTOMERS.UPDATED_BY, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>updated_by IN (values)</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.Customers> fetchByUpdatedBy(UUID... values) {
+        return fetch(Customers.CUSTOMERS.UPDATED_BY, values);
+    }
 }

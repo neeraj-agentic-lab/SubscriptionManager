@@ -269,4 +269,34 @@ public class EntitlementsDao extends DAOImpl<EntitlementsRecord, com.subscriptio
     public List<com.subscriptionengine.generated.tables.pojos.Entitlements> fetchByUpdatedAt(OffsetDateTime... values) {
         return fetch(Entitlements.ENTITLEMENTS.UPDATED_AT, values);
     }
+
+    /**
+     * Fetch records that have <code>created_by BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.Entitlements> fetchRangeOfCreatedBy(UUID lowerInclusive, UUID upperInclusive) {
+        return fetchRange(Entitlements.ENTITLEMENTS.CREATED_BY, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>created_by IN (values)</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.Entitlements> fetchByCreatedBy(UUID... values) {
+        return fetch(Entitlements.ENTITLEMENTS.CREATED_BY, values);
+    }
+
+    /**
+     * Fetch records that have <code>updated_by BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.Entitlements> fetchRangeOfUpdatedBy(UUID lowerInclusive, UUID upperInclusive) {
+        return fetchRange(Entitlements.ENTITLEMENTS.UPDATED_BY, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>updated_by IN (values)</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.Entitlements> fetchByUpdatedBy(UUID... values) {
+        return fetch(Entitlements.ENTITLEMENTS.UPDATED_BY, values);
+    }
 }

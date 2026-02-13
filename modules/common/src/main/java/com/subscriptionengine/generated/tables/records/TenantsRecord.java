@@ -135,6 +135,40 @@ public class TenantsRecord extends UpdatableRecordImpl<TenantsRecord> {
         return (OffsetDateTime) get(6);
     }
 
+    /**
+     * Setter for <code>public.tenants.created_by</code>. User who created this
+     * tenant
+     */
+    public TenantsRecord setCreatedBy(UUID value) {
+        set(7, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.tenants.created_by</code>. User who created this
+     * tenant
+     */
+    public UUID getCreatedBy() {
+        return (UUID) get(7);
+    }
+
+    /**
+     * Setter for <code>public.tenants.updated_by</code>. User who last updated
+     * this tenant
+     */
+    public TenantsRecord setUpdatedBy(UUID value) {
+        set(8, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.tenants.updated_by</code>. User who last updated
+     * this tenant
+     */
+    public UUID getUpdatedBy() {
+        return (UUID) get(8);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -158,7 +192,7 @@ public class TenantsRecord extends UpdatableRecordImpl<TenantsRecord> {
     /**
      * Create a detached, initialised TenantsRecord
      */
-    public TenantsRecord(UUID id, String name, String slug, String status, JSONB customAttrs, OffsetDateTime createdAt, OffsetDateTime updatedAt) {
+    public TenantsRecord(UUID id, String name, String slug, String status, JSONB customAttrs, OffsetDateTime createdAt, OffsetDateTime updatedAt, UUID createdBy, UUID updatedBy) {
         super(Tenants.TENANTS);
 
         setId(id);
@@ -168,6 +202,8 @@ public class TenantsRecord extends UpdatableRecordImpl<TenantsRecord> {
         setCustomAttrs(customAttrs);
         setCreatedAt(createdAt);
         setUpdatedAt(updatedAt);
+        setCreatedBy(createdBy);
+        setUpdatedBy(updatedBy);
         resetChangedOnNotNull();
     }
 
@@ -185,6 +221,8 @@ public class TenantsRecord extends UpdatableRecordImpl<TenantsRecord> {
             setCustomAttrs(value.getCustomAttrs());
             setCreatedAt(value.getCreatedAt());
             setUpdatedAt(value.getUpdatedAt());
+            setCreatedBy(value.getCreatedBy());
+            setUpdatedBy(value.getUpdatedBy());
             resetChangedOnNotNull();
         }
     }

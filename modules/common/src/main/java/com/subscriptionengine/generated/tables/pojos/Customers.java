@@ -35,6 +35,8 @@ public class Customers implements Serializable {
     private OffsetDateTime updatedAt;
     private String guestId;
     private String customerType;
+    private UUID createdBy;
+    private UUID updatedBy;
 
     public Customers() {}
 
@@ -52,6 +54,8 @@ public class Customers implements Serializable {
         this.updatedAt = value.updatedAt;
         this.guestId = value.guestId;
         this.customerType = value.customerType;
+        this.createdBy = value.createdBy;
+        this.updatedBy = value.updatedBy;
     }
 
     public Customers(
@@ -67,7 +71,9 @@ public class Customers implements Serializable {
         OffsetDateTime createdAt,
         OffsetDateTime updatedAt,
         String guestId,
-        String customerType
+        String customerType,
+        UUID createdBy,
+        UUID updatedBy
     ) {
         this.id = id;
         this.tenantId = tenantId;
@@ -82,6 +88,8 @@ public class Customers implements Serializable {
         this.updatedAt = updatedAt;
         this.guestId = guestId;
         this.customerType = customerType;
+        this.createdBy = createdBy;
+        this.updatedBy = updatedBy;
     }
 
     /**
@@ -292,6 +300,40 @@ public class Customers implements Serializable {
         return this;
     }
 
+    /**
+     * Getter for <code>public.customers.created_by</code>. User who created
+     * this customer (admin or self-registered)
+     */
+    public UUID getCreatedBy() {
+        return this.createdBy;
+    }
+
+    /**
+     * Setter for <code>public.customers.created_by</code>. User who created
+     * this customer (admin or self-registered)
+     */
+    public Customers setCreatedBy(UUID createdBy) {
+        this.createdBy = createdBy;
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.customers.updated_by</code>. User who last
+     * updated this customer
+     */
+    public UUID getUpdatedBy() {
+        return this.updatedBy;
+    }
+
+    /**
+     * Setter for <code>public.customers.updated_by</code>. User who last
+     * updated this customer
+     */
+    public Customers setUpdatedBy(UUID updatedBy) {
+        this.updatedBy = updatedBy;
+        return this;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -379,6 +421,18 @@ public class Customers implements Serializable {
         }
         else if (!this.customerType.equals(other.customerType))
             return false;
+        if (this.createdBy == null) {
+            if (other.createdBy != null)
+                return false;
+        }
+        else if (!this.createdBy.equals(other.createdBy))
+            return false;
+        if (this.updatedBy == null) {
+            if (other.updatedBy != null)
+                return false;
+        }
+        else if (!this.updatedBy.equals(other.updatedBy))
+            return false;
         return true;
     }
 
@@ -399,6 +453,8 @@ public class Customers implements Serializable {
         result = prime * result + ((this.updatedAt == null) ? 0 : this.updatedAt.hashCode());
         result = prime * result + ((this.guestId == null) ? 0 : this.guestId.hashCode());
         result = prime * result + ((this.customerType == null) ? 0 : this.customerType.hashCode());
+        result = prime * result + ((this.createdBy == null) ? 0 : this.createdBy.hashCode());
+        result = prime * result + ((this.updatedBy == null) ? 0 : this.updatedBy.hashCode());
         return result;
     }
 
@@ -419,6 +475,8 @@ public class Customers implements Serializable {
         sb.append(", ").append(updatedAt);
         sb.append(", ").append(guestId);
         sb.append(", ").append(customerType);
+        sb.append(", ").append(createdBy);
+        sb.append(", ").append(updatedBy);
 
         sb.append(")");
         return sb.toString();

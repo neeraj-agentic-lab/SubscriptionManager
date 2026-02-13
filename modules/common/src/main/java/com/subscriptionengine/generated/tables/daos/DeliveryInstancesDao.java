@@ -7,6 +7,7 @@ package com.subscriptionengine.generated.tables.daos;
 import com.subscriptionengine.generated.tables.DeliveryInstances;
 import com.subscriptionengine.generated.tables.records.DeliveryInstancesRecord;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -313,5 +314,80 @@ public class DeliveryInstancesDao extends DAOImpl<DeliveryInstancesRecord, com.s
      */
     public List<com.subscriptionengine.generated.tables.pojos.DeliveryInstances> fetchByCancellationReason(String... values) {
         return fetch(DeliveryInstances.DELIVERY_INSTANCES.CANCELLATION_REASON, values);
+    }
+
+    /**
+     * Fetch records that have <code>created_by BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.DeliveryInstances> fetchRangeOfCreatedBy(UUID lowerInclusive, UUID upperInclusive) {
+        return fetchRange(DeliveryInstances.DELIVERY_INSTANCES.CREATED_BY, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>created_by IN (values)</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.DeliveryInstances> fetchByCreatedBy(UUID... values) {
+        return fetch(DeliveryInstances.DELIVERY_INSTANCES.CREATED_BY, values);
+    }
+
+    /**
+     * Fetch records that have <code>updated_by BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.DeliveryInstances> fetchRangeOfUpdatedBy(UUID lowerInclusive, UUID upperInclusive) {
+        return fetchRange(DeliveryInstances.DELIVERY_INSTANCES.UPDATED_BY, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>updated_by IN (values)</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.DeliveryInstances> fetchByUpdatedBy(UUID... values) {
+        return fetch(DeliveryInstances.DELIVERY_INSTANCES.UPDATED_BY, values);
+    }
+
+    /**
+     * Fetch records that have <code>rescheduled_by BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.DeliveryInstances> fetchRangeOfRescheduledBy(UUID lowerInclusive, UUID upperInclusive) {
+        return fetchRange(DeliveryInstances.DELIVERY_INSTANCES.RESCHEDULED_BY, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>rescheduled_by IN (values)</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.DeliveryInstances> fetchByRescheduledBy(UUID... values) {
+        return fetch(DeliveryInstances.DELIVERY_INSTANCES.RESCHEDULED_BY, values);
+    }
+
+    /**
+     * Fetch records that have <code>reschedule_reason BETWEEN lowerInclusive
+     * AND upperInclusive</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.DeliveryInstances> fetchRangeOfRescheduleReason(String lowerInclusive, String upperInclusive) {
+        return fetchRange(DeliveryInstances.DELIVERY_INSTANCES.RESCHEDULE_REASON, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>reschedule_reason IN (values)</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.DeliveryInstances> fetchByRescheduleReason(String... values) {
+        return fetch(DeliveryInstances.DELIVERY_INSTANCES.RESCHEDULE_REASON, values);
+    }
+
+    /**
+     * Fetch records that have <code>rescheduled_at BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.DeliveryInstances> fetchRangeOfRescheduledAt(LocalDateTime lowerInclusive, LocalDateTime upperInclusive) {
+        return fetchRange(DeliveryInstances.DELIVERY_INSTANCES.RESCHEDULED_AT, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>rescheduled_at IN (values)</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.DeliveryInstances> fetchByRescheduledAt(LocalDateTime... values) {
+        return fetch(DeliveryInstances.DELIVERY_INSTANCES.RESCHEDULED_AT, values);
     }
 }

@@ -194,6 +194,36 @@ public class SubscriptionItemsRecord extends UpdatableRecordImpl<SubscriptionIte
         return (OffsetDateTime) get(10);
     }
 
+    /**
+     * Setter for <code>public.subscription_items.created_by</code>.
+     */
+    public SubscriptionItemsRecord setCreatedBy(UUID value) {
+        set(11, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.subscription_items.created_by</code>.
+     */
+    public UUID getCreatedBy() {
+        return (UUID) get(11);
+    }
+
+    /**
+     * Setter for <code>public.subscription_items.updated_by</code>.
+     */
+    public SubscriptionItemsRecord setUpdatedBy(UUID value) {
+        set(12, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.subscription_items.updated_by</code>.
+     */
+    public UUID getUpdatedBy() {
+        return (UUID) get(12);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -217,7 +247,7 @@ public class SubscriptionItemsRecord extends UpdatableRecordImpl<SubscriptionIte
     /**
      * Create a detached, initialised SubscriptionItemsRecord
      */
-    public SubscriptionItemsRecord(UUID id, UUID tenantId, UUID subscriptionId, UUID planId, Integer quantity, Long unitPriceCents, String currency, JSONB itemConfig, JSONB customAttrs, OffsetDateTime createdAt, OffsetDateTime updatedAt) {
+    public SubscriptionItemsRecord(UUID id, UUID tenantId, UUID subscriptionId, UUID planId, Integer quantity, Long unitPriceCents, String currency, JSONB itemConfig, JSONB customAttrs, OffsetDateTime createdAt, OffsetDateTime updatedAt, UUID createdBy, UUID updatedBy) {
         super(SubscriptionItems.SUBSCRIPTION_ITEMS);
 
         setId(id);
@@ -231,6 +261,8 @@ public class SubscriptionItemsRecord extends UpdatableRecordImpl<SubscriptionIte
         setCustomAttrs(customAttrs);
         setCreatedAt(createdAt);
         setUpdatedAt(updatedAt);
+        setCreatedBy(createdBy);
+        setUpdatedBy(updatedBy);
         resetChangedOnNotNull();
     }
 
@@ -252,6 +284,8 @@ public class SubscriptionItemsRecord extends UpdatableRecordImpl<SubscriptionIte
             setCustomAttrs(value.getCustomAttrs());
             setCreatedAt(value.getCreatedAt());
             setUpdatedAt(value.getUpdatedAt());
+            setCreatedBy(value.getCreatedBy());
+            setUpdatedBy(value.getUpdatedBy());
             resetChangedOnNotNull();
         }
     }

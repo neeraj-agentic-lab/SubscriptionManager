@@ -50,4 +50,38 @@ public class JwtTestHelper {
             .signWith(KEY, SignatureAlgorithm.HS256)
             .compact();
     }
+    
+    /**
+     * Generate a JWT token with role and customer_id for authorization testing.
+     * 
+     * @param tenantId the tenant ID
+     * @param userId the user ID
+     * @param email the user email
+     * @param role the user role (SUPER_ADMIN, TENANT_ADMIN, STAFF, CUSTOMER)
+     * @param customerId the customer ID (null for admin users)
+     * @return JWT token string
+     */
+    public static String generateTokenWithRole(String tenantId, String userId, String email, String role, String customerId) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("tenant_id", tenantId);
+        claims.put("user_id", userId);
+        claims.put("email", email);
+        claims.put("role", role);
+        
+        if (customerId != null) {
+            claims.put("customer_id", customerId);
+        }
+        
+        long nowMillis = System.currentTimeMillis();
+        Date now = new Date(nowMillis);
+        Date expiration = new Date(nowMillis + 3600000); // 1 hour
+        
+        return Jwts.builder()
+            .setClaims(claims)
+            .setSubject(userId)
+            .setIssuedAt(now)
+            .setExpiration(expiration)
+            .signWith(KEY, SignatureAlgorithm.HS256)
+            .compact();
+    }
 }

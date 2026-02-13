@@ -259,6 +259,109 @@ public class PlansRecord extends UpdatableRecordImpl<PlansRecord> {
         return (OffsetDateTime) get(14);
     }
 
+    /**
+     * Setter for <code>public.plans.created_by</code>. User who created this
+     * plan
+     */
+    public PlansRecord setCreatedBy(UUID value) {
+        set(15, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.plans.created_by</code>. User who created this
+     * plan
+     */
+    public UUID getCreatedBy() {
+        return (UUID) get(15);
+    }
+
+    /**
+     * Setter for <code>public.plans.updated_by</code>. User who last updated
+     * this plan
+     */
+    public PlansRecord setUpdatedBy(UUID value) {
+        set(16, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.plans.updated_by</code>. User who last updated
+     * this plan
+     */
+    public UUID getUpdatedBy() {
+        return (UUID) get(16);
+    }
+
+    /**
+     * Setter for <code>public.plans.plan_category</code>. DIGITAL,
+     * PRODUCT_BASED, or HYBRID - determines subscription behavior
+     */
+    public PlansRecord setPlanCategory(String value) {
+        set(17, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.plans.plan_category</code>. DIGITAL,
+     * PRODUCT_BASED, or HYBRID - determines subscription behavior
+     */
+    @Size(max = 50)
+    public String getPlanCategory() {
+        return (String) get(17);
+    }
+
+    /**
+     * Setter for <code>public.plans.requires_products</code>. Whether
+     * subscription MUST include products (true for PRODUCT_BASED)
+     */
+    public PlansRecord setRequiresProducts(Boolean value) {
+        set(18, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.plans.requires_products</code>. Whether
+     * subscription MUST include products (true for PRODUCT_BASED)
+     */
+    public Boolean getRequiresProducts() {
+        return (Boolean) get(18);
+    }
+
+    /**
+     * Setter for <code>public.plans.allows_products</code>. Whether
+     * subscription CAN include products (true for PRODUCT_BASED and HYBRID)
+     */
+    public PlansRecord setAllowsProducts(Boolean value) {
+        set(19, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.plans.allows_products</code>. Whether
+     * subscription CAN include products (true for PRODUCT_BASED and HYBRID)
+     */
+    public Boolean getAllowsProducts() {
+        return (Boolean) get(19);
+    }
+
+    /**
+     * Setter for <code>public.plans.base_price_required</code>. Whether plan
+     * must have base price &gt; 0 (true for DIGITAL and HYBRID)
+     */
+    public PlansRecord setBasePriceRequired(Boolean value) {
+        set(20, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.plans.base_price_required</code>. Whether plan
+     * must have base price &gt; 0 (true for DIGITAL and HYBRID)
+     */
+    public Boolean getBasePriceRequired() {
+        return (Boolean) get(20);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -282,7 +385,7 @@ public class PlansRecord extends UpdatableRecordImpl<PlansRecord> {
     /**
      * Create a detached, initialised PlansRecord
      */
-    public PlansRecord(UUID id, UUID tenantId, String name, String description, String planType, String status, Long basePriceCents, String currency, String billingInterval, Integer billingIntervalCount, Integer trialPeriodDays, JSONB planConfig, JSONB customAttrs, OffsetDateTime createdAt, OffsetDateTime updatedAt) {
+    public PlansRecord(UUID id, UUID tenantId, String name, String description, String planType, String status, Long basePriceCents, String currency, String billingInterval, Integer billingIntervalCount, Integer trialPeriodDays, JSONB planConfig, JSONB customAttrs, OffsetDateTime createdAt, OffsetDateTime updatedAt, UUID createdBy, UUID updatedBy, String planCategory, Boolean requiresProducts, Boolean allowsProducts, Boolean basePriceRequired) {
         super(Plans.PLANS);
 
         setId(id);
@@ -300,6 +403,12 @@ public class PlansRecord extends UpdatableRecordImpl<PlansRecord> {
         setCustomAttrs(customAttrs);
         setCreatedAt(createdAt);
         setUpdatedAt(updatedAt);
+        setCreatedBy(createdBy);
+        setUpdatedBy(updatedBy);
+        setPlanCategory(planCategory);
+        setRequiresProducts(requiresProducts);
+        setAllowsProducts(allowsProducts);
+        setBasePriceRequired(basePriceRequired);
         resetChangedOnNotNull();
     }
 
@@ -325,6 +434,12 @@ public class PlansRecord extends UpdatableRecordImpl<PlansRecord> {
             setCustomAttrs(value.getCustomAttrs());
             setCreatedAt(value.getCreatedAt());
             setUpdatedAt(value.getUpdatedAt());
+            setCreatedBy(value.getCreatedBy());
+            setUpdatedBy(value.getUpdatedBy());
+            setPlanCategory(value.getPlanCategory());
+            setRequiresProducts(value.getRequiresProducts());
+            setAllowsProducts(value.getAllowsProducts());
+            setBasePriceRequired(value.getBasePriceRequired());
             resetChangedOnNotNull();
         }
     }

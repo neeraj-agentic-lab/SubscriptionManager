@@ -228,6 +228,36 @@ public class InvoiceLinesRecord extends UpdatableRecordImpl<InvoiceLinesRecord> 
         return (OffsetDateTime) get(12);
     }
 
+    /**
+     * Setter for <code>public.invoice_lines.created_by</code>.
+     */
+    public InvoiceLinesRecord setCreatedBy(UUID value) {
+        set(13, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.invoice_lines.created_by</code>.
+     */
+    public UUID getCreatedBy() {
+        return (UUID) get(13);
+    }
+
+    /**
+     * Setter for <code>public.invoice_lines.updated_by</code>.
+     */
+    public InvoiceLinesRecord setUpdatedBy(UUID value) {
+        set(14, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.invoice_lines.updated_by</code>.
+     */
+    public UUID getUpdatedBy() {
+        return (UUID) get(14);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -251,7 +281,7 @@ public class InvoiceLinesRecord extends UpdatableRecordImpl<InvoiceLinesRecord> 
     /**
      * Create a detached, initialised InvoiceLinesRecord
      */
-    public InvoiceLinesRecord(UUID id, UUID tenantId, UUID invoiceId, UUID subscriptionItemId, String description, Integer quantity, Long unitPriceCents, Long totalCents, String currency, OffsetDateTime periodStart, OffsetDateTime periodEnd, JSONB customAttrs, OffsetDateTime createdAt) {
+    public InvoiceLinesRecord(UUID id, UUID tenantId, UUID invoiceId, UUID subscriptionItemId, String description, Integer quantity, Long unitPriceCents, Long totalCents, String currency, OffsetDateTime periodStart, OffsetDateTime periodEnd, JSONB customAttrs, OffsetDateTime createdAt, UUID createdBy, UUID updatedBy) {
         super(InvoiceLines.INVOICE_LINES);
 
         setId(id);
@@ -267,6 +297,8 @@ public class InvoiceLinesRecord extends UpdatableRecordImpl<InvoiceLinesRecord> 
         setPeriodEnd(periodEnd);
         setCustomAttrs(customAttrs);
         setCreatedAt(createdAt);
+        setCreatedBy(createdBy);
+        setUpdatedBy(updatedBy);
         resetChangedOnNotNull();
     }
 
@@ -290,6 +322,8 @@ public class InvoiceLinesRecord extends UpdatableRecordImpl<InvoiceLinesRecord> 
             setPeriodEnd(value.getPeriodEnd());
             setCustomAttrs(value.getCustomAttrs());
             setCreatedAt(value.getCreatedAt());
+            setCreatedBy(value.getCreatedBy());
+            setUpdatedBy(value.getUpdatedBy());
             resetChangedOnNotNull();
         }
     }

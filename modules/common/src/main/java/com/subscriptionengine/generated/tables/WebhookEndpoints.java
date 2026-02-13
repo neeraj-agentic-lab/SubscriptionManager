@@ -103,6 +103,18 @@ public class WebhookEndpoints extends TableImpl<WebhookEndpointsRecord> {
      */
     public final TableField<WebhookEndpointsRecord, OffsetDateTime> UPDATED_AT = createField(DSL.name("updated_at"), SQLDataType.TIMESTAMPWITHTIMEZONE(6).nullable(false).defaultValue(DSL.field(DSL.raw("now()"), SQLDataType.TIMESTAMPWITHTIMEZONE)), this, "");
 
+    /**
+     * The column <code>public.webhook_endpoints.created_by</code>. User who
+     * registered this webhook endpoint
+     */
+    public final TableField<WebhookEndpointsRecord, UUID> CREATED_BY = createField(DSL.name("created_by"), SQLDataType.UUID, this, "User who registered this webhook endpoint");
+
+    /**
+     * The column <code>public.webhook_endpoints.updated_by</code>. User who
+     * last updated this webhook endpoint
+     */
+    public final TableField<WebhookEndpointsRecord, UUID> UPDATED_BY = createField(DSL.name("updated_by"), SQLDataType.UUID, this, "User who last updated this webhook endpoint");
+
     private WebhookEndpoints(Name alias, Table<WebhookEndpointsRecord> aliased) {
         this(alias, aliased, null);
     }
@@ -143,7 +155,7 @@ public class WebhookEndpoints extends TableImpl<WebhookEndpointsRecord> {
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.asList(Indexes.IDX_WEBHOOK_ENDPOINTS_STATUS, Indexes.IDX_WEBHOOK_ENDPOINTS_TENANT_ID);
+        return Arrays.asList(Indexes.IDX_WEBHOOK_ENDPOINTS_CREATED_BY, Indexes.IDX_WEBHOOK_ENDPOINTS_STATUS, Indexes.IDX_WEBHOOK_ENDPOINTS_TENANT_ID, Indexes.IDX_WEBHOOK_ENDPOINTS_UPDATED_BY);
     }
 
     @Override
@@ -153,10 +165,12 @@ public class WebhookEndpoints extends TableImpl<WebhookEndpointsRecord> {
 
     @Override
     public List<ForeignKey<WebhookEndpointsRecord, ?>> getReferences() {
-        return Arrays.asList(Keys.WEBHOOK_ENDPOINTS__WEBHOOK_ENDPOINTS_TENANT_ID_FKEY);
+        return Arrays.asList(Keys.WEBHOOK_ENDPOINTS__WEBHOOK_ENDPOINTS_TENANT_ID_FKEY, Keys.WEBHOOK_ENDPOINTS__WEBHOOK_ENDPOINTS_CREATED_BY_FKEY, Keys.WEBHOOK_ENDPOINTS__WEBHOOK_ENDPOINTS_UPDATED_BY_FKEY);
     }
 
     private transient Tenants _tenants;
+    private transient Users _webhookEndpointsCreatedByFkey;
+    private transient Users _webhookEndpointsUpdatedByFkey;
 
     /**
      * Get the implicit join path to the <code>public.tenants</code> table.
@@ -166,6 +180,28 @@ public class WebhookEndpoints extends TableImpl<WebhookEndpointsRecord> {
             _tenants = new Tenants(this, Keys.WEBHOOK_ENDPOINTS__WEBHOOK_ENDPOINTS_TENANT_ID_FKEY);
 
         return _tenants;
+    }
+
+    /**
+     * Get the implicit join path to the <code>public.users</code> table, via
+     * the <code>webhook_endpoints_created_by_fkey</code> key.
+     */
+    public Users webhookEndpointsCreatedByFkey() {
+        if (_webhookEndpointsCreatedByFkey == null)
+            _webhookEndpointsCreatedByFkey = new Users(this, Keys.WEBHOOK_ENDPOINTS__WEBHOOK_ENDPOINTS_CREATED_BY_FKEY);
+
+        return _webhookEndpointsCreatedByFkey;
+    }
+
+    /**
+     * Get the implicit join path to the <code>public.users</code> table, via
+     * the <code>webhook_endpoints_updated_by_fkey</code> key.
+     */
+    public Users webhookEndpointsUpdatedByFkey() {
+        if (_webhookEndpointsUpdatedByFkey == null)
+            _webhookEndpointsUpdatedByFkey = new Users(this, Keys.WEBHOOK_ENDPOINTS__WEBHOOK_ENDPOINTS_UPDATED_BY_FKEY);
+
+        return _webhookEndpointsUpdatedByFkey;
     }
 
     @Override

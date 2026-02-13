@@ -32,9 +32,9 @@ import java.util.UUID;
  * @author Neeraj Yadav
  */
 @RestController
-@RequestMapping("/v1/subscriptions")
+@RequestMapping("/v1/admin/subscriptions")
 @TenantSecured
-@Tag(name = "Subscriptions", description = "Subscription lifecycle management APIs. Create, retrieve, and manage customer subscriptions with automatic billing and delivery scheduling.")
+@Tag(name = "Admin - Subscriptions", description = "Admin endpoints for subscription lifecycle management. Create, retrieve, and manage customer subscriptions with automatic billing and delivery scheduling.")
 public class SubscriptionsController {
     
     private static final Logger logger = LoggerFactory.getLogger(SubscriptionsController.class);
@@ -54,11 +54,72 @@ public class SubscriptionsController {
      */
     @PostMapping
     @Operation(
-        summary = "Create a new subscription",
-        description = "Creates a new subscription for a customer with a specified plan. "
-            + "Automatically creates the customer if they don't exist based on email. "
-            + "Initiates billing cycle, schedules first delivery, and triggers subscription.created webhook event. "
-            + "Supports custom start dates and trial periods from the plan."
+        summary = "Create a new subscription (unified endpoint)",
+        description = "**UNIFIED ENDPOINT**: Creates both simple SaaS subscriptions and product-based subscriptions. "
+            + "\n\n**Simple Subscription** (no products): Provide planId, customer info, and payment method. "
+            + "Uses plan's base price and billing interval. "
+            + "\n\n**Product-Based Subscription** (with products): Include optional 'products' array with product details (SKU, name, quantity, price). "
+            + "Each product can have individual pricing. Requires shipping address for physical products. "
+            + "\n\nAutomatically creates the customer if they don't exist based on email. "
+            + "Initiates billing cycle, schedules deliveries, and triggers subscription.created webhook event. "
+            + "Supports custom start dates and trial periods."
+    )
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+        description = "Subscription creation request. Products array is optional - omit for simple subscriptions, include for product-based subscriptions.",
+        required = true,
+        content = @Content(
+            mediaType = "application/json",
+            schema = @Schema(implementation = CreateSubscriptionRequest.class),
+            examples = {
+                @io.swagger.v3.oas.annotations.media.ExampleObject(
+                    name = "Simple SaaS Subscription",
+                    summary = "Create a simple subscription without products",
+                    description = "Basic subscription using plan's base price and billing interval",
+                    value = "{\n" +
+                        "  \"planId\": \"123e4567-e89b-12d3-a456-426614174000\",\n" +
+                        "  \"customerEmail\": \"john.doe@example.com\",\n" +
+                        "  \"customerFirstName\": \"John\",\n" +
+                        "  \"customerLastName\": \"Doe\",\n" +
+                        "  \"paymentMethodRef\": \"pm_stripe_abc123\"\n" +
+                        "}"
+                ),
+                @io.swagger.v3.oas.annotations.media.ExampleObject(
+                    name = "Product-Based Subscription",
+                    summary = "Create subscription with multiple products",
+                    description = "Subscription with product array for subscription boxes, meal kits, etc.",
+                    value = "{\n" +
+                        "  \"planId\": \"123e4567-e89b-12d3-a456-426614174000\",\n" +
+                        "  \"customerEmail\": \"jane.smith@example.com\",\n" +
+                        "  \"customerFirstName\": \"Jane\",\n" +
+                        "  \"customerLastName\": \"Smith\",\n" +
+                        "  \"products\": [\n" +
+                        "    {\n" +
+                        "      \"productId\": \"coffee-beans-001\",\n" +
+                        "      \"productName\": \"Premium Coffee Beans\",\n" +
+                        "      \"quantity\": 2,\n" +
+                        "      \"unitPriceCents\": 1599,\n" +
+                        "      \"currency\": \"USD\"\n" +
+                        "    },\n" +
+                        "    {\n" +
+                        "      \"productId\": \"coffee-filter-002\",\n" +
+                        "      \"productName\": \"Coffee Filters\",\n" +
+                        "      \"quantity\": 1,\n" +
+                        "      \"unitPriceCents\": 599,\n" +
+                        "      \"currency\": \"USD\"\n" +
+                        "    }\n" +
+                        "  ],\n" +
+                        "  \"shippingAddress\": {\n" +
+                        "    \"line1\": \"123 Main St\",\n" +
+                        "    \"city\": \"San Francisco\",\n" +
+                        "    \"state\": \"CA\",\n" +
+                        "    \"postalCode\": \"94102\",\n" +
+                        "    \"country\": \"US\"\n" +
+                        "  },\n" +
+                        "  \"paymentMethodRef\": \"pm_stripe_xyz789\"\n" +
+                        "}"
+                )
+            }
+        )
     )
     @ApiResponses(value = {
         @ApiResponse(
@@ -81,7 +142,6 @@ public class SubscriptionsController {
     })
     // @Idempotent("Subscription creation is idempotent")
     public ResponseEntity<SubscriptionResponse> createSubscription(
-        @Parameter(description = "Subscription creation details including plan ID, customer email, and start date", required = true)
         @Valid @RequestBody CreateSubscriptionRequest request) {
         logger.info("Creating new subscription for plan: {} and customer: {}", 
                    request.getPlanId(), request.getCustomerEmail());

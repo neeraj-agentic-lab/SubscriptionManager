@@ -33,6 +33,8 @@ public class WebhookEndpoints implements Serializable {
     private JSONB customAttrs;
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
+    private UUID createdBy;
+    private UUID updatedBy;
 
     public WebhookEndpoints() {}
 
@@ -47,6 +49,8 @@ public class WebhookEndpoints implements Serializable {
         this.customAttrs = value.customAttrs;
         this.createdAt = value.createdAt;
         this.updatedAt = value.updatedAt;
+        this.createdBy = value.createdBy;
+        this.updatedBy = value.updatedBy;
     }
 
     public WebhookEndpoints(
@@ -59,7 +63,9 @@ public class WebhookEndpoints implements Serializable {
         String description,
         JSONB customAttrs,
         OffsetDateTime createdAt,
-        OffsetDateTime updatedAt
+        OffsetDateTime updatedAt,
+        UUID createdBy,
+        UUID updatedBy
     ) {
         this.id = id;
         this.tenantId = tenantId;
@@ -71,6 +77,8 @@ public class WebhookEndpoints implements Serializable {
         this.customAttrs = customAttrs;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.createdBy = createdBy;
+        this.updatedBy = updatedBy;
     }
 
     /**
@@ -230,6 +238,40 @@ public class WebhookEndpoints implements Serializable {
         return this;
     }
 
+    /**
+     * Getter for <code>public.webhook_endpoints.created_by</code>. User who
+     * registered this webhook endpoint
+     */
+    public UUID getCreatedBy() {
+        return this.createdBy;
+    }
+
+    /**
+     * Setter for <code>public.webhook_endpoints.created_by</code>. User who
+     * registered this webhook endpoint
+     */
+    public WebhookEndpoints setCreatedBy(UUID createdBy) {
+        this.createdBy = createdBy;
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.webhook_endpoints.updated_by</code>. User who
+     * last updated this webhook endpoint
+     */
+    public UUID getUpdatedBy() {
+        return this.updatedBy;
+    }
+
+    /**
+     * Setter for <code>public.webhook_endpoints.updated_by</code>. User who
+     * last updated this webhook endpoint
+     */
+    public WebhookEndpoints setUpdatedBy(UUID updatedBy) {
+        this.updatedBy = updatedBy;
+        return this;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -299,6 +341,18 @@ public class WebhookEndpoints implements Serializable {
         }
         else if (!this.updatedAt.equals(other.updatedAt))
             return false;
+        if (this.createdBy == null) {
+            if (other.createdBy != null)
+                return false;
+        }
+        else if (!this.createdBy.equals(other.createdBy))
+            return false;
+        if (this.updatedBy == null) {
+            if (other.updatedBy != null)
+                return false;
+        }
+        else if (!this.updatedBy.equals(other.updatedBy))
+            return false;
         return true;
     }
 
@@ -316,6 +370,8 @@ public class WebhookEndpoints implements Serializable {
         result = prime * result + ((this.customAttrs == null) ? 0 : this.customAttrs.hashCode());
         result = prime * result + ((this.createdAt == null) ? 0 : this.createdAt.hashCode());
         result = prime * result + ((this.updatedAt == null) ? 0 : this.updatedAt.hashCode());
+        result = prime * result + ((this.createdBy == null) ? 0 : this.createdBy.hashCode());
+        result = prime * result + ((this.updatedBy == null) ? 0 : this.updatedBy.hashCode());
         return result;
     }
 
@@ -333,6 +389,8 @@ public class WebhookEndpoints implements Serializable {
         sb.append(", ").append(customAttrs);
         sb.append(", ").append(createdAt);
         sb.append(", ").append(updatedAt);
+        sb.append(", ").append(createdBy);
+        sb.append(", ").append(updatedBy);
 
         sb.append(")");
         return sb.toString();

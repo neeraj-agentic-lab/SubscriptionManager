@@ -9,6 +9,7 @@ import com.subscriptionengine.generated.Keys;
 import com.subscriptionengine.generated.Public;
 import com.subscriptionengine.generated.tables.records.SubscriptionsRecord;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -158,6 +159,36 @@ public class Subscriptions extends TableImpl<SubscriptionsRecord> {
      */
     public final TableField<SubscriptionsRecord, OffsetDateTime> UPDATED_AT = createField(DSL.name("updated_at"), SQLDataType.TIMESTAMPWITHTIMEZONE(6).nullable(false).defaultValue(DSL.field(DSL.raw("now()"), SQLDataType.TIMESTAMPWITHTIMEZONE)), this, "");
 
+    /**
+     * The column <code>public.subscriptions.created_by</code>. User who created
+     * this subscription (admin on behalf of customer, or customer self-service)
+     */
+    public final TableField<SubscriptionsRecord, UUID> CREATED_BY = createField(DSL.name("created_by"), SQLDataType.UUID, this, "User who created this subscription (admin on behalf of customer, or customer self-service)");
+
+    /**
+     * The column <code>public.subscriptions.updated_by</code>. User who last
+     * updated this subscription
+     */
+    public final TableField<SubscriptionsRecord, UUID> UPDATED_BY = createField(DSL.name("updated_by"), SQLDataType.UUID, this, "User who last updated this subscription");
+
+    /**
+     * The column <code>public.subscriptions.admin_notes</code>. Admin notes for
+     * internal tracking
+     */
+    public final TableField<SubscriptionsRecord, String> ADMIN_NOTES = createField(DSL.name("admin_notes"), SQLDataType.CLOB, this, "Admin notes for internal tracking");
+
+    /**
+     * The column <code>public.subscriptions.archived_at</code>. When
+     * subscription was soft deleted/archived
+     */
+    public final TableField<SubscriptionsRecord, LocalDateTime> ARCHIVED_AT = createField(DSL.name("archived_at"), SQLDataType.LOCALDATETIME(6), this, "When subscription was soft deleted/archived");
+
+    /**
+     * The column <code>public.subscriptions.archived_by</code>. User who
+     * archived the subscription
+     */
+    public final TableField<SubscriptionsRecord, UUID> ARCHIVED_BY = createField(DSL.name("archived_by"), SQLDataType.UUID, this, "User who archived the subscription");
+
     private Subscriptions(Name alias, Table<SubscriptionsRecord> aliased) {
         this(alias, aliased, null);
     }
@@ -198,7 +229,7 @@ public class Subscriptions extends TableImpl<SubscriptionsRecord> {
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.asList(Indexes.IDX_SUBSCRIPTIONS_CURRENT_PERIOD, Indexes.IDX_SUBSCRIPTIONS_CUSTOMER_ID, Indexes.IDX_SUBSCRIPTIONS_NEXT_RENEWAL, Indexes.IDX_SUBSCRIPTIONS_PLAN_ID, Indexes.IDX_SUBSCRIPTIONS_STATUS, Indexes.IDX_SUBSCRIPTIONS_TENANT_ID);
+        return Arrays.asList(Indexes.IDX_SUBSCRIPTIONS_ARCHIVED_AT, Indexes.IDX_SUBSCRIPTIONS_CREATED_BY, Indexes.IDX_SUBSCRIPTIONS_CURRENT_PERIOD, Indexes.IDX_SUBSCRIPTIONS_CUSTOMER_ID, Indexes.IDX_SUBSCRIPTIONS_NEXT_RENEWAL, Indexes.IDX_SUBSCRIPTIONS_PLAN_ID, Indexes.IDX_SUBSCRIPTIONS_STATUS, Indexes.IDX_SUBSCRIPTIONS_TENANT_ID, Indexes.IDX_SUBSCRIPTIONS_UPDATED_BY);
     }
 
     @Override
@@ -208,12 +239,15 @@ public class Subscriptions extends TableImpl<SubscriptionsRecord> {
 
     @Override
     public List<ForeignKey<SubscriptionsRecord, ?>> getReferences() {
-        return Arrays.asList(Keys.SUBSCRIPTIONS__SUBSCRIPTIONS_TENANT_ID_FKEY, Keys.SUBSCRIPTIONS__SUBSCRIPTIONS_CUSTOMER_ID_FKEY, Keys.SUBSCRIPTIONS__SUBSCRIPTIONS_PLAN_ID_FKEY);
+        return Arrays.asList(Keys.SUBSCRIPTIONS__SUBSCRIPTIONS_TENANT_ID_FKEY, Keys.SUBSCRIPTIONS__SUBSCRIPTIONS_CUSTOMER_ID_FKEY, Keys.SUBSCRIPTIONS__SUBSCRIPTIONS_PLAN_ID_FKEY, Keys.SUBSCRIPTIONS__SUBSCRIPTIONS_CREATED_BY_FKEY, Keys.SUBSCRIPTIONS__SUBSCRIPTIONS_UPDATED_BY_FKEY, Keys.SUBSCRIPTIONS__SUBSCRIPTIONS_ARCHIVED_BY_FKEY);
     }
 
     private transient Tenants _tenants;
     private transient Customers _customers;
     private transient Plans _plans;
+    private transient Users _subscriptionsCreatedByFkey;
+    private transient Users _subscriptionsUpdatedByFkey;
+    private transient Users _subscriptionsArchivedByFkey;
 
     /**
      * Get the implicit join path to the <code>public.tenants</code> table.
@@ -245,11 +279,44 @@ public class Subscriptions extends TableImpl<SubscriptionsRecord> {
         return _plans;
     }
 
+    /**
+     * Get the implicit join path to the <code>public.users</code> table, via
+     * the <code>subscriptions_created_by_fkey</code> key.
+     */
+    public Users subscriptionsCreatedByFkey() {
+        if (_subscriptionsCreatedByFkey == null)
+            _subscriptionsCreatedByFkey = new Users(this, Keys.SUBSCRIPTIONS__SUBSCRIPTIONS_CREATED_BY_FKEY);
+
+        return _subscriptionsCreatedByFkey;
+    }
+
+    /**
+     * Get the implicit join path to the <code>public.users</code> table, via
+     * the <code>subscriptions_updated_by_fkey</code> key.
+     */
+    public Users subscriptionsUpdatedByFkey() {
+        if (_subscriptionsUpdatedByFkey == null)
+            _subscriptionsUpdatedByFkey = new Users(this, Keys.SUBSCRIPTIONS__SUBSCRIPTIONS_UPDATED_BY_FKEY);
+
+        return _subscriptionsUpdatedByFkey;
+    }
+
+    /**
+     * Get the implicit join path to the <code>public.users</code> table, via
+     * the <code>subscriptions_archived_by_fkey</code> key.
+     */
+    public Users subscriptionsArchivedByFkey() {
+        if (_subscriptionsArchivedByFkey == null)
+            _subscriptionsArchivedByFkey = new Users(this, Keys.SUBSCRIPTIONS__SUBSCRIPTIONS_ARCHIVED_BY_FKEY);
+
+        return _subscriptionsArchivedByFkey;
+    }
+
     @Override
     public List<Check<SubscriptionsRecord>> getChecks() {
         return Arrays.asList(
             Internal.createCheck(this, DSL.name("subscriptions_period_check"), "((current_period_end > current_period_start))", true),
-            Internal.createCheck(this, DSL.name("subscriptions_status_check"), "(((status)::text = ANY ((ARRAY['ACTIVE'::character varying, 'PAUSED'::character varying, 'CANCELED'::character varying, 'EXPIRED'::character varying, 'PAST_DUE'::character varying])::text[])))", true),
+            Internal.createCheck(this, DSL.name("subscriptions_status_check"), "(((status)::text = ANY ((ARRAY['ACTIVE'::character varying, 'TRIALING'::character varying, 'PAUSED'::character varying, 'CANCELED'::character varying, 'EXPIRED'::character varying, 'PAST_DUE'::character varying])::text[])))", true),
             Internal.createCheck(this, DSL.name("subscriptions_trial_check"), "(((trial_end IS NULL) OR (trial_end > trial_start)))", true)
         );
     }

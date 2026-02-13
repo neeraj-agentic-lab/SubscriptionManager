@@ -4,8 +4,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
+import jakarta.validation.Valid;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -44,6 +46,13 @@ public class CreateSubscriptionRequest {
     
     // Optional scheduling override
     private OffsetDateTime startDate;
+    
+    // Optional: For ecommerce subscriptions with products
+    @Valid
+    private List<ProductItem> products;
+    
+    // Optional: Shipping address for physical product deliveries
+    private ShippingAddress shippingAddress;
     
     // Constructors
     public CreateSubscriptionRequest() {}
@@ -138,6 +147,29 @@ public class CreateSubscriptionRequest {
         this.startDate = startDate;
     }
     
+    public List<ProductItem> getProducts() {
+        return products;
+    }
+    
+    public void setProducts(List<ProductItem> products) {
+        this.products = products;
+    }
+    
+    public ShippingAddress getShippingAddress() {
+        return shippingAddress;
+    }
+    
+    public void setShippingAddress(ShippingAddress shippingAddress) {
+        this.shippingAddress = shippingAddress;
+    }
+    
+    /**
+     * Check if this is an ecommerce subscription (has products).
+     */
+    public boolean hasProducts() {
+        return products != null && !products.isEmpty();
+    }
+    
     @Override
     public String toString() {
         return "CreateSubscriptionRequest{" +
@@ -149,6 +181,8 @@ public class CreateSubscriptionRequest {
                 ", trialStart=" + trialStart +
                 ", trialEnd=" + trialEnd +
                 ", startDate=" + startDate +
+                ", products=" + (products != null ? products.size() + " items" : "none") +
+                ", shippingAddress=" + (shippingAddress != null ? "provided" : "none") +
                 '}';
     }
 }

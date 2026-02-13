@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
@@ -43,6 +44,11 @@ public class Subscriptions implements Serializable {
     private JSONB customAttrs;
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
+    private UUID createdBy;
+    private UUID updatedBy;
+    private String adminNotes;
+    private LocalDateTime archivedAt;
+    private UUID archivedBy;
 
     public Subscriptions() {}
 
@@ -68,6 +74,11 @@ public class Subscriptions implements Serializable {
         this.customAttrs = value.customAttrs;
         this.createdAt = value.createdAt;
         this.updatedAt = value.updatedAt;
+        this.createdBy = value.createdBy;
+        this.updatedBy = value.updatedBy;
+        this.adminNotes = value.adminNotes;
+        this.archivedAt = value.archivedAt;
+        this.archivedBy = value.archivedBy;
     }
 
     public Subscriptions(
@@ -91,7 +102,12 @@ public class Subscriptions implements Serializable {
         OffsetDateTime trialEnd,
         JSONB customAttrs,
         OffsetDateTime createdAt,
-        OffsetDateTime updatedAt
+        OffsetDateTime updatedAt,
+        UUID createdBy,
+        UUID updatedBy,
+        String adminNotes,
+        LocalDateTime archivedAt,
+        UUID archivedBy
     ) {
         this.id = id;
         this.tenantId = tenantId;
@@ -114,6 +130,11 @@ public class Subscriptions implements Serializable {
         this.customAttrs = customAttrs;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.createdBy = createdBy;
+        this.updatedBy = updatedBy;
+        this.adminNotes = adminNotes;
+        this.archivedAt = archivedAt;
+        this.archivedBy = archivedBy;
     }
 
     /**
@@ -440,6 +461,91 @@ public class Subscriptions implements Serializable {
         return this;
     }
 
+    /**
+     * Getter for <code>public.subscriptions.created_by</code>. User who created
+     * this subscription (admin on behalf of customer, or customer self-service)
+     */
+    public UUID getCreatedBy() {
+        return this.createdBy;
+    }
+
+    /**
+     * Setter for <code>public.subscriptions.created_by</code>. User who created
+     * this subscription (admin on behalf of customer, or customer self-service)
+     */
+    public Subscriptions setCreatedBy(UUID createdBy) {
+        this.createdBy = createdBy;
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.subscriptions.updated_by</code>. User who last
+     * updated this subscription
+     */
+    public UUID getUpdatedBy() {
+        return this.updatedBy;
+    }
+
+    /**
+     * Setter for <code>public.subscriptions.updated_by</code>. User who last
+     * updated this subscription
+     */
+    public Subscriptions setUpdatedBy(UUID updatedBy) {
+        this.updatedBy = updatedBy;
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.subscriptions.admin_notes</code>. Admin notes for
+     * internal tracking
+     */
+    public String getAdminNotes() {
+        return this.adminNotes;
+    }
+
+    /**
+     * Setter for <code>public.subscriptions.admin_notes</code>. Admin notes for
+     * internal tracking
+     */
+    public Subscriptions setAdminNotes(String adminNotes) {
+        this.adminNotes = adminNotes;
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.subscriptions.archived_at</code>. When
+     * subscription was soft deleted/archived
+     */
+    public LocalDateTime getArchivedAt() {
+        return this.archivedAt;
+    }
+
+    /**
+     * Setter for <code>public.subscriptions.archived_at</code>. When
+     * subscription was soft deleted/archived
+     */
+    public Subscriptions setArchivedAt(LocalDateTime archivedAt) {
+        this.archivedAt = archivedAt;
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.subscriptions.archived_by</code>. User who
+     * archived the subscription
+     */
+    public UUID getArchivedBy() {
+        return this.archivedBy;
+    }
+
+    /**
+     * Setter for <code>public.subscriptions.archived_by</code>. User who
+     * archived the subscription
+     */
+    public Subscriptions setArchivedBy(UUID archivedBy) {
+        this.archivedBy = archivedBy;
+        return this;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -575,6 +681,36 @@ public class Subscriptions implements Serializable {
         }
         else if (!this.updatedAt.equals(other.updatedAt))
             return false;
+        if (this.createdBy == null) {
+            if (other.createdBy != null)
+                return false;
+        }
+        else if (!this.createdBy.equals(other.createdBy))
+            return false;
+        if (this.updatedBy == null) {
+            if (other.updatedBy != null)
+                return false;
+        }
+        else if (!this.updatedBy.equals(other.updatedBy))
+            return false;
+        if (this.adminNotes == null) {
+            if (other.adminNotes != null)
+                return false;
+        }
+        else if (!this.adminNotes.equals(other.adminNotes))
+            return false;
+        if (this.archivedAt == null) {
+            if (other.archivedAt != null)
+                return false;
+        }
+        else if (!this.archivedAt.equals(other.archivedAt))
+            return false;
+        if (this.archivedBy == null) {
+            if (other.archivedBy != null)
+                return false;
+        }
+        else if (!this.archivedBy.equals(other.archivedBy))
+            return false;
         return true;
     }
 
@@ -603,6 +739,11 @@ public class Subscriptions implements Serializable {
         result = prime * result + ((this.customAttrs == null) ? 0 : this.customAttrs.hashCode());
         result = prime * result + ((this.createdAt == null) ? 0 : this.createdAt.hashCode());
         result = prime * result + ((this.updatedAt == null) ? 0 : this.updatedAt.hashCode());
+        result = prime * result + ((this.createdBy == null) ? 0 : this.createdBy.hashCode());
+        result = prime * result + ((this.updatedBy == null) ? 0 : this.updatedBy.hashCode());
+        result = prime * result + ((this.adminNotes == null) ? 0 : this.adminNotes.hashCode());
+        result = prime * result + ((this.archivedAt == null) ? 0 : this.archivedAt.hashCode());
+        result = prime * result + ((this.archivedBy == null) ? 0 : this.archivedBy.hashCode());
         return result;
     }
 
@@ -631,6 +772,11 @@ public class Subscriptions implements Serializable {
         sb.append(", ").append(customAttrs);
         sb.append(", ").append(createdAt);
         sb.append(", ").append(updatedAt);
+        sb.append(", ").append(createdBy);
+        sb.append(", ").append(updatedBy);
+        sb.append(", ").append(adminNotes);
+        sb.append(", ").append(archivedAt);
+        sb.append(", ").append(archivedBy);
 
         sb.append(")");
         return sb.toString();

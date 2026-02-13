@@ -30,13 +30,16 @@ public class SubscriptionManagementService {
     private final DSLContext dsl;
     private final ScheduledTaskService scheduledTaskService;
     private final ObjectMapper objectMapper;
+    private final SubscriptionHistoryService subscriptionHistoryService;
     
     public SubscriptionManagementService(DSLContext dsl, 
                                        ScheduledTaskService scheduledTaskService,
-                                       ObjectMapper objectMapper) {
+                                       ObjectMapper objectMapper,
+                                       SubscriptionHistoryService subscriptionHistoryService) {
         this.dsl = dsl;
         this.scheduledTaskService = scheduledTaskService;
         this.objectMapper = objectMapper;
+        this.subscriptionHistoryService = subscriptionHistoryService;
     }
 
     @Transactional
@@ -309,6 +312,9 @@ public class SubscriptionManagementService {
 
                 logger.info("[SUBSCRIPTION_CANCEL_SUCCESS] RequestId: {} - Immediately cancelled subscription {}",
                     requestId, subscriptionId);
+                
+                // Record cancellation in history
+                subscriptionHistoryService.recordCancellation(tenantId, subscriptionId, null, "CUSTOMER", reason);
             } else {
                 int updated = dsl.update(SUBSCRIPTIONS)
                     .set(SUBSCRIPTIONS.CANCEL_AT_PERIOD_END, true)
@@ -328,6 +334,9 @@ public class SubscriptionManagementService {
 
                 logger.info("[SUBSCRIPTION_CANCEL_SUCCESS] RequestId: {} - Marked subscription {} to cancel at period end {}",
                     requestId, subscriptionId, currentPeriodEnd);
+                
+                // Record cancellation in history
+                subscriptionHistoryService.recordCancellation(tenantId, subscriptionId, null, "CUSTOMER", reason);
             }
 
             return true;
@@ -428,6 +437,10 @@ public class SubscriptionManagementService {
             logger.info("[SUBSCRIPTION_PAUSE_SUCCESS] RequestId: {} - Successfully paused subscription {}", 
                        requestId, subscriptionId);
             
+            // Record pause action in history
+            subscriptionHistoryService.recordPause(tenantId, subscriptionId, null, "CUSTOMER", 
+                reason != null ? reason : "Customer requested pause");
+            
             // TODO: Emit outbox event for subscription.paused
             
             return true;
@@ -522,6 +535,9 @@ public class SubscriptionManagementService {
             
             logger.info("[SUBSCRIPTION_RESUME_SUCCESS] RequestId: {} - Successfully resumed subscription {} with next renewal at {}", 
                        requestId, subscriptionId, nextRenewalAt);
+            
+            // Record resume action in history
+            subscriptionHistoryService.recordResume(tenantId, subscriptionId, null, "CUSTOMER");
             
             // TODO: Emit outbox event for subscription.resumed
             

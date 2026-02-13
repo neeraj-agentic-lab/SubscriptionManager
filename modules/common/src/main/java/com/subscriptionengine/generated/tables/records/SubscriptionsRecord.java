@@ -9,6 +9,7 @@ import com.subscriptionengine.generated.tables.Subscriptions;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
@@ -349,6 +350,91 @@ public class SubscriptionsRecord extends UpdatableRecordImpl<SubscriptionsRecord
         return (OffsetDateTime) get(20);
     }
 
+    /**
+     * Setter for <code>public.subscriptions.created_by</code>. User who created
+     * this subscription (admin on behalf of customer, or customer self-service)
+     */
+    public SubscriptionsRecord setCreatedBy(UUID value) {
+        set(21, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.subscriptions.created_by</code>. User who created
+     * this subscription (admin on behalf of customer, or customer self-service)
+     */
+    public UUID getCreatedBy() {
+        return (UUID) get(21);
+    }
+
+    /**
+     * Setter for <code>public.subscriptions.updated_by</code>. User who last
+     * updated this subscription
+     */
+    public SubscriptionsRecord setUpdatedBy(UUID value) {
+        set(22, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.subscriptions.updated_by</code>. User who last
+     * updated this subscription
+     */
+    public UUID getUpdatedBy() {
+        return (UUID) get(22);
+    }
+
+    /**
+     * Setter for <code>public.subscriptions.admin_notes</code>. Admin notes for
+     * internal tracking
+     */
+    public SubscriptionsRecord setAdminNotes(String value) {
+        set(23, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.subscriptions.admin_notes</code>. Admin notes for
+     * internal tracking
+     */
+    public String getAdminNotes() {
+        return (String) get(23);
+    }
+
+    /**
+     * Setter for <code>public.subscriptions.archived_at</code>. When
+     * subscription was soft deleted/archived
+     */
+    public SubscriptionsRecord setArchivedAt(LocalDateTime value) {
+        set(24, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.subscriptions.archived_at</code>. When
+     * subscription was soft deleted/archived
+     */
+    public LocalDateTime getArchivedAt() {
+        return (LocalDateTime) get(24);
+    }
+
+    /**
+     * Setter for <code>public.subscriptions.archived_by</code>. User who
+     * archived the subscription
+     */
+    public SubscriptionsRecord setArchivedBy(UUID value) {
+        set(25, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.subscriptions.archived_by</code>. User who
+     * archived the subscription
+     */
+    public UUID getArchivedBy() {
+        return (UUID) get(25);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -372,7 +458,7 @@ public class SubscriptionsRecord extends UpdatableRecordImpl<SubscriptionsRecord
     /**
      * Create a detached, initialised SubscriptionsRecord
      */
-    public SubscriptionsRecord(UUID id, UUID tenantId, UUID customerId, UUID planId, String status, OffsetDateTime currentPeriodStart, OffsetDateTime currentPeriodEnd, OffsetDateTime nextRenewalAt, JSONB scheduleConfig, String paymentMethodRef, JSONB shippingAddress, JSONB shippingPreferences, JSONB planSnapshot, Boolean cancelAtPeriodEnd, OffsetDateTime canceledAt, String cancellationReason, OffsetDateTime trialStart, OffsetDateTime trialEnd, JSONB customAttrs, OffsetDateTime createdAt, OffsetDateTime updatedAt) {
+    public SubscriptionsRecord(UUID id, UUID tenantId, UUID customerId, UUID planId, String status, OffsetDateTime currentPeriodStart, OffsetDateTime currentPeriodEnd, OffsetDateTime nextRenewalAt, JSONB scheduleConfig, String paymentMethodRef, JSONB shippingAddress, JSONB shippingPreferences, JSONB planSnapshot, Boolean cancelAtPeriodEnd, OffsetDateTime canceledAt, String cancellationReason, OffsetDateTime trialStart, OffsetDateTime trialEnd, JSONB customAttrs, OffsetDateTime createdAt, OffsetDateTime updatedAt, UUID createdBy, UUID updatedBy, String adminNotes, LocalDateTime archivedAt, UUID archivedBy) {
         super(Subscriptions.SUBSCRIPTIONS);
 
         setId(id);
@@ -396,6 +482,11 @@ public class SubscriptionsRecord extends UpdatableRecordImpl<SubscriptionsRecord
         setCustomAttrs(customAttrs);
         setCreatedAt(createdAt);
         setUpdatedAt(updatedAt);
+        setCreatedBy(createdBy);
+        setUpdatedBy(updatedBy);
+        setAdminNotes(adminNotes);
+        setArchivedAt(archivedAt);
+        setArchivedBy(archivedBy);
         resetChangedOnNotNull();
     }
 
@@ -427,6 +518,11 @@ public class SubscriptionsRecord extends UpdatableRecordImpl<SubscriptionsRecord
             setCustomAttrs(value.getCustomAttrs());
             setCreatedAt(value.getCreatedAt());
             setUpdatedAt(value.getUpdatedAt());
+            setCreatedBy(value.getCreatedBy());
+            setUpdatedBy(value.getUpdatedBy());
+            setAdminNotes(value.getAdminNotes());
+            setArchivedAt(value.getArchivedAt());
+            setArchivedBy(value.getArchivedBy());
             resetChangedOnNotNull();
         }
     }

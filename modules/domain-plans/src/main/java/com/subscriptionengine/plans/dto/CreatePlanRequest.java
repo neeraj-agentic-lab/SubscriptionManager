@@ -44,6 +44,9 @@ public class CreatePlanRequest {
     
     private Integer trialPeriodDays;
     
+    @Size(max = 50, message = "Plan category must not exceed 50 characters")
+    private String planCategory;
+    
     // Constructors
     public CreatePlanRequest() {}
     
@@ -129,6 +132,14 @@ public class CreatePlanRequest {
     
     public void setTrialPeriodDays(Integer trialPeriodDays) {
         this.trialPeriodDays = trialPeriodDays;
+    }
+    
+    public String getPlanCategory() {
+        return planCategory;
+    }
+    
+    public void setPlanCategory(String planCategory) {
+        this.planCategory = planCategory;
     }
     
     @Override

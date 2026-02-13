@@ -22,6 +22,16 @@ public class PlanResponse {
     private String billingInterval;
     private Integer billingIntervalCount;
     private Integer trialPeriodDays;
+    
+    // Validation fields (Phase 1)
+    private String planCategory;
+    private Boolean requiresProducts;
+    private Boolean allowsProducts;
+    private Boolean basePriceRequired;
+    
+    // Audit fields
+    private UUID createdBy;
+    private UUID updatedBy;
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
     
@@ -134,6 +144,54 @@ public class PlanResponse {
     
     public void setTrialPeriodDays(Integer trialPeriodDays) {
         this.trialPeriodDays = trialPeriodDays;
+    }
+    
+    public String getPlanCategory() {
+        return planCategory;
+    }
+    
+    public void setPlanCategory(String planCategory) {
+        this.planCategory = planCategory;
+    }
+    
+    public Boolean getRequiresProducts() {
+        return requiresProducts;
+    }
+    
+    public void setRequiresProducts(Boolean requiresProducts) {
+        this.requiresProducts = requiresProducts;
+    }
+    
+    public Boolean getAllowsProducts() {
+        return allowsProducts;
+    }
+    
+    public void setAllowsProducts(Boolean allowsProducts) {
+        this.allowsProducts = allowsProducts;
+    }
+    
+    public Boolean getBasePriceRequired() {
+        return basePriceRequired;
+    }
+    
+    public void setBasePriceRequired(Boolean basePriceRequired) {
+        this.basePriceRequired = basePriceRequired;
+    }
+    
+    public UUID getCreatedBy() {
+        return createdBy;
+    }
+    
+    public void setCreatedBy(UUID createdBy) {
+        this.createdBy = createdBy;
+    }
+    
+    public UUID getUpdatedBy() {
+        return updatedBy;
+    }
+    
+    public void setUpdatedBy(UUID updatedBy) {
+        this.updatedBy = updatedBy;
     }
     
     public OffsetDateTime getCreatedAt() {

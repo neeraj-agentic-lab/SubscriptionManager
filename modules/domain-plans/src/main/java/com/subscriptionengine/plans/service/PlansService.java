@@ -35,10 +35,12 @@ public class PlansService {
     
     private final DSLContext dsl;
     private final PlansDao plansDao;
+    private final PlanValidationService planValidationService;
     
-    public PlansService(DSLContext dsl, PlansDao plansDao) {
+    public PlansService(DSLContext dsl, PlansDao plansDao, PlanValidationService planValidationService) {
         this.dsl = dsl;
         this.plansDao = plansDao;
+        this.planValidationService = planValidationService;
     }
     
     /**
@@ -66,6 +68,18 @@ public class PlansService {
         plan.setBillingInterval(request.getBillingInterval());
         plan.setBillingIntervalCount(request.getBillingIntervalCount());
         plan.setTrialPeriodDays(request.getTrialPeriodDays());
+        
+        // Set plan category and validation flags
+        plan.setPlanCategory(request.getPlanCategory() != null ? request.getPlanCategory() : "DIGITAL");
+        planValidationService.setDefaultValidationFlags(plan);
+        
+        // Validate plan configuration
+        PlanValidationService.ValidationResult validationResult = planValidationService.validatePlanConfiguration(plan);
+        if (!validationResult.isValid()) {
+            logger.error("Plan validation failed: {}", validationResult.getErrorMessage());
+            throw new IllegalArgumentException("Plan validation failed: " + validationResult.getErrorMessage());
+        }
+        
         plan.setCreatedAt(OffsetDateTime.now());
         plan.setUpdatedAt(OffsetDateTime.now());
         
@@ -206,7 +220,7 @@ public class PlansService {
      * Map Plans entity to PlanResponse DTO.
      */
     private PlanResponse mapToResponse(Plans plan) {
-        return new PlanResponse(
+        PlanResponse response = new PlanResponse(
                 plan.getId(),
                 plan.getTenantId(),
                 plan.getName(),
@@ -221,5 +235,17 @@ public class PlansService {
                 plan.getCreatedAt(),
                 plan.getUpdatedAt()
         );
+        
+        // Add validation fields
+        response.setPlanCategory(plan.getPlanCategory());
+        response.setRequiresProducts(plan.getRequiresProducts());
+        response.setAllowsProducts(plan.getAllowsProducts());
+        response.setBasePriceRequired(plan.getBasePriceRequired());
+        
+        // Add audit fields
+        response.setCreatedBy(plan.getCreatedBy());
+        response.setUpdatedBy(plan.getUpdatedBy());
+        
+        return response;
     }
 }

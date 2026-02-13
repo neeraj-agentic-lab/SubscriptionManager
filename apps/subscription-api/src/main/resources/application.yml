@@ -13,14 +13,49 @@ spring:
   jooq:
     sql-dialect: postgres
   
-  # OAuth 2.0 Resource Server configuration
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          # For development/testing (NOT for production)
-          # This will be overridden by custom JWT decoder bean
-          issuer-uri: ${JWT_ISSUER_URI:https://dev-placeholder.local}
+  # Spring Boot startup optimization
+  main:
+    lazy-initialization: false  # Keep eager initialization for production
+  jmx:
+    enabled: false  # Disable JMX to speed up startup
+  
+  # Disable scheduled jobs in API module (jobs run in worker module only)
+  task:
+    scheduling:
+      enabled: false  # Prevents @Scheduled jobs from running in API
+  
+  # OAuth 2.0 Resource Server configuration (DISABLED)
+  # 
+  # CURRENT STATE: JWT validation is handled by custom JwtTenantAuthenticationFilter
+  # This provides tenant-aware JWT validation without requiring an external OAuth provider.
+  #
+  # FUTURE USE: Uncomment the section below when integrating with an external OAuth provider
+  # (Auth0, Okta, Keycloak, AWS Cognito, etc.)
+  #
+  # WARNING: Enabling issuer-uri with an invalid/unreachable URL will cause 50+ second startup delays
+  # as Spring Security attempts to fetch JWKS keys from the provider.
+  #
+  # TO ENABLE OAUTH 2.0 INTEGRATION:
+  # 1. Uncomment the 'security' block below
+  # 2. Replace the issuer-uri with your actual OAuth provider URL
+  # 3. Optionally configure jwk-set-uri if your provider uses a non-standard endpoint
+  # 4. Update JwtTenantAuthenticationFilter to work alongside Spring's JWT decoder
+  #
+  # EXAMPLES:
+  # - Auth0:     https://your-tenant.auth0.com/
+  # - Okta:      https://your-domain.okta.com/oauth2/default
+  # - Keycloak:  https://keycloak.example.com/realms/your-realm
+  # - Cognito:   https://cognito-idp.{region}.amazonaws.com/{userPoolId}
+  #
+  # security:
+  #   oauth2:
+  #     resourceserver:
+  #       jwt:
+  #         issuer-uri: ${JWT_ISSUER_URI:https://your-oauth-provider.com}
+  #         # Optional: Override JWKS endpoint if non-standard
+  #         # jwk-set-uri: ${JWT_JWK_SET_URI:https://your-oauth-provider.com/.well-known/jwks.json}
+  #         # Optional: Configure JWT claim validation
+  #         # audiences: ${JWT_AUDIENCES:api://subscription-manager}
 
 # Server configuration
 server:
@@ -33,7 +68,9 @@ logging:
   level:
     com.subscriptionengine: DEBUG
     org.springframework.security: DEBUG
-    org.jooq: DEBUG
+    org.springframework.boot.autoconfigure: INFO
+    org.springframework.context: INFO
+    org.jooq: INFO  # Changed from DEBUG to reduce noise
   pattern:
     console: "%d{HH:mm:ss.SSS} [%thread] %-5level [%X{tenantId}] %logger{36} - %msg%n"
 
@@ -55,15 +92,19 @@ springdoc:
   swagger-ui:
     enabled: true
     path: /swagger-ui.html
-    # Display download links for OpenAPI spec
-    urls:
-      - name: OpenAPI JSON
-        url: /v3/api-docs
-      - name: OpenAPI YAML
-        url: /v3/api-docs.yaml
-    urls-primary-name: OpenAPI JSON
+    operations-sorter: alpha
+    # Set Admin APIs as the default group to display (matches GroupedOpenApi bean displayName)
+    urls-primary-name: Admin APIs
+    # Show download links for OpenAPI spec in different formats
+    display-request-duration: true
+    display-operation-id: false
+    # Lazy load Swagger UI to speed up startup
+    lazy: true
   writer-with-default-pretty-printer: true
   show-actuator: false
+  # Cache OpenAPI spec to avoid regenerating on every request
+  cache:
+    disabled: false
 
 # Application-specific configuration
 subscription-engine:

@@ -306,6 +306,36 @@ public class InvoicesRecord extends UpdatableRecordImpl<InvoicesRecord> {
         return (OffsetDateTime) get(17);
     }
 
+    /**
+     * Setter for <code>public.invoices.created_by</code>.
+     */
+    public InvoicesRecord setCreatedBy(UUID value) {
+        set(18, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.invoices.created_by</code>.
+     */
+    public UUID getCreatedBy() {
+        return (UUID) get(18);
+    }
+
+    /**
+     * Setter for <code>public.invoices.updated_by</code>.
+     */
+    public InvoicesRecord setUpdatedBy(UUID value) {
+        set(19, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.invoices.updated_by</code>.
+     */
+    public UUID getUpdatedBy() {
+        return (UUID) get(19);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -329,7 +359,7 @@ public class InvoicesRecord extends UpdatableRecordImpl<InvoicesRecord> {
     /**
      * Create a detached, initialised InvoicesRecord
      */
-    public InvoicesRecord(UUID id, UUID tenantId, UUID subscriptionId, UUID customerId, String invoiceNumber, OffsetDateTime periodStart, OffsetDateTime periodEnd, Long subtotalCents, Long taxCents, Long totalCents, String currency, String status, OffsetDateTime dueDate, OffsetDateTime paidAt, String externalInvoiceRef, JSONB customAttrs, OffsetDateTime createdAt, OffsetDateTime updatedAt) {
+    public InvoicesRecord(UUID id, UUID tenantId, UUID subscriptionId, UUID customerId, String invoiceNumber, OffsetDateTime periodStart, OffsetDateTime periodEnd, Long subtotalCents, Long taxCents, Long totalCents, String currency, String status, OffsetDateTime dueDate, OffsetDateTime paidAt, String externalInvoiceRef, JSONB customAttrs, OffsetDateTime createdAt, OffsetDateTime updatedAt, UUID createdBy, UUID updatedBy) {
         super(Invoices.INVOICES);
 
         setId(id);
@@ -350,6 +380,8 @@ public class InvoicesRecord extends UpdatableRecordImpl<InvoicesRecord> {
         setCustomAttrs(customAttrs);
         setCreatedAt(createdAt);
         setUpdatedAt(updatedAt);
+        setCreatedBy(createdBy);
+        setUpdatedBy(updatedBy);
         resetChangedOnNotNull();
     }
 
@@ -378,6 +410,8 @@ public class InvoicesRecord extends UpdatableRecordImpl<InvoicesRecord> {
             setCustomAttrs(value.getCustomAttrs());
             setCreatedAt(value.getCreatedAt());
             setUpdatedAt(value.getUpdatedAt());
+            setCreatedBy(value.getCreatedBy());
+            setUpdatedBy(value.getUpdatedBy());
             resetChangedOnNotNull();
         }
     }

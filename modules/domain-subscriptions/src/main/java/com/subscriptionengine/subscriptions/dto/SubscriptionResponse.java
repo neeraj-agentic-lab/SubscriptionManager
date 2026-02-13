@@ -24,6 +24,14 @@ public class SubscriptionResponse {
     private String cancellationReason;
     private OffsetDateTime trialStart;
     private OffsetDateTime trialEnd;
+    
+    // Audit fields (Phase 1)
+    private UUID createdBy;
+    private UUID updatedBy;
+    private String createdByType;
+    private String adminNotes;
+    private OffsetDateTime archivedAt;
+    private UUID archivedBy;
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
     
@@ -189,6 +197,54 @@ public class SubscriptionResponse {
     
     public void setUpdatedAt(OffsetDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+    
+    public UUID getCreatedBy() {
+        return createdBy;
+    }
+    
+    public void setCreatedBy(UUID createdBy) {
+        this.createdBy = createdBy;
+    }
+    
+    public UUID getUpdatedBy() {
+        return updatedBy;
+    }
+    
+    public void setUpdatedBy(UUID updatedBy) {
+        this.updatedBy = updatedBy;
+    }
+    
+    public String getCreatedByType() {
+        return createdByType;
+    }
+    
+    public void setCreatedByType(String createdByType) {
+        this.createdByType = createdByType;
+    }
+    
+    public String getAdminNotes() {
+        return adminNotes;
+    }
+    
+    public void setAdminNotes(String adminNotes) {
+        this.adminNotes = adminNotes;
+    }
+    
+    public OffsetDateTime getArchivedAt() {
+        return archivedAt;
+    }
+    
+    public void setArchivedAt(OffsetDateTime archivedAt) {
+        this.archivedAt = archivedAt;
+    }
+    
+    public UUID getArchivedBy() {
+        return archivedBy;
+    }
+    
+    public void setArchivedBy(UUID archivedBy) {
+        this.archivedBy = archivedBy;
     }
     
     public String getCustomerEmail() {

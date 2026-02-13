@@ -75,6 +75,40 @@ public class JwtTenantExtractor {
     }
     
     /**
+     * Extract user role from JWT token
+     * @param jwt the JWT token
+     * @return user role (SUPER_ADMIN, TENANT_ADMIN, STAFF, CUSTOMER) or null if not present
+     */
+    public String extractUserRole(Jwt jwt) {
+        // Try 'role' claim first
+        String role = jwt.getClaimAsString("role");
+        if (role != null) {
+            return role;
+        }
+        
+        // Try 'roles' array claim
+        Object rolesObj = jwt.getClaim("roles");
+        if (rolesObj instanceof java.util.List<?> roles && !roles.isEmpty()) {
+            return roles.get(0).toString();
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Extract customer ID from JWT token (for customer-facing APIs)
+     * @param jwt the JWT token
+     * @return customer ID or null if not present
+     */
+    public UUID extractCustomerId(Jwt jwt) {
+        String customerIdStr = jwt.getClaimAsString("customer_id");
+        if (customerIdStr != null) {
+            return parseUuid(customerIdStr, "customer_id");
+        }
+        return null;
+    }
+    
+    /**
      * Check if the JWT token has required tenant claims
      * @param jwt the JWT token
      * @return true if tenant can be extracted

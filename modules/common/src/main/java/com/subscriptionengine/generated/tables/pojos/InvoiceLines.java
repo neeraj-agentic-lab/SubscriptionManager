@@ -35,6 +35,8 @@ public class InvoiceLines implements Serializable {
     private OffsetDateTime periodEnd;
     private JSONB customAttrs;
     private OffsetDateTime createdAt;
+    private UUID createdBy;
+    private UUID updatedBy;
 
     public InvoiceLines() {}
 
@@ -52,6 +54,8 @@ public class InvoiceLines implements Serializable {
         this.periodEnd = value.periodEnd;
         this.customAttrs = value.customAttrs;
         this.createdAt = value.createdAt;
+        this.createdBy = value.createdBy;
+        this.updatedBy = value.updatedBy;
     }
 
     public InvoiceLines(
@@ -67,7 +71,9 @@ public class InvoiceLines implements Serializable {
         OffsetDateTime periodStart,
         OffsetDateTime periodEnd,
         JSONB customAttrs,
-        OffsetDateTime createdAt
+        OffsetDateTime createdAt,
+        UUID createdBy,
+        UUID updatedBy
     ) {
         this.id = id;
         this.tenantId = tenantId;
@@ -82,6 +88,8 @@ public class InvoiceLines implements Serializable {
         this.periodEnd = periodEnd;
         this.customAttrs = customAttrs;
         this.createdAt = createdAt;
+        this.createdBy = createdBy;
+        this.updatedBy = updatedBy;
     }
 
     /**
@@ -287,6 +295,36 @@ public class InvoiceLines implements Serializable {
         return this;
     }
 
+    /**
+     * Getter for <code>public.invoice_lines.created_by</code>.
+     */
+    public UUID getCreatedBy() {
+        return this.createdBy;
+    }
+
+    /**
+     * Setter for <code>public.invoice_lines.created_by</code>.
+     */
+    public InvoiceLines setCreatedBy(UUID createdBy) {
+        this.createdBy = createdBy;
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.invoice_lines.updated_by</code>.
+     */
+    public UUID getUpdatedBy() {
+        return this.updatedBy;
+    }
+
+    /**
+     * Setter for <code>public.invoice_lines.updated_by</code>.
+     */
+    public InvoiceLines setUpdatedBy(UUID updatedBy) {
+        this.updatedBy = updatedBy;
+        return this;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -374,6 +412,18 @@ public class InvoiceLines implements Serializable {
         }
         else if (!this.createdAt.equals(other.createdAt))
             return false;
+        if (this.createdBy == null) {
+            if (other.createdBy != null)
+                return false;
+        }
+        else if (!this.createdBy.equals(other.createdBy))
+            return false;
+        if (this.updatedBy == null) {
+            if (other.updatedBy != null)
+                return false;
+        }
+        else if (!this.updatedBy.equals(other.updatedBy))
+            return false;
         return true;
     }
 
@@ -394,6 +444,8 @@ public class InvoiceLines implements Serializable {
         result = prime * result + ((this.periodEnd == null) ? 0 : this.periodEnd.hashCode());
         result = prime * result + ((this.customAttrs == null) ? 0 : this.customAttrs.hashCode());
         result = prime * result + ((this.createdAt == null) ? 0 : this.createdAt.hashCode());
+        result = prime * result + ((this.createdBy == null) ? 0 : this.createdBy.hashCode());
+        result = prime * result + ((this.updatedBy == null) ? 0 : this.updatedBy.hashCode());
         return result;
     }
 
@@ -414,6 +466,8 @@ public class InvoiceLines implements Serializable {
         sb.append(", ").append(periodEnd);
         sb.append(", ").append(customAttrs);
         sb.append(", ").append(createdAt);
+        sb.append(", ").append(createdBy);
+        sb.append(", ").append(updatedBy);
 
         sb.append(")");
         return sb.toString();

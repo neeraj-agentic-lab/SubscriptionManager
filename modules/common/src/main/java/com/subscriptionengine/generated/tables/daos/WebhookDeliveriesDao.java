@@ -314,4 +314,34 @@ public class WebhookDeliveriesDao extends DAOImpl<WebhookDeliveriesRecord, com.s
     public List<com.subscriptionengine.generated.tables.pojos.WebhookDeliveries> fetchByUpdatedAt(OffsetDateTime... values) {
         return fetch(WebhookDeliveries.WEBHOOK_DELIVERIES.UPDATED_AT, values);
     }
+
+    /**
+     * Fetch records that have <code>created_by BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.WebhookDeliveries> fetchRangeOfCreatedBy(UUID lowerInclusive, UUID upperInclusive) {
+        return fetchRange(WebhookDeliveries.WEBHOOK_DELIVERIES.CREATED_BY, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>created_by IN (values)</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.WebhookDeliveries> fetchByCreatedBy(UUID... values) {
+        return fetch(WebhookDeliveries.WEBHOOK_DELIVERIES.CREATED_BY, values);
+    }
+
+    /**
+     * Fetch records that have <code>updated_by BETWEEN lowerInclusive AND
+     * upperInclusive</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.WebhookDeliveries> fetchRangeOfUpdatedBy(UUID lowerInclusive, UUID upperInclusive) {
+        return fetchRange(WebhookDeliveries.WEBHOOK_DELIVERIES.UPDATED_BY, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>updated_by IN (values)</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.WebhookDeliveries> fetchByUpdatedBy(UUID... values) {
+        return fetch(WebhookDeliveries.WEBHOOK_DELIVERIES.UPDATED_BY, values);
+    }
 }

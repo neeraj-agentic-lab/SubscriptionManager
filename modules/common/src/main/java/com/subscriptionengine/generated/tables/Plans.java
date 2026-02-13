@@ -128,6 +128,42 @@ public class Plans extends TableImpl<PlansRecord> {
      */
     public final TableField<PlansRecord, OffsetDateTime> UPDATED_AT = createField(DSL.name("updated_at"), SQLDataType.TIMESTAMPWITHTIMEZONE(6).nullable(false).defaultValue(DSL.field(DSL.raw("now()"), SQLDataType.TIMESTAMPWITHTIMEZONE)), this, "");
 
+    /**
+     * The column <code>public.plans.created_by</code>. User who created this
+     * plan
+     */
+    public final TableField<PlansRecord, UUID> CREATED_BY = createField(DSL.name("created_by"), SQLDataType.UUID, this, "User who created this plan");
+
+    /**
+     * The column <code>public.plans.updated_by</code>. User who last updated
+     * this plan
+     */
+    public final TableField<PlansRecord, UUID> UPDATED_BY = createField(DSL.name("updated_by"), SQLDataType.UUID, this, "User who last updated this plan");
+
+    /**
+     * The column <code>public.plans.plan_category</code>. DIGITAL,
+     * PRODUCT_BASED, or HYBRID - determines subscription behavior
+     */
+    public final TableField<PlansRecord, String> PLAN_CATEGORY = createField(DSL.name("plan_category"), SQLDataType.VARCHAR(50).nullable(false).defaultValue(DSL.field(DSL.raw("'DIGITAL'::character varying"), SQLDataType.VARCHAR)), this, "DIGITAL, PRODUCT_BASED, or HYBRID - determines subscription behavior");
+
+    /**
+     * The column <code>public.plans.requires_products</code>. Whether
+     * subscription MUST include products (true for PRODUCT_BASED)
+     */
+    public final TableField<PlansRecord, Boolean> REQUIRES_PRODUCTS = createField(DSL.name("requires_products"), SQLDataType.BOOLEAN.nullable(false).defaultValue(DSL.field(DSL.raw("false"), SQLDataType.BOOLEAN)), this, "Whether subscription MUST include products (true for PRODUCT_BASED)");
+
+    /**
+     * The column <code>public.plans.allows_products</code>. Whether
+     * subscription CAN include products (true for PRODUCT_BASED and HYBRID)
+     */
+    public final TableField<PlansRecord, Boolean> ALLOWS_PRODUCTS = createField(DSL.name("allows_products"), SQLDataType.BOOLEAN.nullable(false).defaultValue(DSL.field(DSL.raw("false"), SQLDataType.BOOLEAN)), this, "Whether subscription CAN include products (true for PRODUCT_BASED and HYBRID)");
+
+    /**
+     * The column <code>public.plans.base_price_required</code>. Whether plan
+     * must have base price &gt; 0 (true for DIGITAL and HYBRID)
+     */
+    public final TableField<PlansRecord, Boolean> BASE_PRICE_REQUIRED = createField(DSL.name("base_price_required"), SQLDataType.BOOLEAN.nullable(false).defaultValue(DSL.field(DSL.raw("true"), SQLDataType.BOOLEAN)), this, "Whether plan must have base price > 0 (true for DIGITAL and HYBRID)");
+
     private Plans(Name alias, Table<PlansRecord> aliased) {
         this(alias, aliased, null);
     }
@@ -168,7 +204,7 @@ public class Plans extends TableImpl<PlansRecord> {
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.asList(Indexes.IDX_PLANS_STATUS, Indexes.IDX_PLANS_TENANT_ID, Indexes.IDX_PLANS_TYPE);
+        return Arrays.asList(Indexes.IDX_PLANS_CATEGORY, Indexes.IDX_PLANS_CREATED_BY, Indexes.IDX_PLANS_STATUS, Indexes.IDX_PLANS_TENANT_ID, Indexes.IDX_PLANS_TYPE, Indexes.IDX_PLANS_UPDATED_BY);
     }
 
     @Override
@@ -178,10 +214,12 @@ public class Plans extends TableImpl<PlansRecord> {
 
     @Override
     public List<ForeignKey<PlansRecord, ?>> getReferences() {
-        return Arrays.asList(Keys.PLANS__PLANS_TENANT_ID_FKEY);
+        return Arrays.asList(Keys.PLANS__PLANS_TENANT_ID_FKEY, Keys.PLANS__PLANS_CREATED_BY_FKEY, Keys.PLANS__PLANS_UPDATED_BY_FKEY);
     }
 
     private transient Tenants _tenants;
+    private transient Users _plansCreatedByFkey;
+    private transient Users _plansUpdatedByFkey;
 
     /**
      * Get the implicit join path to the <code>public.tenants</code> table.
@@ -193,10 +231,33 @@ public class Plans extends TableImpl<PlansRecord> {
         return _tenants;
     }
 
+    /**
+     * Get the implicit join path to the <code>public.users</code> table, via
+     * the <code>plans_created_by_fkey</code> key.
+     */
+    public Users plansCreatedByFkey() {
+        if (_plansCreatedByFkey == null)
+            _plansCreatedByFkey = new Users(this, Keys.PLANS__PLANS_CREATED_BY_FKEY);
+
+        return _plansCreatedByFkey;
+    }
+
+    /**
+     * Get the implicit join path to the <code>public.users</code> table, via
+     * the <code>plans_updated_by_fkey</code> key.
+     */
+    public Users plansUpdatedByFkey() {
+        if (_plansUpdatedByFkey == null)
+            _plansUpdatedByFkey = new Users(this, Keys.PLANS__PLANS_UPDATED_BY_FKEY);
+
+        return _plansUpdatedByFkey;
+    }
+
     @Override
     public List<Check<PlansRecord>> getChecks() {
         return Arrays.asList(
             Internal.createCheck(this, DSL.name("plans_base_price_check"), "((base_price_cents >= 0))", true),
+            Internal.createCheck(this, DSL.name("plans_category_check"), "(((plan_category)::text = ANY ((ARRAY['DIGITAL'::character varying, 'PRODUCT_BASED'::character varying, 'HYBRID'::character varying])::text[])))", true),
             Internal.createCheck(this, DSL.name("plans_interval_check"), "(((billing_interval)::text = ANY ((ARRAY['DAILY'::character varying, 'WEEKLY'::character varying, 'MONTHLY'::character varying, 'QUARTERLY'::character varying, 'YEARLY'::character varying])::text[])))", true),
             Internal.createCheck(this, DSL.name("plans_interval_count_check"), "((billing_interval_count > 0))", true),
             Internal.createCheck(this, DSL.name("plans_status_check"), "(((status)::text = ANY ((ARRAY['ACTIVE'::character varying, 'INACTIVE'::character varying, 'ARCHIVED'::character varying])::text[])))", true),

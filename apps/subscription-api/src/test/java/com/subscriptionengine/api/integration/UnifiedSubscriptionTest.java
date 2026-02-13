@@ -13,12 +13,14 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Integration tests for ecommerce subscription operations.
- * Tests: Direct product subscriptions without traditional plans.
+ * Integration tests for unified subscription creation endpoint.
+ * Tests: POST /v1/admin/subscriptions supports both simple SaaS subscriptions and 
+ * product-based subscriptions with optional products array.
+ * Verifies backward compatibility and new product-based subscription capabilities.
  */
-@Epic("Ecommerce Subscriptions")
-@Feature("Direct Product Subscriptions")
-class EcommerceSubscriptionTest extends BaseIntegrationTest {
+@Epic("Unified Subscriptions")
+@Feature("Subscription Creation (Simple & Product-Based)")
+class UnifiedSubscriptionTest extends BaseIntegrationTest {
     
     private String testTenantId;
     
@@ -28,23 +30,22 @@ class EcommerceSubscriptionTest extends BaseIntegrationTest {
     }
     
     @Test
-    @DisplayName("Should create ecommerce subscription with products")
-    @Description("Tests POST /v1/subscriptions/ecommerce endpoint")
+    @DisplayName("Should create product-based subscription with multiple products")
+    @Description("Tests POST /v1/admin/subscriptions with products array")
     @Severity(SeverityLevel.CRITICAL)
-    @Story("Ecommerce subscription creation")
-    void shouldCreateEcommerceSubscription() {
+    @Story("Unified subscription creation")
+    void shouldCreateProductBasedSubscription() {
         String tenantId = testTenantId;
         
-        // Create base plan first
-        UUID basePlanId = createBasePlan(tenantId);
+        // Create plan for subscription
+        UUID planId = createBasePlan(tenantId);
         
         Map<String, Object> product1 = Map.of(
             "productId", "coffee-beans-001",
             "productName", "Premium Coffee Beans",
             "quantity", 2,
             "unitPriceCents", 1599,
-            "currency", "USD",
-            "planId", basePlanId
+            "currency", "USD"
         );
         
         Map<String, Object> product2 = Map.of(
@@ -52,23 +53,22 @@ class EcommerceSubscriptionTest extends BaseIntegrationTest {
             "productName", "Coffee Filters Pack",
             "quantity", 1,
             "unitPriceCents", 599,
-            "currency", "USD",
-            "planId", basePlanId
+            "currency", "USD"
         );
         
-        Map<String, Object> ecommerceRequest = Map.of(
-            "basePlanId", basePlanId,
+        Map<String, Object> unifiedRequest = Map.of(
+            "planId", planId,
             "products", List.of(product1, product2),
-            "customerEmail", "ecommerce-" + UUID.randomUUID().toString().substring(0, 8) + "@example.com",
+            "customerEmail", "product-" + UUID.randomUUID().toString().substring(0, 8) + "@example.com",
             "customerFirstName", "John",
             "customerLastName", "Doe",
             "paymentMethodRef", "pm_stripe_" + UUID.randomUUID().toString().substring(0, 8)
         );
         
         Response response = givenAuthenticated(tenantId)
-            .body(ecommerceRequest)
+            .body(unifiedRequest)
             .when()
-            .post("/v1/subscriptions/ecommerce")
+            .post("/v1/admin/subscriptions")
             .then()
             .statusCode(201)
             .extract()
@@ -77,11 +77,11 @@ class EcommerceSubscriptionTest extends BaseIntegrationTest {
         assertThat(response.jsonPath().getString("id")).isNotNull();
         assertThat(response.jsonPath().getString("status")).isEqualTo("ACTIVE");
         
-        Allure.addAttachment("Ecommerce Subscription Created", "application/json", response.asString());
+        Allure.addAttachment("Product-Based Subscription Created", "application/json", response.asString());
     }
     
     @Test
-    @DisplayName("Should validate required fields for ecommerce subscription")
+    @DisplayName("Should validate required fields for subscription creation")
     @Description("Tests validation for missing required fields")
     @Severity(SeverityLevel.NORMAL)
     @Story("Input validation")
@@ -98,7 +98,7 @@ class EcommerceSubscriptionTest extends BaseIntegrationTest {
         Response response = givenAuthenticated(tenantId)
             .body(invalidRequest)
             .when()
-            .post("/v1/subscriptions/ecommerce")
+            .post("/v1/admin/subscriptions")
             .then()
             .statusCode(400)
             .extract()
@@ -113,7 +113,7 @@ class EcommerceSubscriptionTest extends BaseIntegrationTest {
     @DisplayName("Should create subscription with single product")
     @Description("Tests ecommerce subscription with one product")
     @Severity(SeverityLevel.NORMAL)
-    @Story("Ecommerce subscription creation")
+    @Story("Unified subscription creation")
     void shouldCreateSubscriptionWithSingleProduct() {
         String tenantId = testTenantId;
         UUID basePlanId = createBasePlan(tenantId);
@@ -123,12 +123,11 @@ class EcommerceSubscriptionTest extends BaseIntegrationTest {
             "productName", "Monthly Box",
             "quantity", 1,
             "unitPriceCents", 2999,
-            "currency", "USD",
-            "planId", basePlanId
+            "currency", "USD"
         );
         
-        Map<String, Object> ecommerceRequest = Map.of(
-            "basePlanId", basePlanId,
+        Map<String, Object> unifiedRequest = Map.of(
+            "planId", basePlanId,
             "products", List.of(product),
             "customerEmail", "single-" + UUID.randomUUID().toString().substring(0, 8) + "@example.com",
             "customerFirstName", "Jane",
@@ -137,9 +136,9 @@ class EcommerceSubscriptionTest extends BaseIntegrationTest {
         );
         
         Response response = givenAuthenticated(tenantId)
-            .body(ecommerceRequest)
+            .body(unifiedRequest)
             .when()
-            .post("/v1/subscriptions/ecommerce")
+            .post("/v1/admin/subscriptions")
             .then()
             .statusCode(201)
             .extract()
@@ -148,6 +147,38 @@ class EcommerceSubscriptionTest extends BaseIntegrationTest {
         assertThat(response.jsonPath().getString("id")).isNotNull();
         
         Allure.addAttachment("Single Product Subscription", "application/json", response.asString());
+    }
+    
+    @Test
+    @DisplayName("Should create simple SaaS subscription without products")
+    @Description("Tests POST /v1/admin/subscriptions without products array (backward compatibility)")
+    @Severity(SeverityLevel.CRITICAL)
+    @Story("Unified subscription creation")
+    void shouldCreateSimpleSubscriptionWithoutProducts() {
+        String tenantId = testTenantId;
+        UUID planId = createBasePlan(tenantId);
+        
+        Map<String, Object> simpleRequest = Map.of(
+            "planId", planId,
+            "customerEmail", "simple-" + UUID.randomUUID().toString().substring(0, 8) + "@example.com",
+            "customerFirstName", "Alice",
+            "customerLastName", "Johnson",
+            "paymentMethodRef", "pm_simple_test"
+        );
+        
+        Response response = givenAuthenticated(tenantId)
+            .body(simpleRequest)
+            .when()
+            .post("/v1/admin/subscriptions")
+            .then()
+            .statusCode(201)
+            .extract()
+            .response();
+        
+        assertThat(response.jsonPath().getString("id")).isNotNull();
+        assertThat(response.jsonPath().getString("status")).isIn("ACTIVE", "TRIALING");
+        
+        Allure.addAttachment("Simple Subscription Created", "application/json", response.asString());
     }
     
     @Test
@@ -167,8 +198,8 @@ class EcommerceSubscriptionTest extends BaseIntegrationTest {
             "currency", "USD"
         );
         
-        Map<String, Object> ecommerceRequest = Map.of(
-            "basePlanId", basePlanId,
+        Map<String, Object> unifiedRequest = Map.of(
+            "planId", basePlanId,
             "products", List.of(invalidProduct),
             "customerEmail", "invalid-" + UUID.randomUUID().toString().substring(0, 8) + "@example.com",
             "customerFirstName", "Test",
@@ -176,9 +207,9 @@ class EcommerceSubscriptionTest extends BaseIntegrationTest {
         );
         
         Response response = givenAuthenticated(tenantId)
-            .body(ecommerceRequest)
+            .body(unifiedRequest)
             .when()
-            .post("/v1/subscriptions/ecommerce")
+            .post("/v1/admin/subscriptions")
             .then()
             .statusCode(400)
             .extract()
@@ -194,8 +225,8 @@ class EcommerceSubscriptionTest extends BaseIntegrationTest {
     @Step("Create base plan")
     private UUID createBasePlan(String tenantId) {
         Map<String, Object> planRequest = Map.of(
-            "name", "Ecommerce Base Plan",
-            "description", "Base plan for ecommerce subscriptions",
+            "name", "Unified Subscription Plan",
+            "description", "Plan supporting both simple and product-based subscriptions",
             "basePriceCents", 1, // Minimum positive price (validation requires positive)
             "currency", "USD",
             "billingInterval", "MONTHLY",
@@ -206,7 +237,7 @@ class EcommerceSubscriptionTest extends BaseIntegrationTest {
         Response response = givenAuthenticated(tenantId)
             .body(planRequest)
             .when()
-            .post("/v1/plans")
+            .post("/v1/admin/plans")
             .then()
             .statusCode(201)
             .extract()
@@ -218,10 +249,10 @@ class EcommerceSubscriptionTest extends BaseIntegrationTest {
     @Step("Create test tenant")
     private String createTestTenant() {
         UUID tenantId = UUID.randomUUID();
-        String slug = "test-tenant-ecommerce-" + UUID.randomUUID().toString().substring(0, 8);
+        String slug = "test-tenant-unified-" + UUID.randomUUID().toString().substring(0, 8);
         
         Map<String, Object> tenantRequest = Map.of(
-            "name", "Test Tenant for Ecommerce",
+            "name", "Test Tenant for Unified Subscriptions",
             "slug", slug,
             "status", "ACTIVE"
         );
@@ -230,7 +261,7 @@ class EcommerceSubscriptionTest extends BaseIntegrationTest {
             .contentType("application/json")
             .body(tenantRequest)
             .when()
-            .post("/v1/tenants")
+            .post("/v1/admin/tenants")
             .then()
             .statusCode(201)
             .extract()

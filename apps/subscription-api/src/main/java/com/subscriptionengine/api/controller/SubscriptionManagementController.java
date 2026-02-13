@@ -29,9 +29,9 @@ import java.util.UUID;
  * @author Neeraj Yadav
  */
 @RestController
-@RequestMapping("/v1/subscription-mgmt")
+@RequestMapping("/v1/admin/subscriptions/manage")
 @TenantSecured
-@Tag(name = "Subscription Management", description = "Subscription lifecycle operations APIs. Pause, resume, cancel, and modify active subscriptions with customer authorization.")
+@Tag(name = "Admin - Subscriptions", description = "Admin endpoints for subscription lifecycle management. Create, retrieve, and manage customer subscriptions with automatic billing and delivery scheduling.")
 public class SubscriptionManagementController {
     
     private static final Logger logger = LoggerFactory.getLogger(SubscriptionManagementController.class);

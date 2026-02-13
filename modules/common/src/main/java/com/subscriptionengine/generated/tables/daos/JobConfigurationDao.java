@@ -299,4 +299,34 @@ public class JobConfigurationDao extends DAOImpl<JobConfigurationRecord, com.sub
     public List<com.subscriptionengine.generated.tables.pojos.JobConfiguration> fetchByJobConfig(JSONB... values) {
         return fetch(JobConfiguration.JOB_CONFIGURATION.JOB_CONFIG, values);
     }
+
+    /**
+     * Fetch records that have <code>created_by_user_id BETWEEN lowerInclusive
+     * AND upperInclusive</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.JobConfiguration> fetchRangeOfCreatedByUserId(UUID lowerInclusive, UUID upperInclusive) {
+        return fetchRange(JobConfiguration.JOB_CONFIGURATION.CREATED_BY_USER_ID, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>created_by_user_id IN (values)</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.JobConfiguration> fetchByCreatedByUserId(UUID... values) {
+        return fetch(JobConfiguration.JOB_CONFIGURATION.CREATED_BY_USER_ID, values);
+    }
+
+    /**
+     * Fetch records that have <code>updated_by_user_id BETWEEN lowerInclusive
+     * AND upperInclusive</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.JobConfiguration> fetchRangeOfUpdatedByUserId(UUID lowerInclusive, UUID upperInclusive) {
+        return fetchRange(JobConfiguration.JOB_CONFIGURATION.UPDATED_BY_USER_ID, lowerInclusive, upperInclusive);
+    }
+
+    /**
+     * Fetch records that have <code>updated_by_user_id IN (values)</code>
+     */
+    public List<com.subscriptionengine.generated.tables.pojos.JobConfiguration> fetchByUpdatedByUserId(UUID... values) {
+        return fetch(JobConfiguration.JOB_CONFIGURATION.UPDATED_BY_USER_ID, values);
+    }
 }

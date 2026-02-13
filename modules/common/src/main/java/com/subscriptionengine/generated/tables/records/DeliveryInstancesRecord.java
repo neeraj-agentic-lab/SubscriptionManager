@@ -9,6 +9,7 @@ import com.subscriptionengine.generated.tables.DeliveryInstances;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
@@ -293,6 +294,91 @@ public class DeliveryInstancesRecord extends UpdatableRecordImpl<DeliveryInstanc
         return (String) get(16);
     }
 
+    /**
+     * Setter for <code>public.delivery_instances.created_by</code>. User who
+     * created this delivery (usually system)
+     */
+    public DeliveryInstancesRecord setCreatedBy(UUID value) {
+        set(17, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.delivery_instances.created_by</code>. User who
+     * created this delivery (usually system)
+     */
+    public UUID getCreatedBy() {
+        return (UUID) get(17);
+    }
+
+    /**
+     * Setter for <code>public.delivery_instances.updated_by</code>. User who
+     * last updated this delivery (skip, reschedule, fulfill)
+     */
+    public DeliveryInstancesRecord setUpdatedBy(UUID value) {
+        set(18, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.delivery_instances.updated_by</code>. User who
+     * last updated this delivery (skip, reschedule, fulfill)
+     */
+    public UUID getUpdatedBy() {
+        return (UUID) get(18);
+    }
+
+    /**
+     * Setter for <code>public.delivery_instances.rescheduled_by</code>. User
+     * who rescheduled the delivery
+     */
+    public DeliveryInstancesRecord setRescheduledBy(UUID value) {
+        set(19, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.delivery_instances.rescheduled_by</code>. User
+     * who rescheduled the delivery
+     */
+    public UUID getRescheduledBy() {
+        return (UUID) get(19);
+    }
+
+    /**
+     * Setter for <code>public.delivery_instances.reschedule_reason</code>.
+     * Reason for rescheduling the delivery
+     */
+    public DeliveryInstancesRecord setRescheduleReason(String value) {
+        set(20, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.delivery_instances.reschedule_reason</code>.
+     * Reason for rescheduling the delivery
+     */
+    public String getRescheduleReason() {
+        return (String) get(20);
+    }
+
+    /**
+     * Setter for <code>public.delivery_instances.rescheduled_at</code>. When
+     * the delivery was rescheduled
+     */
+    public DeliveryInstancesRecord setRescheduledAt(LocalDateTime value) {
+        set(21, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.delivery_instances.rescheduled_at</code>. When
+     * the delivery was rescheduled
+     */
+    public LocalDateTime getRescheduledAt() {
+        return (LocalDateTime) get(21);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -316,7 +402,7 @@ public class DeliveryInstancesRecord extends UpdatableRecordImpl<DeliveryInstanc
     /**
      * Create a detached, initialised DeliveryInstancesRecord
      */
-    public DeliveryInstancesRecord(UUID id, UUID tenantId, UUID subscriptionId, UUID invoiceId, String cycleKey, String status, String deliveryType, JSONB snapshot, String externalOrderRef, String externalTrackingRef, OffsetDateTime scheduledFor, OffsetDateTime deliveredAt, JSONB customAttrs, OffsetDateTime createdAt, OffsetDateTime updatedAt, OffsetDateTime cancelledAt, String cancellationReason) {
+    public DeliveryInstancesRecord(UUID id, UUID tenantId, UUID subscriptionId, UUID invoiceId, String cycleKey, String status, String deliveryType, JSONB snapshot, String externalOrderRef, String externalTrackingRef, OffsetDateTime scheduledFor, OffsetDateTime deliveredAt, JSONB customAttrs, OffsetDateTime createdAt, OffsetDateTime updatedAt, OffsetDateTime cancelledAt, String cancellationReason, UUID createdBy, UUID updatedBy, UUID rescheduledBy, String rescheduleReason, LocalDateTime rescheduledAt) {
         super(DeliveryInstances.DELIVERY_INSTANCES);
 
         setId(id);
@@ -336,6 +422,11 @@ public class DeliveryInstancesRecord extends UpdatableRecordImpl<DeliveryInstanc
         setUpdatedAt(updatedAt);
         setCancelledAt(cancelledAt);
         setCancellationReason(cancellationReason);
+        setCreatedBy(createdBy);
+        setUpdatedBy(updatedBy);
+        setRescheduledBy(rescheduledBy);
+        setRescheduleReason(rescheduleReason);
+        setRescheduledAt(rescheduledAt);
         resetChangedOnNotNull();
     }
 
@@ -363,6 +454,11 @@ public class DeliveryInstancesRecord extends UpdatableRecordImpl<DeliveryInstanc
             setUpdatedAt(value.getUpdatedAt());
             setCancelledAt(value.getCancelledAt());
             setCancellationReason(value.getCancellationReason());
+            setCreatedBy(value.getCreatedBy());
+            setUpdatedBy(value.getUpdatedBy());
+            setRescheduledBy(value.getRescheduledBy());
+            setRescheduleReason(value.getRescheduleReason());
+            setRescheduledAt(value.getRescheduledAt());
             resetChangedOnNotNull();
         }
     }

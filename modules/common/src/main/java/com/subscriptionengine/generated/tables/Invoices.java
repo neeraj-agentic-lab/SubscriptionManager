@@ -143,6 +143,16 @@ public class Invoices extends TableImpl<InvoicesRecord> {
      */
     public final TableField<InvoicesRecord, OffsetDateTime> UPDATED_AT = createField(DSL.name("updated_at"), SQLDataType.TIMESTAMPWITHTIMEZONE(6).nullable(false).defaultValue(DSL.field(DSL.raw("now()"), SQLDataType.TIMESTAMPWITHTIMEZONE)), this, "");
 
+    /**
+     * The column <code>public.invoices.created_by</code>.
+     */
+    public final TableField<InvoicesRecord, UUID> CREATED_BY = createField(DSL.name("created_by"), SQLDataType.UUID, this, "");
+
+    /**
+     * The column <code>public.invoices.updated_by</code>.
+     */
+    public final TableField<InvoicesRecord, UUID> UPDATED_BY = createField(DSL.name("updated_by"), SQLDataType.UUID, this, "");
+
     private Invoices(Name alias, Table<InvoicesRecord> aliased) {
         this(alias, aliased, null);
     }
@@ -183,7 +193,7 @@ public class Invoices extends TableImpl<InvoicesRecord> {
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.asList(Indexes.IDX_INVOICES_CUSTOMER_ID, Indexes.IDX_INVOICES_DUE_DATE, Indexes.IDX_INVOICES_PERIOD, Indexes.IDX_INVOICES_STATUS, Indexes.IDX_INVOICES_SUBSCRIPTION_ID, Indexes.IDX_INVOICES_TENANT_ID, Indexes.IDX_INVOICES_TENANT_NUMBER);
+        return Arrays.asList(Indexes.IDX_INVOICES_CREATED_BY, Indexes.IDX_INVOICES_CUSTOMER_ID, Indexes.IDX_INVOICES_DUE_DATE, Indexes.IDX_INVOICES_PERIOD, Indexes.IDX_INVOICES_STATUS, Indexes.IDX_INVOICES_SUBSCRIPTION_ID, Indexes.IDX_INVOICES_TENANT_ID, Indexes.IDX_INVOICES_TENANT_NUMBER, Indexes.IDX_INVOICES_UPDATED_BY);
     }
 
     @Override
@@ -198,12 +208,14 @@ public class Invoices extends TableImpl<InvoicesRecord> {
 
     @Override
     public List<ForeignKey<InvoicesRecord, ?>> getReferences() {
-        return Arrays.asList(Keys.INVOICES__INVOICES_TENANT_ID_FKEY, Keys.INVOICES__INVOICES_SUBSCRIPTION_ID_FKEY, Keys.INVOICES__INVOICES_CUSTOMER_ID_FKEY);
+        return Arrays.asList(Keys.INVOICES__INVOICES_TENANT_ID_FKEY, Keys.INVOICES__INVOICES_SUBSCRIPTION_ID_FKEY, Keys.INVOICES__INVOICES_CUSTOMER_ID_FKEY, Keys.INVOICES__INVOICES_CREATED_BY_FKEY, Keys.INVOICES__INVOICES_UPDATED_BY_FKEY);
     }
 
     private transient Tenants _tenants;
     private transient Subscriptions _subscriptions;
     private transient Customers _customers;
+    private transient Users _invoicesCreatedByFkey;
+    private transient Users _invoicesUpdatedByFkey;
 
     /**
      * Get the implicit join path to the <code>public.tenants</code> table.
@@ -234,6 +246,28 @@ public class Invoices extends TableImpl<InvoicesRecord> {
             _customers = new Customers(this, Keys.INVOICES__INVOICES_CUSTOMER_ID_FKEY);
 
         return _customers;
+    }
+
+    /**
+     * Get the implicit join path to the <code>public.users</code> table, via
+     * the <code>invoices_created_by_fkey</code> key.
+     */
+    public Users invoicesCreatedByFkey() {
+        if (_invoicesCreatedByFkey == null)
+            _invoicesCreatedByFkey = new Users(this, Keys.INVOICES__INVOICES_CREATED_BY_FKEY);
+
+        return _invoicesCreatedByFkey;
+    }
+
+    /**
+     * Get the implicit join path to the <code>public.users</code> table, via
+     * the <code>invoices_updated_by_fkey</code> key.
+     */
+    public Users invoicesUpdatedByFkey() {
+        if (_invoicesUpdatedByFkey == null)
+            _invoicesUpdatedByFkey = new Users(this, Keys.INVOICES__INVOICES_UPDATED_BY_FKEY);
+
+        return _invoicesUpdatedByFkey;
     }
 
     @Override

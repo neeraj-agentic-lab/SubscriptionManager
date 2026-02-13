@@ -33,9 +33,9 @@ import java.util.UUID;
  * @author Neeraj Yadav
  */
 @RestController
-@RequestMapping("/v1/plans")
+@RequestMapping("/v1/admin/plans")
 @TenantSecured
-@Tag(name = "Plans", description = "Subscription plan management APIs. Create and manage subscription plans with pricing, billing intervals, and trial periods.")
+@Tag(name = "Admin - Plans", description = "Admin endpoints for subscription plan management. Create and manage subscription plans with pricing, billing intervals, and trial periods.")
 public class PlansController {
     
     private static final Logger logger = LoggerFactory.getLogger(PlansController.class);

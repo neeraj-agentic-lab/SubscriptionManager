@@ -120,6 +120,18 @@ public class Customers extends TableImpl<CustomersRecord> {
      */
     public final TableField<CustomersRecord, String> CUSTOMER_TYPE = createField(DSL.name("customer_type"), SQLDataType.VARCHAR(20).nullable(false).defaultValue(DSL.field(DSL.raw("'REGISTERED'::character varying"), SQLDataType.VARCHAR)), this, "REGISTERED for normal users, GUEST for anonymous shoppers");
 
+    /**
+     * The column <code>public.customers.created_by</code>. User who created
+     * this customer (admin or self-registered)
+     */
+    public final TableField<CustomersRecord, UUID> CREATED_BY = createField(DSL.name("created_by"), SQLDataType.UUID, this, "User who created this customer (admin or self-registered)");
+
+    /**
+     * The column <code>public.customers.updated_by</code>. User who last
+     * updated this customer
+     */
+    public final TableField<CustomersRecord, UUID> UPDATED_BY = createField(DSL.name("updated_by"), SQLDataType.UUID, this, "User who last updated this customer");
+
     private Customers(Name alias, Table<CustomersRecord> aliased) {
         this(alias, aliased, null);
     }
@@ -160,7 +172,7 @@ public class Customers extends TableImpl<CustomersRecord> {
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.asList(Indexes.IDX_CUSTOMERS_EMAIL, Indexes.IDX_CUSTOMERS_EXTERNAL_ID, Indexes.IDX_CUSTOMERS_GUEST_ID, Indexes.IDX_CUSTOMERS_GUEST_ID_LOOKUP, Indexes.IDX_CUSTOMERS_GUEST_TYPE, Indexes.IDX_CUSTOMERS_REGISTERED_EMAIL, Indexes.IDX_CUSTOMERS_STATUS, Indexes.IDX_CUSTOMERS_TENANT_ID);
+        return Arrays.asList(Indexes.IDX_CUSTOMERS_CREATED_BY, Indexes.IDX_CUSTOMERS_EMAIL, Indexes.IDX_CUSTOMERS_EXTERNAL_ID, Indexes.IDX_CUSTOMERS_GUEST_ID, Indexes.IDX_CUSTOMERS_GUEST_ID_LOOKUP, Indexes.IDX_CUSTOMERS_GUEST_TYPE, Indexes.IDX_CUSTOMERS_REGISTERED_EMAIL, Indexes.IDX_CUSTOMERS_STATUS, Indexes.IDX_CUSTOMERS_TENANT_ID, Indexes.IDX_CUSTOMERS_UPDATED_BY);
     }
 
     @Override
@@ -175,10 +187,12 @@ public class Customers extends TableImpl<CustomersRecord> {
 
     @Override
     public List<ForeignKey<CustomersRecord, ?>> getReferences() {
-        return Arrays.asList(Keys.CUSTOMERS__CUSTOMERS_TENANT_ID_FKEY);
+        return Arrays.asList(Keys.CUSTOMERS__CUSTOMERS_TENANT_ID_FKEY, Keys.CUSTOMERS__CUSTOMERS_CREATED_BY_FKEY, Keys.CUSTOMERS__CUSTOMERS_UPDATED_BY_FKEY);
     }
 
     private transient Tenants _tenants;
+    private transient Users _customersCreatedByFkey;
+    private transient Users _customersUpdatedByFkey;
 
     /**
      * Get the implicit join path to the <code>public.tenants</code> table.
@@ -188,6 +202,28 @@ public class Customers extends TableImpl<CustomersRecord> {
             _tenants = new Tenants(this, Keys.CUSTOMERS__CUSTOMERS_TENANT_ID_FKEY);
 
         return _tenants;
+    }
+
+    /**
+     * Get the implicit join path to the <code>public.users</code> table, via
+     * the <code>customers_created_by_fkey</code> key.
+     */
+    public Users customersCreatedByFkey() {
+        if (_customersCreatedByFkey == null)
+            _customersCreatedByFkey = new Users(this, Keys.CUSTOMERS__CUSTOMERS_CREATED_BY_FKEY);
+
+        return _customersCreatedByFkey;
+    }
+
+    /**
+     * Get the implicit join path to the <code>public.users</code> table, via
+     * the <code>customers_updated_by_fkey</code> key.
+     */
+    public Users customersUpdatedByFkey() {
+        if (_customersUpdatedByFkey == null)
+            _customersUpdatedByFkey = new Users(this, Keys.CUSTOMERS__CUSTOMERS_UPDATED_BY_FKEY);
+
+        return _customersUpdatedByFkey;
     }
 
     @Override

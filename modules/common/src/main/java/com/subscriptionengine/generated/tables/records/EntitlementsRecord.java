@@ -245,6 +245,36 @@ public class EntitlementsRecord extends UpdatableRecordImpl<EntitlementsRecord> 
         return (OffsetDateTime) get(13);
     }
 
+    /**
+     * Setter for <code>public.entitlements.created_by</code>.
+     */
+    public EntitlementsRecord setCreatedBy(UUID value) {
+        set(14, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.entitlements.created_by</code>.
+     */
+    public UUID getCreatedBy() {
+        return (UUID) get(14);
+    }
+
+    /**
+     * Setter for <code>public.entitlements.updated_by</code>.
+     */
+    public EntitlementsRecord setUpdatedBy(UUID value) {
+        set(15, value);
+        return this;
+    }
+
+    /**
+     * Getter for <code>public.entitlements.updated_by</code>.
+     */
+    public UUID getUpdatedBy() {
+        return (UUID) get(15);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -268,7 +298,7 @@ public class EntitlementsRecord extends UpdatableRecordImpl<EntitlementsRecord> 
     /**
      * Create a detached, initialised EntitlementsRecord
      */
-    public EntitlementsRecord(UUID id, UUID tenantId, UUID subscriptionId, UUID customerId, String entitlementType, String entitlementKey, String status, OffsetDateTime validFrom, OffsetDateTime validUntil, JSONB entitlementPayload, String externalEntitlementRef, JSONB customAttrs, OffsetDateTime createdAt, OffsetDateTime updatedAt) {
+    public EntitlementsRecord(UUID id, UUID tenantId, UUID subscriptionId, UUID customerId, String entitlementType, String entitlementKey, String status, OffsetDateTime validFrom, OffsetDateTime validUntil, JSONB entitlementPayload, String externalEntitlementRef, JSONB customAttrs, OffsetDateTime createdAt, OffsetDateTime updatedAt, UUID createdBy, UUID updatedBy) {
         super(Entitlements.ENTITLEMENTS);
 
         setId(id);
@@ -285,6 +315,8 @@ public class EntitlementsRecord extends UpdatableRecordImpl<EntitlementsRecord> 
         setCustomAttrs(customAttrs);
         setCreatedAt(createdAt);
         setUpdatedAt(updatedAt);
+        setCreatedBy(createdBy);
+        setUpdatedBy(updatedBy);
         resetChangedOnNotNull();
     }
 
@@ -309,6 +341,8 @@ public class EntitlementsRecord extends UpdatableRecordImpl<EntitlementsRecord> 
             setCustomAttrs(value.getCustomAttrs());
             setCreatedAt(value.getCreatedAt());
             setUpdatedAt(value.getUpdatedAt());
+            setCreatedBy(value.getCreatedBy());
+            setUpdatedBy(value.getUpdatedBy());
             resetChangedOnNotNull();
         }
     }
