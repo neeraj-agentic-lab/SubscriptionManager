@@ -1851,7 +1851,7 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
 
 gcloud projects add-iam-policy-binding $PROJECT_ID \
   --member="serviceAccount:${SA_EMAIL}" \
-  --role="roles/serviceusage.admin"
+  --role="roles/serviceusage.serviceUsageConsumer"
 ```
 
 **Required Roles:**
