@@ -34,11 +34,12 @@ class ConcurrentModificationScenarioTest extends BaseIntegrationTest {
     @Description("Validates race conditions: create subscription → simultaneously pause/modify/cancel → only one succeeds → consistent state → no data corruption")
     @Severity(SeverityLevel.NORMAL)
     void shouldHandleConcurrentModificationsCorrectly() throws Exception {
-        String tenantId = TestDataFactory.DEFAULT_TENANT_ID;
+        String tenantId = createTestTenant();
         
-        UUID customerId = createCustomer(tenantId);
         UUID planId = createPlan(tenantId);
-        UUID subscriptionId = createSubscription(tenantId, customerId, planId);
+        Map<String, UUID> subResult = createSubscriptionWithCustomer(tenantId, planId);
+        UUID subscriptionId = subResult.get("subscriptionId");
+        UUID customerId = subResult.get("customerId");
         
         step1_VerifyInitialState(tenantId, subscriptionId);
         List<Response> responses = step2_ExecuteConcurrentOperations(tenantId, subscriptionId, customerId);
@@ -54,7 +55,7 @@ class ConcurrentModificationScenarioTest extends BaseIntegrationTest {
     private void step1_VerifyInitialState(String tenantId, UUID subscriptionId) {
         Response response = givenAuthenticated(tenantId)
             .when()
-            .get("/v1/subscriptions/" + subscriptionId)
+            .get("/v1/admin/subscriptions/" + subscriptionId)
             .then()
             .statusCode(200)
             .extract()
@@ -77,7 +78,7 @@ class ConcurrentModificationScenarioTest extends BaseIntegrationTest {
             return givenAuthenticated(tenantId)
                 .body(pauseRequest)
                 .when()
-                .put("/v1/subscription-mgmt/" + subscriptionId)
+                .put("/v1/admin/subscriptions/manage/" + subscriptionId)
                 .then()
                 .extract()
                 .response();
@@ -93,7 +94,7 @@ class ConcurrentModificationScenarioTest extends BaseIntegrationTest {
             return givenAuthenticated(tenantId)
                 .body(modifyRequest)
                 .when()
-                .put("/v1/subscription-mgmt/" + subscriptionId)
+                .put("/v1/admin/subscriptions/manage/" + subscriptionId)
                 .then()
                 .extract()
                 .response();
@@ -105,7 +106,7 @@ class ConcurrentModificationScenarioTest extends BaseIntegrationTest {
             return givenAuthenticated(tenantId)
                 .body(cancelRequest)
                 .when()
-                .put("/v1/subscription-mgmt/" + subscriptionId)
+                .put("/v1/admin/subscriptions/manage/" + subscriptionId)
                 .then()
                 .extract()
                 .response();
@@ -155,7 +156,7 @@ class ConcurrentModificationScenarioTest extends BaseIntegrationTest {
     private void step4_VerifyConsistentState(String tenantId, UUID subscriptionId) {
         Response response = givenAuthenticated(tenantId)
             .when()
-            .get("/v1/subscriptions/" + subscriptionId)
+            .get("/v1/admin/subscriptions/" + subscriptionId)
             .then()
             .statusCode(200)
             .extract()
@@ -178,7 +179,7 @@ class ConcurrentModificationScenarioTest extends BaseIntegrationTest {
     private void step5_VerifyNoDataCorruption(String tenantId, UUID subscriptionId) {
         Response response = givenAuthenticated(tenantId)
             .when()
-            .get("/v1/subscriptions/" + subscriptionId)
+            .get("/v1/admin/subscriptions/" + subscriptionId)
             .then()
             .statusCode(200)
             .extract()
@@ -206,11 +207,12 @@ class ConcurrentModificationScenarioTest extends BaseIntegrationTest {
     @Description("Tests multiple simultaneous pause attempts on the same subscription")
     @Severity(SeverityLevel.NORMAL)
     void shouldHandleConcurrentPauseOperations() throws Exception {
-        String tenantId = TestDataFactory.DEFAULT_TENANT_ID;
+        String tenantId = createTestTenant();
         
-        UUID customerId = createCustomer(tenantId);
         UUID planId = createPlan(tenantId);
-        UUID subscriptionId = createSubscription(tenantId, customerId, planId);
+        Map<String, UUID> subResult = createSubscriptionWithCustomer(tenantId, planId);
+        UUID subscriptionId = subResult.get("subscriptionId");
+        UUID customerId = subResult.get("customerId");
         
         ExecutorService executor = Executors.newFixedThreadPool(5);
         List<Future<Response>> futures = new ArrayList<>();
@@ -222,7 +224,7 @@ class ConcurrentModificationScenarioTest extends BaseIntegrationTest {
                 return givenAuthenticated(tenantId)
                     .body(pauseRequest)
                     .when()
-                    .put("/v1/subscription-mgmt/" + subscriptionId)
+                    .put("/v1/admin/subscriptions/manage/" + subscriptionId)
                     .then()
                     .extract()
                     .response();
@@ -247,7 +249,7 @@ class ConcurrentModificationScenarioTest extends BaseIntegrationTest {
         // Verify final state is PAUSED
         Response finalState = givenAuthenticated(tenantId)
             .when()
-            .get("/v1/subscriptions/" + subscriptionId)
+            .get("/v1/admin/subscriptions/" + subscriptionId)
             .then()
             .statusCode(200)
             .extract()
@@ -264,11 +266,12 @@ class ConcurrentModificationScenarioTest extends BaseIntegrationTest {
     @Description("Tests optimistic locking with various operation types")
     @Severity(SeverityLevel.NORMAL)
     void shouldPreventRaceConditionsWithOptimisticLocking() throws Exception {
-        String tenantId = TestDataFactory.DEFAULT_TENANT_ID;
+        String tenantId = createTestTenant();
         
-        UUID customerId = createCustomer(tenantId);
         UUID planId = createPlan(tenantId);
-        UUID subscriptionId = createSubscription(tenantId, customerId, planId);
+        Map<String, UUID> subResult3 = createSubscriptionWithCustomer(tenantId, planId);
+        UUID subscriptionId = subResult3.get("subscriptionId");
+        UUID customerId = subResult3.get("customerId");
         
         ExecutorService executor = Executors.newFixedThreadPool(3);
         List<Future<Response>> futures = new ArrayList<>();
@@ -276,17 +279,17 @@ class ConcurrentModificationScenarioTest extends BaseIntegrationTest {
         // Concurrent operations: pause, resume (will fail), modify
         futures.add(executor.submit(() -> {
             Map<String, Object> pauseRequest = TestDataFactory.createPauseRequest(customerId);
-            return givenAuthenticated(tenantId).body(pauseRequest).when().put("/v1/subscription-mgmt/" + subscriptionId).then().extract().response();
+            return givenAuthenticated(tenantId).body(pauseRequest).when().put("/v1/admin/subscriptions/manage/" + subscriptionId).then().extract().response();
         }));
         
         futures.add(executor.submit(() -> {
             Map<String, Object> resumeRequest = TestDataFactory.createResumeRequest(customerId);
-            return givenAuthenticated(tenantId).body(resumeRequest).when().put("/v1/subscription-mgmt/" + subscriptionId).then().extract().response();
+            return givenAuthenticated(tenantId).body(resumeRequest).when().put("/v1/admin/subscriptions/manage/" + subscriptionId).then().extract().response();
         }));
         
         futures.add(executor.submit(() -> {
             Map<String, Object> modifyRequest = Map.of("customerId", customerId.toString(), "operation", "MODIFY", "newQuantity", 3);
-            return givenAuthenticated(tenantId).body(modifyRequest).when().put("/v1/subscription-mgmt/" + subscriptionId).then().extract().response();
+            return givenAuthenticated(tenantId).body(modifyRequest).when().put("/v1/admin/subscriptions/manage/" + subscriptionId).then().extract().response();
         }));
         
         List<Response> responses = new ArrayList<>();
@@ -307,7 +310,7 @@ class ConcurrentModificationScenarioTest extends BaseIntegrationTest {
         // Verify subscription is in a valid state
         Response finalState = givenAuthenticated(tenantId)
             .when()
-            .get("/v1/subscriptions/" + subscriptionId)
+            .get("/v1/admin/subscriptions/" + subscriptionId)
             .then()
             .statusCode(200)
             .extract()
@@ -322,21 +325,24 @@ class ConcurrentModificationScenarioTest extends BaseIntegrationTest {
     
     // Helper methods
     
-    private UUID createCustomer(String tenantId) {
-        Map<String, Object> customerRequest = TestDataFactory.createCustomerRequest();
-        Response response = givenAuthenticated(tenantId).body(customerRequest).when().post("/v1/customers").then().statusCode(200).extract().response();
-        return UUID.fromString(response.jsonPath().getString("data.customerId"));
+    private String createTestTenant() {
+        Map<String, Object> tenantRequest = Map.of("name", "Test Tenant " + UUID.randomUUID().toString().substring(0, 8), "slug", "test-" + UUID.randomUUID().toString().substring(0, 8), "status", "ACTIVE");
+        Response response = givenSuperAdmin().contentType("application/json").body(tenantRequest).when().post("/v1/admin/tenants").then().statusCode(201).extract().response();
+        return response.jsonPath().getString("id");
     }
-    
+
     private UUID createPlan(String tenantId) {
         Map<String, Object> planRequest = TestDataFactory.createPlanRequest();
-        Response response = givenAuthenticated(tenantId).body(planRequest).when().post("/v1/plans").then().statusCode(200).extract().response();
-        return UUID.fromString(response.jsonPath().getString("data.planId"));
+        Response response = givenAuthenticated(tenantId).body(planRequest).when().post("/v1/admin/plans").then().statusCode(201).extract().response();
+        return UUID.fromString(response.jsonPath().getString("id"));
     }
     
-    private UUID createSubscription(String tenantId, UUID customerId, UUID planId) {
-        Map<String, Object> subscriptionRequest = TestDataFactory.createSubscriptionRequest(customerId, planId);
-        Response response = givenAuthenticated(tenantId).body(subscriptionRequest).when().post("/v1/subscriptions").then().statusCode(200).extract().response();
-        return UUID.fromString(response.jsonPath().getString("data.subscriptionId"));
+    private Map<String, UUID> createSubscriptionWithCustomer(String tenantId, UUID planId) {
+        Map<String, Object> subscriptionRequest = TestDataFactory.createSubscriptionRequest(UUID.randomUUID(), planId);
+        Response response = givenAuthenticated(tenantId).body(subscriptionRequest).when().post("/v1/admin/subscriptions").then().statusCode(201).extract().response();
+        Map<String, UUID> result = new java.util.HashMap<>();
+        result.put("subscriptionId", UUID.fromString(response.jsonPath().getString("id")));
+        result.put("customerId", UUID.fromString(response.jsonPath().getString("customerId")));
+        return result;
     }
 }

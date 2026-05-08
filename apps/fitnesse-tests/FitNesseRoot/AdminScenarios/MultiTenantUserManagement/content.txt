@@ -1,0 +1,115 @@
+!define TEST_SYSTEM {slim}
+
+!path build/fitnesse-lib/*.jar
+!path build/classes/java/main
+!path build/resources/main
+
+!|import|
+|com.subscriptionengine.fitnesse.fixtures|
+
+!1 Multi-Tenant User Management (P1)
+
+This test validates a user working across multiple tenants with different roles - supports consultants, agencies, multi-brand scenarios.
+
+!2 Step 1: Login as Super Admin
+
+!|script|RestApiFixture|
+|$ts=|timestamp|
+|post to|/v1/auth/login|with body|{"email":"admin@subscriptionengine.com","password":"ChangeMe123!"}|
+|check|status code|200|
+|show|response body|
+|$superToken=|json value|token|
+
+!2 Step 2: Create User Account
+
+!|script|RestApiFixture|
+|set auth token|$superToken|
+|post to|/v1/admin/users|with body|{"email":"consultant-$ts@example.com","password":"SecurePass123","firstName":"Alice","lastName":"Johnson","role":"TENANT_USER"}|
+|check|status code|201|
+|show|response body|
+|$userId=|json value|id|
+
+!2 Step 3: Create Tenant A
+
+!|script|RestApiFixture|
+|set auth token|$superToken|
+|post to|/v1/admin/tenants|with body|{"name":"TenantA-$ts","slug":"tenant-a-$ts"}|
+|check|status code|201|
+|show|response body|
+|$tenantAId=|json value|id|
+
+!2 Step 4: Create Tenant B
+
+!|script|RestApiFixture|
+|set auth token|$superToken|
+|post to|/v1/admin/tenants|with body|{"name":"TenantB-$ts","slug":"tenant-b-$ts"}|
+|check|status code|201|
+|show|response body|
+|$tenantBId=|json value|id|
+
+!2 Step 5: Assign User to Tenant A as TENANT_ADMIN
+
+!|script|RestApiFixture|
+|set auth token|$superToken|
+|post to|/v1/admin/user-tenants|with body|{"userId":"$userId","tenantId":"$tenantAId","role":"TENANT_ADMIN"}|
+|check|status code|201|
+|show|response body|
+
+!2 Step 6: Assign User to Tenant B as TENANT_USER
+
+!|script|RestApiFixture|
+|set auth token|$superToken|
+|post to|/v1/admin/user-tenants|with body|{"userId":"$userId","tenantId":"$tenantBId","role":"TENANT_USER"}|
+|check|status code|201|
+|show|response body|
+
+!2 Step 7: Login as Consultant User (Tenant A Context)
+
+!|script|RestApiFixture|
+|post to|/v1/auth/login|with body|{"email":"consultant-$ts@example.com","password":"SecurePass123"}|
+|check|status code|200|
+|show|response body|
+|$consultantToken=|json value|token|
+
+!2 Step 8: Verify User Context Shows Tenant A
+
+!|script|RestApiFixture|
+|set auth token|$consultantToken|
+|get from|/v1/auth/me|
+|check|status code|200|
+|show|response body|
+
+!2 Step 9: Verify TENANT_ADMIN Can Access Tenant A
+
+!|script|RestApiFixture|
+|set auth token|$consultantToken|
+|get from|/v1/admin/tenants/$tenantAId|
+|check|status code|200|
+|show|response body|
+
+!2 Step 10: Verify User Cannot Access Tenant B (Different Tenant)
+
+!|script|RestApiFixture|
+|set auth token|$consultantToken|
+|get from|/v1/admin/tenants/$tenantBId|
+|check|status code|403|
+|show|response body|
+
+!2 Step 11: Super Admin Can See User Has Multiple Tenant Assignments
+
+!|script|RestApiFixture|
+|set auth token|$superToken|
+|get from|/v1/admin/users/$userId|
+|check|status code|200|
+|show|response body|
+
+!2 Summary
+
+This test validates:
+- ✓ User can be assigned to multiple tenants with different roles
+- ✓ User authenticates and gets context for their primary tenant
+- ✓ TENANT_ADMIN can access their own tenant
+- ✓ User cannot access other tenants they're assigned to via different role
+- ✓ Multi-tenant user management works correctly
+
+Note: JWT contains the user's primary tenant context. Switching tenant context would require re-authentication or a tenant-switching API endpoint (not yet implemented).

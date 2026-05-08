@@ -1,0 +1,42 @@
+!define TEST_SYSTEM {slim}
+
+!path /Users/nyadav/personal/development/SubscriptionManager/apps/fitnesse-tests/build/libs/*.jar
+
+!|import|
+|com.subscriptionengine.fitnesse.fixtures|
+
+!1 Create Subscription Test
+
+This test verifies the subscription creation flow.
+
+!2 Setup Test Data
+
+!|Subscription Fixture|
+|set tenant id|test-tenant-001|
+|set customer id|test-customer-001|
+|set plan id|plan-basic-monthly|
+
+!2 Create Subscription
+
+!|Subscription Fixture|
+|create subscription|true|
+
+!2 Verify Subscription Created
+
+!|Subscription Fixture|
+|subscription id?|
+|status is|ACTIVE|
+|has next billing date|true|
+|plan id is|plan-basic-monthly|
+
+!2 Verify Subscription Details
+
+!|Subscription Fixture|
+|get subscription|${subscriptionId}|
+|status is|ACTIVE|
+|next billing date?|
+
+!2 Cleanup
+
+!|Subscription Fixture|
+|reset|

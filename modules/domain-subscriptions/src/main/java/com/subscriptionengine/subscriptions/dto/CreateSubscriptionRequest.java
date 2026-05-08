@@ -20,7 +20,9 @@ public class CreateSubscriptionRequest {
     @NotNull(message = "Plan ID is required")
     private UUID planId;
     
-    // Customer information (for upsert)
+    // Customer identification - either customerId (for registered) OR customerEmail (for guest/new)
+    private UUID customerId;
+    
     @Email(message = "Valid email is required")
     @Size(max = 255, message = "Email must not exceed 255 characters")
     private String customerEmail;
@@ -73,6 +75,14 @@ public class CreateSubscriptionRequest {
     
     public void setPlanId(UUID planId) {
         this.planId = planId;
+    }
+    
+    public UUID getCustomerId() {
+        return customerId;
+    }
+    
+    public void setCustomerId(UUID customerId) {
+        this.customerId = customerId;
     }
     
     public String getCustomerEmail() {

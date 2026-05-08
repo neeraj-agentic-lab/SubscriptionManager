@@ -26,7 +26,7 @@ class IdempotencyKeyScenarioTest extends BaseIntegrationTest {
     @Description("Validates duplicate prevention: create with key → retry same key → same result → different key → new resource")
     @Severity(SeverityLevel.NORMAL)
     void shouldHandleIdempotencyKeysCorrectly() {
-        String tenantId = TestDataFactory.DEFAULT_TENANT_ID;
+        String tenantId = createTestTenant();
         
         UUID customerId = createCustomer(tenantId);
         UUID planId = createPlan(tenantId);
@@ -51,13 +51,13 @@ class IdempotencyKeyScenarioTest extends BaseIntegrationTest {
             .header("Idempotency-Key", idempotencyKey)
             .body(subscriptionRequest)
             .when()
-            .post("/v1/subscriptions")
+            .post("/v1/admin/subscriptions")
             .then()
-            .statusCode(200)
+            .statusCode(201)
             .extract()
             .response();
         
-        UUID subscriptionId = UUID.fromString(response.jsonPath().getString("data.subscriptionId"));
+        UUID subscriptionId = UUID.fromString(response.jsonPath().getString("id"));
         assertThat(subscriptionId).isNotNull();
         
         Allure.addAttachment("First Creation", "application/json", response.asString());
@@ -72,13 +72,13 @@ class IdempotencyKeyScenarioTest extends BaseIntegrationTest {
             .header("Idempotency-Key", idempotencyKey)
             .body(subscriptionRequest)
             .when()
-            .post("/v1/subscriptions")
+            .post("/v1/admin/subscriptions")
             .then()
-            .statusCode(200)
+            .statusCode(201)
             .extract()
             .response();
         
-        UUID subscriptionId = UUID.fromString(response.jsonPath().getString("data.subscriptionId"));
+        UUID subscriptionId = UUID.fromString(response.jsonPath().getString("id"));
         
         Allure.addAttachment("Retry Response", "application/json", response.asString());
         return subscriptionId;
@@ -100,13 +100,13 @@ class IdempotencyKeyScenarioTest extends BaseIntegrationTest {
             .header("Idempotency-Key", idempotencyKey)
             .body(subscriptionRequest)
             .when()
-            .post("/v1/subscriptions")
+            .post("/v1/admin/subscriptions")
             .then()
-            .statusCode(200)
+            .statusCode(201)
             .extract()
             .response();
         
-        UUID subscriptionId = UUID.fromString(response.jsonPath().getString("data.subscriptionId"));
+        UUID subscriptionId = UUID.fromString(response.jsonPath().getString("id"));
         assertThat(subscriptionId).isNotNull();
         
         Allure.addAttachment("Different Key Creation", "application/json", response.asString());
@@ -122,13 +122,19 @@ class IdempotencyKeyScenarioTest extends BaseIntegrationTest {
     
     private UUID createCustomer(String tenantId) {
         Map<String, Object> customerRequest = TestDataFactory.createCustomerRequest();
-        Response response = givenAuthenticated(tenantId).body(customerRequest).when().post("/v1/customers").then().statusCode(200).extract().response();
+        Response response = givenAuthenticated(tenantId).body(customerRequest).when().post("/v1/admin/customers").then().statusCode(200).extract().response();
         return UUID.fromString(response.jsonPath().getString("data.customerId"));
     }
     
+    private String createTestTenant() {
+        Map<String, Object> tenantRequest = Map.of("name", "Test Tenant " + UUID.randomUUID().toString().substring(0, 8), "slug", "test-" + UUID.randomUUID().toString().substring(0, 8), "status", "ACTIVE");
+        Response response = givenSuperAdmin().contentType("application/json").body(tenantRequest).when().post("/v1/admin/tenants").then().statusCode(201).extract().response();
+        return response.jsonPath().getString("id");
+    }
+
     private UUID createPlan(String tenantId) {
         Map<String, Object> planRequest = TestDataFactory.createPlanRequest();
-        Response response = givenAuthenticated(tenantId).body(planRequest).when().post("/v1/plans").then().statusCode(200).extract().response();
-        return UUID.fromString(response.jsonPath().getString("data.planId"));
+        Response response = givenAuthenticated(tenantId).body(planRequest).when().post("/v1/admin/plans").then().statusCode(201).extract().response();
+        return UUID.fromString(response.jsonPath().getString("id"));
     }
 }

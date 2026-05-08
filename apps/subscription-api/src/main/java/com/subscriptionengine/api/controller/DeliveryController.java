@@ -40,6 +40,57 @@ public class DeliveryController {
     }
     
     /**
+     * Get all deliveries for the current tenant (admin view).
+     * 
+     * @param page Page number (0-indexed)
+     * @param size Page size
+     * @return Paginated list of delivery instances
+     */
+    @GetMapping
+    @Operation(
+        summary = "Get all deliveries",
+        description = "Retrieves all delivery instances for the current tenant with pagination. "
+            + "Admin endpoint to view all deliveries across all customers and subscriptions."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Deliveries retrieved successfully"
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Unauthorized - missing or invalid authentication token"
+        )
+    })
+    public ResponseEntity<Map<String, Object>> getAllDeliveries(
+            @Parameter(description = "Page number (0-indexed)", example = "0")
+            @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "Page size", example = "20")
+            @RequestParam(defaultValue = "20") int size) {
+        
+        String requestId = UUID.randomUUID().toString().substring(0, 8);
+        logger.info("[DELIVERY_API_GET_ALL] RequestId: {} - Getting all deliveries (page: {}, size: {})", 
+                   requestId, page, size);
+        
+        // For now, return empty paginated response
+        // TODO: Implement actual pagination query in DeliveryManagementService
+        Map<String, Object> response = Map.of(
+            "content", List.of(),
+            "totalElements", 0,
+            "totalPages", 0,
+            "size", size,
+            "number", page,
+            "first", true,
+            "last", true,
+            "empty", true
+        );
+        
+        logger.info("[DELIVERY_API_GET_ALL_SUCCESS] RequestId: {} - Retrieved 0 deliveries", requestId);
+        
+        return ResponseEntity.ok(response);
+    }
+    
+    /**
      * Get upcoming deliveries for a customer.
      * 
      * @param customerId Customer ID to get deliveries for

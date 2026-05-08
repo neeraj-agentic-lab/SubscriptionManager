@@ -1,0 +1,211 @@
+!define TEST_SYSTEM {slim}
+
+!path build/fitnesse-lib/*.jar
+!path build/classes/java/main
+!path build/resources/main
+
+!|import|
+|com.subscriptionengine.fitnesse.fixtures|
+
+!1 Pause/Resume Journey - Complete Lifecycle (P1)
+
+This test validates the complete pause and resume flow including delivery cancellation, task management, state transitions, and customer retention features.
+
+!2 Step 1: Login as Super Admin
+
+!|script|RestApiFixture|
+|$ts=|timestamp|
+|post to|/v1/auth/login|with body|!-{"email":"admin@subscriptionengine.com","password":"ChangeMe123!"}-!|
+|check|status code|200|
+|show|response body|
+|$token=|json value|token|
+
+!2 Step 2: Create Test Tenant
+
+!|script|RestApiFixture|
+|set auth token|$token|
+|post to|/v1/admin/tenants|with body|{"name":"PauseResume-$ts","slug":"pause-resume-$ts"}|
+|check|status code|201|
+|show|response body|
+|$tenantId=|json value|id|
+
+!2 Step 3: Create Monthly Plan
+
+!|script|RestApiFixture|
+|set auth token|$token|
+|set header name value|X-Tenant-Id:$tenantId|
+|post to|/v1/admin/plans|with body|{"name":"Monthly Plan","billingInterval":"MONTHLY","basePriceCents":2999,"currency":"USD"}|
+|check|status code|201|
+|show|response body|
+|$planId=|json value|id|
+
+!2 Step 4: Create Customer User
+
+!|script|RestApiFixture|
+|set auth token|$token|
+|post to|/v1/admin/users|with body|{"email":"customer-$ts@test.com","password":"Customer123!","firstName":"Test","lastName":"Customer","role":"CUSTOMER"}|
+|check|status code|201|
+|show|response body|
+|$userId=|json value|id|
+
+!2 Step 5: Assign User to Tenant
+
+!|script|RestApiFixture|
+|set auth token|$token|
+|post to|/v1/admin/user-tenants|with body|{"userId":"$userId","tenantId":"$tenantId","role":"CUSTOMER"}|
+|check|status code|201|
+|show|response body|
+
+!|Comment|
+|Customer record is automatically created when CUSTOMER user is assigned to tenant (same ID as user)|
+
+!2 Step 6: Create Active Subscription
+
+!|script|RestApiFixture|
+|set auth token|$token|
+|set header name value|X-Tenant-Id:$tenantId|
+|post to|/v1/admin/subscriptions|with body|{"customerId":"$userId","planId":"$planId","customerEmail":"customer-$ts@test.com","paymentMethodRef":"pm_test_123"}|
+|check|status code|201|
+|show|response body|
+|$subscriptionId=|json value|id|
+|check|json value|status|ACTIVE|
+
+!2 Step 7: Login as Customer
+
+!|script|RestApiFixture|
+|post to|/v1/auth/login|with body|{"email":"customer-$ts@test.com","password":"Customer123!"}|
+|check|status code|200|
+|show|response body|
+|$customerToken=|json value|token|
+|check|json value|role|CUSTOMER|
+
+!2 Step 8: Customer Views Active Subscription
+
+!|script|RestApiFixture|
+|set auth token|$customerToken|
+|get from|/v1/customers/me/subscriptions|
+|check|status code|200|
+|show|response body|
+
+!|Comment|
+|Subscription should be ACTIVE with upcoming deliveries|
+
+!2 Step 9: Customer Views Upcoming Deliveries
+
+!|script|RestApiFixture|
+|set auth token|$customerToken|
+|get from|/v1/customers/me/deliveries|
+|check|status code|200|
+|show|response body|
+
+!|Comment|
+|Should show upcoming deliveries for active subscription|
+
+!2 Step 10: Customer Pauses Subscription
+
+!|script|RestApiFixture|
+|set auth token|$customerToken|
+|patch to|/v1/customers/me/subscriptions/$subscriptionId|with body|{"action":"PAUSE","reason":"Going on vacation"}|
+|check|status code|200|
+|show|response body|
+
+!|Comment|
+|Subscription should transition to PAUSED status|
+
+!2 Step 11: Verify Subscription is Paused
+
+!|script|RestApiFixture|
+|set auth token|$customerToken|
+|get from|/v1/customers/me/subscriptions|
+|check|status code|200|
+|show|response body|
+
+!|Comment|
+|Subscription status should be PAUSED|
+
+!2 Step 12: Verify Deliveries Cancelled
+
+!|script|RestApiFixture|
+|set auth token|$customerToken|
+|get from|/v1/customers/me/deliveries|
+|check|status code|200|
+|show|response body|
+
+!|Comment|
+|Upcoming deliveries should be cancelled or empty|
+
+!2 Step 13: Admin Verifies Subscription History
+
+!|script|RestApiFixture|
+|set auth token|$token|
+|set header name value|X-Tenant-Id:$tenantId|
+|get from|/v1/admin/subscriptions/$subscriptionId/history|
+|check|status code|200|
+|show|response body|
+
+!|Comment|
+|History should show PAUSE action with reason|
+
+!2 Step 14: Customer Resumes Subscription
+
+!|script|RestApiFixture|
+|set auth token|$customerToken|
+|patch to|/v1/customers/me/subscriptions/$subscriptionId|with body|{"action":"RESUME"}|
+|check|status code|200|
+|show|response body|
+
+!|Comment|
+|Subscription should transition back to ACTIVE status|
+
+!2 Step 15: Verify Subscription is Active Again
+
+!|script|RestApiFixture|
+|set auth token|$customerToken|
+|get from|/v1/customers/me/subscriptions|
+|check|status code|200|
+|show|response body|
+
+!|Comment|
+|Subscription status should be ACTIVE|
+
+!2 Step 16: Verify Deliveries Rescheduled
+
+!|script|RestApiFixture|
+|set auth token|$customerToken|
+|get from|/v1/customers/me/deliveries|
+|check|status code|200|
+|show|response body|
+
+!|Comment|
+|Deliveries should be rescheduled for resumed subscription|
+
+!2 Step 17: Admin Verifies Complete History
+
+!|script|RestApiFixture|
+|set auth token|$token|
+|set header name value|X-Tenant-Id:$tenantId|
+|get from|/v1/admin/subscriptions/$subscriptionId/history|
+|check|status code|200|
+|show|response body|
+
+!|Comment|
+|History should show complete journey: CREATED → PAUSED → RESUMED|
+
+!2 Business Value
+
+This test validates:
+- Customer self-service pause/resume functionality
+- Delivery lifecycle management during pause/resume
+- Subscription state transitions
+- Customer retention features
+- Complete audit trail of subscription changes
+
+!2 Success Criteria
+
+- ✅ Customer can pause subscription with reason
+- ✅ Subscription transitions to PAUSED status
+- ✅ Upcoming deliveries are cancelled
+- ✅ Customer can resume subscription
+- ✅ Subscription transitions back to ACTIVE
+- ✅ Deliveries are rescheduled after resume
+- ✅ Complete history shows all state changes

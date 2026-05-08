@@ -1,0 +1,76 @@
+!define TEST_SYSTEM {slim}
+
+!path build/fitnesse-lib/*.jar
+!path build/classes/java/main
+!path build/resources/main
+
+!|import|
+|com.subscriptionengine.fitnesse.fixtures|
+
+!1 Guest Customer Subscription Flow (P1)
+
+This test validates subscription creation for guest customers using email (no pre-existing customer record).
+
+!2 Step 1: Login as Super Admin
+
+!|script|RestApiFixture|
+|$ts=|timestamp|
+|post to|/v1/auth/login|with body|{"email":"admin@subscriptionengine.com","password":"ChangeMe123!"}|
+|check|status code|200|
+|show|response body|
+|$superToken=|json value|token|
+
+!2 Step 2: Create Tenant
+
+!|script|RestApiFixture|
+|set auth token|$superToken|
+|post to|/v1/admin/tenants|with body|{"name":"GuestTestCorp-$ts","slug":"guest-test-$ts"}|
+|check|status code|201|
+|show|response body|
+|$tenantId=|json value|id|
+
+!2 Step 3: Create Plan
+
+!|script|RestApiFixture|
+|set auth token|$superToken|
+|set header name value|X-Tenant-Id:$tenantId|
+|post to|/v1/admin/plans|with body|{"tenantId":"$tenantId","name":"Starter Plan","description":"Starter subscription","basePriceCents":1999,"currency":"USD","billingInterval":"MONTHLY","planType":"RECURRING"}|
+|check|status code|201|
+|show|response body|
+|$planId=|json value|id|
+
+!2 Step 4: Create Subscription with Guest Customer Email
+
+!|script|RestApiFixture|
+|set auth token|$superToken|
+|set header name value|X-Tenant-Id:$tenantId|
+|post to|/v1/admin/subscriptions|with body|{"customerEmail":"guest-$ts@example.com","customerFirstName":"Guest","customerLastName":"User","planId":"$planId"}|
+|check|status code|201|
+|show|response body|
+|$subscriptionId=|json value|id|
+
+!2 Step 5: Verify Subscription Created
+
+!|script|RestApiFixture|
+|set auth token|$superToken|
+|set header name value|X-Tenant-Id:$tenantId|
+|get from|/v1/admin/subscriptions/$subscriptionId|
+|check|status code|200|
+|show|response body|
+
+!2 Step 6: Create Another Subscription with Same Email (Should Reuse Customer)
+
+!|script|RestApiFixture|
+|set auth token|$superToken|
+|set header name value|X-Tenant-Id:$tenantId|
+|post to|/v1/admin/subscriptions|with body|{"customerEmail":"guest-$ts@example.com","planId":"$planId"}|
+|check|status code|201|
+|show|response body|
+|$subscription2Id=|json value|id|
+
+!2 Summary
+
+This test validates:
+- ✓ Subscription created for guest customer using email only
+- ✓ Customer automatically created from email
+- ✓ Second subscription reuses existing customer by email

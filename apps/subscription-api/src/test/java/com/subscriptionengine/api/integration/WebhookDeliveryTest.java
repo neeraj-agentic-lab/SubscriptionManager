@@ -88,7 +88,7 @@ class WebhookDeliveryTest extends BaseIntegrationTest {
         givenAuthenticated(tenantId)
             .body(cancelRequest)
             .when()
-            .post("/v1/deliveries/" + deliveryId + "/cancel")
+            .post("/v1/admin/deliveries/" + deliveryId + "/cancel")
             .then()
             .statusCode(200);
         
@@ -156,7 +156,7 @@ class WebhookDeliveryTest extends BaseIntegrationTest {
         givenAuthenticated(tenantId)
             .body(cancelRequest)
             .when()
-            .post("/v1/deliveries/" + deliveryId + "/cancel")
+            .post("/v1/admin/deliveries/" + deliveryId + "/cancel")
             .then()
             .statusCode(200);
         
@@ -220,7 +220,7 @@ class WebhookDeliveryTest extends BaseIntegrationTest {
         // List webhooks
         Response response = givenAuthenticated(tenantId)
             .when()
-            .get("/v1/webhooks")
+            .get("/v1/admin/webhooks")
             .then()
             .statusCode(200)
             .extract()
@@ -248,7 +248,7 @@ class WebhookDeliveryTest extends BaseIntegrationTest {
         Response response = givenAuthenticated(tenantId)
             .body(updateRequest)
             .when()
-            .patch("/v1/webhooks/" + webhookId)
+            .patch("/v1/admin/webhooks/" + webhookId)
             .then()
             .statusCode(200)
             .extract()
@@ -273,7 +273,7 @@ class WebhookDeliveryTest extends BaseIntegrationTest {
         // Delete webhook
         Response response = givenAuthenticated(tenantId)
             .when()
-            .delete("/v1/webhooks/" + webhookId)
+            .delete("/v1/admin/webhooks/" + webhookId)
             .then()
             .statusCode(200)
             .extract()
@@ -284,7 +284,7 @@ class WebhookDeliveryTest extends BaseIntegrationTest {
         // Verify deleted
         givenAuthenticated(tenantId)
             .when()
-            .get("/v1/webhooks")
+            .get("/v1/admin/webhooks")
             .then()
             .statusCode(200);
         
@@ -304,7 +304,7 @@ class WebhookDeliveryTest extends BaseIntegrationTest {
         Response response = givenAuthenticated(tenantId)
             .body(webhookRequest)
             .when()
-            .post("/v1/webhooks")
+            .post("/v1/admin/webhooks")
             .then()
             .statusCode(200)
             .extract()
@@ -323,7 +323,7 @@ class WebhookDeliveryTest extends BaseIntegrationTest {
         Response response = givenAuthenticated(tenantId)
             .body(planRequest)
             .when()
-            .post("/v1/plans")
+            .post("/v1/admin/plans")
             .then()
             .statusCode(201)
             .extract()
@@ -339,7 +339,7 @@ class WebhookDeliveryTest extends BaseIntegrationTest {
         Response response = givenAuthenticated(tenantId)
             .body(customerRequest)
             .when()
-            .post("/v1/customers")
+            .post("/v1/admin/customers")
             .then()
             .statusCode(200)
             .extract()
@@ -360,7 +360,7 @@ class WebhookDeliveryTest extends BaseIntegrationTest {
         Response response = givenAuthenticated(tenantId)
             .body(subscriptionRequest)
             .when()
-            .post("/v1/subscriptions")
+            .post("/v1/admin/subscriptions")
             .then()
             .statusCode(201)
             .extract()
@@ -399,11 +399,11 @@ class WebhookDeliveryTest extends BaseIntegrationTest {
             "status", "ACTIVE"
         );
         
-        Response response = givenAuthenticated(tenantId.toString())
+        Response response = givenSuperAdmin()
             .contentType("application/json")
             .body(tenantRequest)
             .when()
-            .post("/v1/tenants")
+            .post("/v1/admin/tenants")
             .then()
             .statusCode(201)
             .extract()

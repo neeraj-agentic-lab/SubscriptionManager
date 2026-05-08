@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 import static com.subscriptionengine.generated.tables.UserTenants.USER_TENANTS;
 import static com.subscriptionengine.generated.tables.Users.USERS;
 import static com.subscriptionengine.generated.tables.Tenants.TENANTS;
+import static com.subscriptionengine.generated.tables.Customers.CUSTOMERS;
 
 /**
  * Admin controller for user-tenant relationship management.
@@ -71,6 +72,38 @@ public class AdminUserTenantsController {
             .set(USER_TENANTS.CREATED_AT, now)
             .set(USER_TENANTS.UPDATED_AT, now)
             .execute();
+        
+        // Auto-create customer record for CUSTOMER role users
+        if ("CUSTOMER".equals(request.getRole())) {
+            // Check if customer record already exists
+            boolean customerExists = dsl.fetchExists(
+                dsl.selectOne()
+                    .from(CUSTOMERS)
+                    .where(CUSTOMERS.ID.eq(request.getUserId()))
+            );
+            
+            if (!customerExists) {
+                // Get user details
+                var user = dsl.selectFrom(USERS)
+                    .where(USERS.ID.eq(request.getUserId()))
+                    .fetchOne();
+                
+                if (user != null) {
+                    dsl.insertInto(CUSTOMERS)
+                        .set(CUSTOMERS.ID, request.getUserId()) // Same ID as user!
+                        .set(CUSTOMERS.TENANT_ID, request.getTenantId())
+                        .set(CUSTOMERS.EMAIL, user.get(USERS.EMAIL))
+                        .set(CUSTOMERS.FIRST_NAME, user.get(USERS.FIRST_NAME))
+                        .set(CUSTOMERS.LAST_NAME, user.get(USERS.LAST_NAME))
+                        .set(CUSTOMERS.STATUS, "ACTIVE")
+                        .set(CUSTOMERS.CUSTOMER_TYPE, "REGISTERED")
+                        .set(CUSTOMERS.CUSTOM_ATTRS, org.jooq.JSONB.valueOf("{}"))
+                        .set(CUSTOMERS.CREATED_AT, OffsetDateTime.of(now, ZoneOffset.UTC))
+                        .set(CUSTOMERS.UPDATED_AT, OffsetDateTime.of(now, ZoneOffset.UTC))
+                        .execute();
+                }
+            }
+        }
         
         var result = dsl.select(
                 USER_TENANTS.ID,

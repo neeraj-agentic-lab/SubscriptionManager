@@ -1,0 +1,108 @@
+!define TEST_SYSTEM {slim}
+
+!path build/fitnesse-lib/*.jar
+!path build/classes/java/main
+!path build/resources/main
+
+!|import|
+|com.subscriptionengine.fitnesse.fixtures|
+
+!1 New Tenant Onboarding (P0)
+
+This test validates the complete tenant onboarding workflow: tenant creation, admin user setup, API client generation, and tenant user login.
+
+!2 Step 1: Login as Super Admin
+
+!|script|RestApiFixture|
+|$ts=|timestamp|
+|post to|/v1/auth/login|with body|!-{"email":"admin@subscriptionengine.com","password":"ChangeMe123!"}-!|
+|check|status code|200|
+|show|response body|
+|$token=|json value|token|
+
+!2 Step 2: Create New Tenant
+
+!|script|RestApiFixture|
+|set auth token|$token|
+|post to|/v1/admin/tenants|with body|{"name":"AcmeCorp-$ts","slug":"acme-corp-$ts"}|
+|check|status code|201|
+|show|response body|
+|$tenantId=|json value|id|
+
+!2 Step 3: Verify Tenant Created
+
+!|script|RestApiFixture|
+|set auth token|$token|
+|get from|/v1/admin/tenants/$tenantId|
+|check|status code|200|
+|show|response body|
+
+!2 Step 4: Create Admin User for Tenant
+
+!|script|RestApiFixture|
+|set auth token|$token|
+|post to|/v1/admin/users|with body|{"email":"admin-$ts@acme.com","password":"SecurePass123","firstName":"John","lastName":"Doe","role":"TENANT_ADMIN"}|
+|check|status code|201|
+|show|response body|
+|$userId=|json value|id|
+
+!2 Step 5: Assign User to Tenant
+
+!|script|RestApiFixture|
+|set auth token|$token|
+|post to|/v1/admin/user-tenants|with body|{"userId":"$userId","tenantId":"$tenantId","role":"TENANT_ADMIN"}|
+|check|status code|201|
+|show|response body|
+|$assignmentId=|json value|id|
+
+!2 Step 6: Verify User-Tenant Assignment
+
+!|script|RestApiFixture|
+|set auth token|$token|
+|get from|/v1/admin/user-tenants/user/$userId|
+|check|status code|200|
+|show|response body|
+
+!2 Step 7: Create API Client for Tenant
+
+!|script|RestApiFixture|
+|set auth token|$token|
+|post to|/v1/admin/api-clients|with body|{"tenantId":"$tenantId","name":"acme-api-$ts","clientType":"SERVER","authMethod":"API_KEY"}|
+|check|status code|201|
+|show|response body|
+|$clientId=|json value|id|
+|$apiKey=|json value|clientId|
+|$apiSecret=|json value|clientSecret|
+
+!2 Step 8: Verify API Client Created
+
+!|script|RestApiFixture|
+|set auth token|$token|
+|get from|/v1/admin/api-clients/$clientId|
+|check|status code|200|
+|show|response body|
+
+!2 Step 9: Login as Tenant Admin User
+
+!|script|RestApiFixture|
+|post to|/v1/auth/login|with body|{"email":"admin-$ts@acme.com","password":"SecurePass123"}|
+|check|status code|200|
+|show|response body|
+|$tenantToken=|json value|token|
+|check|json value|role|TENANT_ADMIN|
+
+!2 Step 10: Verify Tenant Admin Can Access Their Tenant
+
+!|script|RestApiFixture|
+|set auth token|$tenantToken|
+|get from|/v1/admin/tenants/$tenantId|
+|check|status code|200|
+|show|response body|
+
+!2 Step 11: Verify Tenant Admin Context via /v1/auth/me
+
+!|script|RestApiFixture|
+|set auth token|$tenantToken|
+|get from|/v1/auth/me|
+|check|status code|200|
+|show|response body|

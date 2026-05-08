@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 
 import static com.subscriptionengine.generated.tables.Tenants.TENANTS;
 import static com.subscriptionengine.generated.tables.Subscriptions.SUBSCRIPTIONS;
+import static com.subscriptionengine.generated.tables.Customers.CUSTOMERS;
 
 /**
  * REST controller for tenant management.
@@ -152,6 +153,22 @@ public class TenantsController {
     public ResponseEntity<Object> getTenantById(@PathVariable UUID tenantId) {
         logger.info("Fetching tenant: {}", tenantId);
         
+        // Authorization check: Only SUPER_ADMIN or users assigned to this tenant can access it
+        String userRole = com.subscriptionengine.auth.UserContext.getUserRole();
+        UUID currentTenantId = com.subscriptionengine.auth.TenantContext.getTenantId();
+        
+        if (!"SUPER_ADMIN".equals(userRole)) {
+            // Tenant admin can only access their own tenant
+            if (currentTenantId == null || !currentTenantId.equals(tenantId)) {
+                logger.warn("Unauthorized access attempt: user with tenant {} tried to access tenant {}", 
+                    currentTenantId, tenantId);
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of(
+                    "error", "ACCESS_DENIED",
+                    "message", "You do not have permission to access this tenant"
+                ));
+            }
+        }
+        
         Tenants tenant = tenantsDao.fetchOneById(tenantId);
         
         if (tenant == null) {
@@ -171,6 +188,22 @@ public class TenantsController {
     public ResponseEntity<Object> updateTenant(@PathVariable UUID tenantId, 
                                              @Valid @RequestBody UpdateTenantRequest request) {
         logger.info("Updating tenant: {}", tenantId);
+        
+        // Authorization check: Only SUPER_ADMIN or users assigned to this tenant can update it
+        String userRole = com.subscriptionengine.auth.UserContext.getUserRole();
+        UUID currentTenantId = com.subscriptionengine.auth.TenantContext.getTenantId();
+        
+        if (!"SUPER_ADMIN".equals(userRole)) {
+            // Tenant admin can only update their own tenant
+            if (currentTenantId == null || !currentTenantId.equals(tenantId)) {
+                logger.warn("Unauthorized update attempt: user with tenant {} tried to update tenant {}", 
+                    currentTenantId, tenantId);
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of(
+                    "error", "ACCESS_DENIED",
+                    "message", "You do not have permission to update this tenant"
+                ));
+            }
+        }
         
         Tenants existingTenant = tenantsDao.fetchOneById(tenantId);
         
@@ -202,6 +235,22 @@ public class TenantsController {
     @DeleteMapping("/{tenantId}")
     public ResponseEntity<Object> deleteTenant(@PathVariable UUID tenantId) {
         logger.info("Deleting tenant: {}", tenantId);
+        
+        // Authorization check: Only SUPER_ADMIN or users assigned to this tenant can delete it
+        String userRole = com.subscriptionengine.auth.UserContext.getUserRole();
+        UUID currentTenantId = com.subscriptionengine.auth.TenantContext.getTenantId();
+        
+        if (!"SUPER_ADMIN".equals(userRole)) {
+            // Tenant admin can only delete their own tenant
+            if (currentTenantId == null || !currentTenantId.equals(tenantId)) {
+                logger.warn("Unauthorized delete attempt: user with tenant {} tried to delete tenant {}", 
+                    currentTenantId, tenantId);
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of(
+                    "error", "ACCESS_DENIED",
+                    "message", "You do not have permission to delete this tenant"
+                ));
+            }
+        }
         
         Tenants existingTenant = tenantsDao.fetchOneById(tenantId);
         
@@ -247,6 +296,21 @@ public class TenantsController {
         response.setStatus(tenant.getStatus());
         response.setCreatedAt(tenant.getCreatedAt());
         response.setUpdatedAt(tenant.getUpdatedAt());
+        
+        // Get subscription count for this tenant
+        long subscriptionCount = dsl.selectCount()
+                .from(SUBSCRIPTIONS)
+                .where(SUBSCRIPTIONS.TENANT_ID.eq(tenant.getId()))
+                .fetchOne(0, Long.class);
+        response.setSubscriptionCount(subscriptionCount);
+        
+        // Get customer count for this tenant
+        long customerCount = dsl.selectCount()
+                .from(CUSTOMERS)
+                .where(CUSTOMERS.TENANT_ID.eq(tenant.getId()))
+                .fetchOne(0, Long.class);
+        response.setCustomerCount(customerCount);
+        
         return response;
     }
     
@@ -307,6 +371,8 @@ public class TenantsController {
         private String status;
         private OffsetDateTime createdAt;
         private OffsetDateTime updatedAt;
+        private Long subscriptionCount;
+        private Long customerCount;
         
         public UUID getId() { return id; }
         public void setId(UUID id) { this.id = id; }
@@ -325,5 +391,11 @@ public class TenantsController {
         
         public OffsetDateTime getUpdatedAt() { return updatedAt; }
         public void setUpdatedAt(OffsetDateTime updatedAt) { this.updatedAt = updatedAt; }
+        
+        public Long getSubscriptionCount() { return subscriptionCount; }
+        public void setSubscriptionCount(Long subscriptionCount) { this.subscriptionCount = subscriptionCount; }
+        
+        public Long getCustomerCount() { return customerCount; }
+        public void setCustomerCount(Long customerCount) { this.customerCount = customerCount; }
     }
 }

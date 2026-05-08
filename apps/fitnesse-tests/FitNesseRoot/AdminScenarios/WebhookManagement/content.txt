@@ -1,0 +1,85 @@
+!define TEST_SYSTEM {slim}
+
+!path build/fitnesse-lib/*.jar
+!path build/classes/java/main
+!path build/resources/main
+
+!|import|
+|com.subscriptionengine.fitnesse.fixtures|
+
+!1 Webhook Management (P1)
+
+This test validates admin capabilities to create, list, update, and delete webhooks for integration with external systems.
+
+!2 Step 1: Login as Super Admin
+
+!|script|RestApiFixture|
+|$ts=|timestamp|
+|post to|/v1/auth/login|with body|!-{"email":"admin@subscriptionengine.com","password":"ChangeMe123!"}-!|
+|check|status code|200|
+|show|response body|
+|$token=|json value|token|
+
+!2 Step 2: Create Test Tenant
+
+!|script|RestApiFixture|
+|set auth token|$token|
+|post to|/v1/admin/tenants|with body|{"name":"WebhookTest-$ts","slug":"webhook-test-$ts"}|
+|check|status code|201|
+|show|response body|
+|$tenantId=|json value|id|
+
+!2 Step 3: Create Webhook
+
+!|script|RestApiFixture|
+|set auth token|$token|
+|set header name value|X-Tenant-Id:$tenantId|
+|post to|/v1/admin/webhooks|with body|{"url":"https://example.com/webhook-$ts","events":["subscription.created","subscription.canceled"],"description":"Test webhook"}|
+|check|status code|200|
+|show|response body|
+|$webhookId=|json value|data.webhookId|
+
+!2 Step 4: List Webhooks
+
+!|script|RestApiFixture|
+|set auth token|$token|
+|set header name value|X-Tenant-Id:$tenantId|
+|get from|/v1/admin/webhooks|
+|check|status code|200|
+|show|response body|
+
+!2 Step 5: Update Webhook Status
+
+!|script|RestApiFixture|
+|set auth token|$token|
+|set header name value|X-Tenant-Id:$tenantId|
+|patch to|/v1/admin/webhooks/$webhookId|with body|{"status":"INACTIVE"}|
+|check|status code|200|
+|show|response body|
+
+!2 Step 6: Verify Webhook Updated
+
+!|script|RestApiFixture|
+|set auth token|$token|
+|set header name value|X-Tenant-Id:$tenantId|
+|get from|/v1/admin/webhooks|
+|check|status code|200|
+|show|response body|
+
+!2 Step 7: Delete Webhook
+
+!|script|RestApiFixture|
+|set auth token|$token|
+|set header name value|X-Tenant-Id:$tenantId|
+|delete from|/v1/admin/webhooks/$webhookId|
+|check|status code|200|
+|show|response body|
+
+!2 Step 8: Verify Webhook Deleted
+
+!|script|RestApiFixture|
+|set auth token|$token|
+|set header name value|X-Tenant-Id:$tenantId|
+|get from|/v1/admin/webhooks|
+|check|status code|200|
+|show|response body|

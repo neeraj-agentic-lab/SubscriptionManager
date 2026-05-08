@@ -220,13 +220,17 @@ public class SubscriptionsController {
         )
     })
     public ResponseEntity<Page<SubscriptionResponse>> getSubscriptions(
+            @Parameter(description = "Optional customer ID to filter subscriptions by customer")
+            @RequestParam(required = false) UUID customerId,
             @Parameter(description = "Pagination parameters (page, size, sort)", example = "page=0&size=20&sort=createdAt,desc")
             @PageableDefault(size = 20, sort = "createdAt") Pageable pageable) {
         
-        logger.debug("Retrieving subscriptions - page: {}, size: {}", 
-                    pageable.getPageNumber(), pageable.getPageSize());
+        logger.debug("Retrieving subscriptions - customerId: {}, page: {}, size: {}", 
+                    customerId, pageable.getPageNumber(), pageable.getPageSize());
         
-        Page<SubscriptionResponse> subscriptions = subscriptionsService.getSubscriptions(pageable);
+        Page<SubscriptionResponse> subscriptions = customerId != null 
+            ? subscriptionsService.getSubscriptionsByCustomerId(customerId, pageable)
+            : subscriptionsService.getSubscriptions(pageable);
         
         logger.debug("Retrieved {} subscriptions", subscriptions.getNumberOfElements());
         return ResponseEntity.ok(subscriptions);

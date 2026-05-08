@@ -1,0 +1,127 @@
+!define TEST_SYSTEM {slim}
+
+!path build/classes/java/main
+!path build/resources/main
+!path build/fitnesse-lib/*.jar
+
+!|import|
+|com.subscriptionengine.fitnesse.fixtures|
+
+!contents -R2 -g -p -f -h
+
+!1 Admin Scenario Test Suite
+
+This suite contains end-to-end scenario tests for admin workflows covering tenant onboarding, user management, API security, and compliance.
+
+!2 !-Overview-!
+
+!-Total Scenarios:-! 11
+!-Priority:-! P0-P2 (Critical to Medium)
+!-Coverage:-! Complete admin workflow testing
+
+
+
+!2 Test Scenarios
+
+!3 P0 (Critical) Scenarios
+
+| Scenario | Description | Business Value |
+| [[New Tenant Onboarding][>NewTenantOnboarding]] | Complete tenant onboarding from creation to first subscription | Platform growth and tenant acquisition |
+| [[Cross-Tenant Data Isolation][>CrossTenantDataIsolation]] | Verify admin from Tenant A cannot access Tenant B data | Security and trust - fundamental SaaS requirement |
+| [[Subscription History Audit][>SubscriptionHistoryAudit]] | Verify complete audit trail for subscription lifecycle events | Compliance, dispute resolution, customer support |
+| [[Subscription Renewal][>SubscriptionRenewal]] | Automated subscription renewal with billing, invoicing, and payment processing | Recurring revenue automation - critical for business sustainability |
+
+!3 P1 (High) Scenarios
+
+| Scenario | Description | Business Value |
+| [[Multi-Tenant User Management][>MultiTenantUserManagement]] | User working across multiple tenants with different roles | User flexibility - supports consultants and agencies |
+| [[API Client Lifecycle][>ApiClientLifecycle]] | Complete API client lifecycle from creation to revocation | Secure API access management |
+| [[User Offboarding][>UserOffboarding]] | Graceful user offboarding and access removal | Security and compliance |
+| [[Registered Customer Subscription Flow][>RegisteredCustomerSubscriptionFlow]] | Complete subscription lifecycle for registered customers using customerId | Subscription management for existing customers |
+| [[Guest Customer Subscription Flow][>GuestCustomerSubscriptionFlow]] | Subscription creation for guest customers using email | Guest checkout and customer acquisition |
+| [[Delivery Management][>DeliveryManagement]] | List, view, and cancel deliveries for order fulfillment | Order fulfillment and customer service |
+| [[Webhook Management][>WebhookManagement]] | Create, update, and delete webhooks for external integrations | Integration with external systems |
+
+!3 P2 (Medium) Scenarios
+
+| Scenario | Description | Business Value |
+| [[Bulk User Operations][>BulkUserOperations]] | Bulk user creation and management | Enterprise onboarding efficiency |
+
+!2 Prerequisites
+
+Before running these tests:
+
+1. API Server Running: Subscription Engine API must be running on http://localhost:8080
+2. Database: !-PostgreSQL-! database must be accessible
+3. Test Data: Database should be in clean state (or tests will clean up)
+4. Fixtures Built: Run ./gradlew build in fitnesse-tests directory
+
+!2 Running the Tests
+
+!3 Run All Admin Scenarios
+Click the Suite button above to run all 11 admin scenario tests.
+
+!3 Run Individual Scenario
+Click on any scenario link above, then click the Test button.
+
+!3 Run by Priority
+- P0 scenarios: Critical security and onboarding tests
+- P1 scenarios: Important operational workflows
+- P2 scenarios: Nice-to-have efficiency features
+
+!2 Expected Results
+
+All tests should pass with:
+- Green tables indicating successful assertions
+- All setup and cleanup completed
+- No data leakage between tests
+- Audit trails properly recorded
+
+!2 Test Data Management
+
+Each scenario:
+- Creates its own test data in setup
+- Cleans up all resources in teardown
+- Uses unique identifiers to avoid conflicts
+- Verifies cleanup completed successfully
+
+!2 Fixtures Used
+
+These scenarios use the following Java fixture:
+- !-RestApiFixture-!: REST API client for making HTTP requests to the Subscription Engine API
+
+!2 Troubleshooting
+
+If tests fail:
+
+1. Check API Server: Ensure http://localhost:8080 is accessible
+2. Check Database: Verify !-PostgreSQL-! is running
+3. Check Logs: Review !-FitNesse-! output and API logs
+4. Check Fixtures: Ensure fixtures are built and in classpath
+5. Check Test Data: Verify no conflicting data from previous runs
+
+!2 Continuous Integration
+
+These tests can be run in CI/CD:
+
+{{{
+# Run FitNesse tests in CI
+cd apps/fitnesse-tests
+./gradlew clean build
+java -jar fitnesse-standalone.jar -c "AdminScenarios?suite&format=xml"
+}}}
+
+!2 Documentation
+
+For detailed information about each scenario, click the scenario links above to view:
+- Test objectives
+- Step-by-step flow
+- Assertions and validations
+- Expected results
+- Business value
+
+!2 Status
+
+Implementation Status: !-FitNesse-! pages created
+Fixture Status: Java fixtures implemented
+Next Steps: Run and validate all admin scenarios

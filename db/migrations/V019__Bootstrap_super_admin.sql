@@ -20,7 +20,7 @@ VALUES (
   '00000000-0000-0000-0000-000000000001'::UUID,
   'admin@subscriptionengine.com',
   'System Administrator',
-  '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYVvMpYq0Iu', -- bcrypt('ChangeMe123!')
+  '$2a$12$nkU0tzjv59UugGrTgox3heA5VV1mPSyPUkoRpyyE6BMdapG9hOdl2', -- bcrypt('ChangeMe123!')
   'SUPER_ADMIN',
   'ACTIVE',
   TRUE, -- Force password change on first login

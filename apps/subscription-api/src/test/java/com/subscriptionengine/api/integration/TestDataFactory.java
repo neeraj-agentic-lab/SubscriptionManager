@@ -24,11 +24,24 @@ public class TestDataFactory {
     
     /**
      * Create a subscription request with specific customer and plan.
+     * Note: The SubscriptionsController expects customerEmail (not customerId) for customer upsert.
+     * WARNING: This generates a random email, so the subscription will create a NEW customer.
+     * If you need the subscription linked to a pre-created customer, use the 3-arg overload
+     * with the same email used in createCustomerRequest().
      */
     public static Map<String, Object> createSubscriptionRequest(UUID customerId, UUID planId) {
+        return createSubscriptionRequest(customerId, planId, "test-" + UUID.randomUUID().toString().substring(0, 8) + "@example.com");
+    }
+    
+    /**
+     * Create a subscription request with specific customer email and plan.
+     */
+    public static Map<String, Object> createSubscriptionRequest(UUID customerId, UUID planId, String customerEmail) {
         Map<String, Object> request = new HashMap<>();
-        request.put("customerId", customerId.toString());
         request.put("planId", planId.toString());
+        request.put("customerEmail", customerEmail);
+        request.put("customerFirstName", "Test");
+        request.put("customerLastName", "Customer");
         request.put("startDate", OffsetDateTime.now().toString());
         request.put("paymentMethodRef", "pm_test_" + UUID.randomUUID().toString().substring(0, 8));
         

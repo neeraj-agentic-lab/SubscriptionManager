@@ -15,6 +15,7 @@ import java.util.UUID;
 public class JwtTenantExtractor {
     
     private static final String TENANT_ID_CLAIM = "tenant_id";
+    private static final String TENANT_ID_CAMEL_CLAIM = "tenantId";
     private static final String ORG_ID_CLAIM = "org_id";
     private static final String ORGANIZATION_CLAIM = "organization";
     
@@ -25,10 +26,16 @@ public class JwtTenantExtractor {
      * @throws IllegalArgumentException if tenant ID cannot be extracted
      */
     public UUID extractTenantId(Jwt jwt) {
-        // Try direct tenant_id claim first
+        // Try direct tenant_id claim first (snake_case)
         String tenantIdStr = jwt.getClaimAsString(TENANT_ID_CLAIM);
         if (tenantIdStr != null) {
             return parseUuid(tenantIdStr, TENANT_ID_CLAIM);
+        }
+        
+        // Try camelCase tenantId claim (from AuthController)
+        tenantIdStr = jwt.getClaimAsString(TENANT_ID_CAMEL_CLAIM);
+        if (tenantIdStr != null) {
+            return parseUuid(tenantIdStr, TENANT_ID_CAMEL_CLAIM);
         }
         
         // Try org_id claim
@@ -115,6 +122,7 @@ public class JwtTenantExtractor {
      */
     public boolean hasTenantClaim(Jwt jwt) {
         return jwt.getClaimAsString(TENANT_ID_CLAIM) != null ||
+               jwt.getClaimAsString(TENANT_ID_CAMEL_CLAIM) != null ||
                jwt.getClaimAsString(ORG_ID_CLAIM) != null ||
                jwt.getClaimAsString(ORGANIZATION_CLAIM) != null;
     }

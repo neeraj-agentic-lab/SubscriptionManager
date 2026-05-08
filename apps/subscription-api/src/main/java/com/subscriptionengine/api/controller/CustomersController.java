@@ -23,8 +23,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.OffsetDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * REST controller for standalone customer management.
@@ -42,6 +44,93 @@ public class CustomersController {
     
     public CustomersController(CustomersDao customersDao) {
         this.customersDao = customersDao;
+    }
+    
+    /**
+     * Get all customers for the current tenant.
+     */
+    @GetMapping
+    @Operation(
+        summary = "Get all customers",
+        description = "Retrieves all customers for the current tenant."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Customers retrieved successfully"
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Unauthorized - missing or invalid authentication token"
+        )
+    })
+    public ResponseEntity<List<CustomerResponse>> getAllCustomers() {
+        UUID tenantId = TenantContext.getRequiredTenantId();
+        
+        logger.info("Fetching all customers for tenant: {}", tenantId);
+        
+        List<Customers> customers = customersDao.fetchByTenantId(tenantId);
+        
+        logger.info("Found {} customers for tenant: {}", customers.size(), tenantId);
+        
+        List<CustomerResponse> response = customers.stream()
+            .map(this::mapToResponse)
+            .collect(Collectors.toList());
+        
+        return ResponseEntity.ok(response);
+    }
+    
+    /**
+     * Get customer by ID.
+     */
+    @GetMapping("/{customerId}")
+    @Operation(
+        summary = "Get customer by ID",
+        description = "Retrieves a specific customer by their ID for the current tenant."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Customer retrieved successfully"
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Customer not found"
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Unauthorized - missing or invalid authentication token"
+        )
+    })
+    public ResponseEntity<CustomerResponse> getCustomerById(@PathVariable UUID customerId) {
+        UUID tenantId = TenantContext.getRequiredTenantId();
+        
+        logger.info("Fetching customer {} for tenant: {}", customerId, tenantId);
+        
+        Customers customer = customersDao.fetchOneById(customerId);
+        
+        if (customer == null || !customer.getTenantId().equals(tenantId)) {
+            logger.warn("Customer {} not found for tenant: {}", customerId, tenantId);
+            return ResponseEntity.notFound().build();
+        }
+        
+        return ResponseEntity.ok(mapToResponse(customer));
+    }
+    
+    private CustomerResponse mapToResponse(Customers customer) {
+        CustomerResponse response = new CustomerResponse();
+        response.setId(customer.getId());
+        response.setTenantId(customer.getTenantId());
+        response.setEmail(customer.getEmail());
+        response.setFirstName(customer.getFirstName());
+        response.setLastName(customer.getLastName());
+        response.setExternalCustomerId(customer.getExternalCustomerId());
+        response.setStatus(customer.getStatus());
+        response.setCustomerType(customer.getCustomerType());
+        response.setCustomAttrs(customer.getCustomAttrs() != null ? customer.getCustomAttrs().data() : "{}");
+        response.setCreatedAt(customer.getCreatedAt());
+        response.setUpdatedAt(customer.getUpdatedAt());
+        return response;
     }
     
     /**
@@ -95,7 +184,12 @@ public class CustomersController {
         logger.debug("Customer object before insert - email: {}, firstName: {}, externalCustomerId: {}", 
             customer.getEmail(), customer.getFirstName(), customer.getExternalCustomerId());
         
-        customersDao.insert(customer);
+        try {
+            customersDao.insert(customer);
+        } catch (DuplicateKeyException e) {
+            logger.warn("Customer with email {} already exists for tenant: {}", request.getEmail(), tenantId);
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
         
         logger.info("Successfully created customer: {}", customer.getId());
         
@@ -110,7 +204,7 @@ public class CustomersController {
         
         response.put("data", data);
         
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
     
     /**
@@ -148,5 +242,55 @@ public class CustomersController {
         public void setExternalCustomerRef(String externalCustomerRef) {
             this.externalCustomerRef = externalCustomerRef;
         }
+    }
+    
+    /**
+     * Response DTO for customer data.
+     */
+    public static class CustomerResponse {
+        private UUID id;
+        private UUID tenantId;
+        private String email;
+        private String firstName;
+        private String lastName;
+        private String externalCustomerId;
+        private String status;
+        private String customerType;
+        private String customAttrs;
+        private OffsetDateTime createdAt;
+        private OffsetDateTime updatedAt;
+        
+        public UUID getId() { return id; }
+        public void setId(UUID id) { this.id = id; }
+        
+        public UUID getTenantId() { return tenantId; }
+        public void setTenantId(UUID tenantId) { this.tenantId = tenantId; }
+        
+        public String getEmail() { return email; }
+        public void setEmail(String email) { this.email = email; }
+        
+        public String getFirstName() { return firstName; }
+        public void setFirstName(String firstName) { this.firstName = firstName; }
+        
+        public String getLastName() { return lastName; }
+        public void setLastName(String lastName) { this.lastName = lastName; }
+        
+        public String getExternalCustomerId() { return externalCustomerId; }
+        public void setExternalCustomerId(String externalCustomerId) { this.externalCustomerId = externalCustomerId; }
+        
+        public String getStatus() { return status; }
+        public void setStatus(String status) { this.status = status; }
+        
+        public String getCustomerType() { return customerType; }
+        public void setCustomerType(String customerType) { this.customerType = customerType; }
+        
+        public String getCustomAttrs() { return customAttrs; }
+        public void setCustomAttrs(String customAttrs) { this.customAttrs = customAttrs; }
+        
+        public OffsetDateTime getCreatedAt() { return createdAt; }
+        public void setCreatedAt(OffsetDateTime createdAt) { this.createdAt = createdAt; }
+        
+        public OffsetDateTime getUpdatedAt() { return updatedAt; }
+        public void setUpdatedAt(OffsetDateTime updatedAt) { this.updatedAt = updatedAt; }
     }
 }

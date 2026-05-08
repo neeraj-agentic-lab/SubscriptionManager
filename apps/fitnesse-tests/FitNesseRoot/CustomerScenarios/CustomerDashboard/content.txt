@@ -1,0 +1,130 @@
+!define TEST_SYSTEM {slim}
+
+!path build/fitnesse-lib/*.jar
+!path build/classes/java/main
+!path build/resources/main
+
+!|import|
+|com.subscriptionengine.fitnesse.fixtures|
+
+!1 Customer Dashboard - Self-Service (P0)
+
+This test validates customer self-service capabilities to view and manage their own subscriptions and deliveries.
+
+!2 Step 1: Login as Super Admin
+
+!|script|RestApiFixture|
+|$ts=|timestamp|
+|post to|/v1/auth/login|with body|!-{"email":"admin@subscriptionengine.com","password":"ChangeMe123!"}-!|
+|check|status code|200|
+|show|response body|
+|$token=|json value|token|
+
+!2 Step 2: Create Test Tenant
+
+!|script|RestApiFixture|
+|set auth token|$token|
+|post to|/v1/admin/tenants|with body|{"name":"CustomerDash-$ts","slug":"customer-dash-$ts"}|
+|check|status code|201|
+|show|response body|
+|$tenantId=|json value|id|
+
+!2 Step 3: Create Customer User
+
+!|script|RestApiFixture|
+|set auth token|$token|
+|post to|/v1/admin/users|with body|{"email":"customer-$ts@test.com","password":"Customer123!","firstName":"Test","lastName":"Customer","role":"CUSTOMER"}|
+|check|status code|201|
+|show|response body|
+|$userId=|json value|id|
+
+!2 Step 4: Assign User to Tenant
+
+!|script|RestApiFixture|
+|set auth token|$token|
+|post to|/v1/admin/user-tenants|with body|{"userId":"$userId","tenantId":"$tenantId","role":"CUSTOMER"}|
+|check|status code|201|
+|show|response body|
+
+!|Comment|
+|Customer record is automatically created when CUSTOMER user is assigned to tenant (same ID as user)|
+
+!2 Step 5: Create Plan
+
+!|script|RestApiFixture|
+|set auth token|$token|
+|set header name value|X-Tenant-Id:$tenantId|
+|post to|/v1/admin/plans|with body|{"name":"Premium Plan","billingInterval":"MONTHLY","basePriceCents":4999,"currency":"USD"}|
+|check|status code|201|
+|show|response body|
+|$planId=|json value|id|
+
+!|Comment|
+|Step 5: Customer record is automatically created when CUSTOMER user is created (same ID as user)|
+
+!2 Step 5: Create Subscription for Customer
+
+!|script|RestApiFixture|
+|set auth token|$token|
+|set header name value|X-Tenant-Id:$tenantId|
+|post to|/v1/admin/subscriptions|with body|{"customerId":"$userId","planId":"$planId","customerEmail":"customer-$ts@test.com","paymentMethodRef":"pm_test_123"}|
+|check|status code|201|
+|show|response body|
+|$subscriptionId=|json value|id|
+
+!2 Step 6: Login as Customer
+
+!|script|RestApiFixture|
+|post to|/v1/auth/login|with body|{"email":"customer-$ts@test.com","password":"Customer123!"}|
+|check|status code|200|
+|show|response body|
+|$customerToken=|json value|token|
+|check|json value|role|CUSTOMER|
+
+!2 Step 7: Customer Views Their Subscriptions
+
+!|script|RestApiFixture|
+|set auth token|$customerToken|
+|get from|/v1/customers/me/subscriptions|
+|check|status code|200|
+|show|response body|
+
+!2 Step 8: Customer Views Subscription Dashboard
+
+!|script|RestApiFixture|
+|set auth token|$customerToken|
+|get from|/v1/customers/me/subscriptions/$subscriptionId/dashboard|
+|check|status code|200|
+|show|response body|
+
+!2 Step 9: Customer Pauses Subscription
+
+!|script|RestApiFixture|
+|set auth token|$customerToken|
+|patch to|/v1/customers/me/subscriptions/$subscriptionId|with body|{"action":"PAUSE","reason":"Going on vacation"}|
+|check|status code|200|
+|show|response body|
+
+!2 Step 10: Customer Resumes Subscription
+
+!|script|RestApiFixture|
+|set auth token|$customerToken|
+|patch to|/v1/customers/me/subscriptions/$subscriptionId|with body|{"action":"RESUME"}|
+|check|status code|200|
+|show|response body|
+
+!2 Step 11: Customer Views Upcoming Deliveries
+
+!|script|RestApiFixture|
+|set auth token|$customerToken|
+|get from|/v1/customers/me/deliveries|
+|check|status code|200|
+|show|response body|
+
+!2 Step 12: Customer Cancels Subscription
+
+!|script|RestApiFixture|
+|set auth token|$customerToken|
+|patch to|/v1/customers/me/subscriptions/$subscriptionId|with body|{"action":"CANCEL","reason":"No longer needed"}|
+|check|status code|200|
+|show|response body|

@@ -7,7 +7,7 @@ CREATE TABLE users (
   email VARCHAR(255) NOT NULL UNIQUE,
   full_name VARCHAR(255) NOT NULL,
   password_hash VARCHAR(255), -- bcrypt hash, nullable for OAuth-only users
-  role VARCHAR(50) NOT NULL, -- 'SUPER_ADMIN', 'TENANT_ADMIN', 'STAFF', 'CUSTOMER'
+  role VARCHAR(50) NOT NULL, -- 'SUPER_ADMIN', 'TENANT_ADMIN', 'TENANT_USER', 'CUSTOMER'
   status VARCHAR(50) NOT NULL DEFAULT 'ACTIVE', -- 'ACTIVE', 'SUSPENDED', 'DELETED'
   
   -- Security fields
@@ -25,7 +25,7 @@ CREATE TABLE users (
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
   
-  CONSTRAINT users_role_check CHECK (role IN ('SUPER_ADMIN', 'TENANT_ADMIN', 'STAFF', 'CUSTOMER')),
+  CONSTRAINT users_role_check CHECK (role IN ('SUPER_ADMIN', 'TENANT_ADMIN', 'TENANT_USER', 'CUSTOMER')),
   CONSTRAINT users_status_check CHECK (status IN ('ACTIVE', 'SUSPENDED', 'DELETED'))
 );
 
@@ -35,7 +35,7 @@ CREATE INDEX idx_users_status ON users(status);
 CREATE INDEX idx_users_created_at ON users(created_at);
 
 COMMENT ON TABLE users IS 'System users including admins, staff, and customers';
-COMMENT ON COLUMN users.role IS 'SUPER_ADMIN: platform admin, TENANT_ADMIN: tenant owner, STAFF: tenant employee, CUSTOMER: end customer';
+COMMENT ON COLUMN users.role IS 'SUPER_ADMIN: platform admin, TENANT_ADMIN: tenant owner/admin, TENANT_USER: tenant employee, CUSTOMER: end customer';
 COMMENT ON COLUMN users.password_hash IS 'bcrypt hash of password, nullable for OAuth-only users';
 COMMENT ON COLUMN users.must_change_password IS 'Force password change on next login (e.g., for bootstrap admin)';
 
@@ -44,14 +44,14 @@ CREATE TABLE user_tenants (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
-  role VARCHAR(50) NOT NULL, -- 'OWNER', 'ADMIN', 'MEMBER', 'VIEWER'
+  role VARCHAR(50) NOT NULL, -- 'TENANT_ADMIN', 'TENANT_USER', 'CUSTOMER'
   
   -- Timestamps
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
   
   UNIQUE(user_id, tenant_id),
-  CONSTRAINT user_tenants_role_check CHECK (role IN ('OWNER', 'ADMIN', 'MEMBER', 'VIEWER'))
+  CONSTRAINT user_tenants_role_check CHECK (role IN ('TENANT_ADMIN', 'TENANT_USER', 'CUSTOMER'))
 );
 
 CREATE INDEX idx_user_tenants_user ON user_tenants(user_id);
@@ -59,7 +59,7 @@ CREATE INDEX idx_user_tenants_tenant ON user_tenants(tenant_id);
 CREATE INDEX idx_user_tenants_role ON user_tenants(role);
 
 COMMENT ON TABLE user_tenants IS 'Maps users to tenants with specific roles for multi-tenant access';
-COMMENT ON COLUMN user_tenants.role IS 'OWNER: full control, ADMIN: manage users/settings, MEMBER: standard access, VIEWER: read-only';
+COMMENT ON COLUMN user_tenants.role IS 'TENANT_ADMIN: full control, TENANT_USER: standard access, CUSTOMER: end customer access';
 
 -- Admin sessions for JWT token tracking
 CREATE TABLE admin_sessions (

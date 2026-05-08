@@ -77,7 +77,8 @@ public class SubscriptionHistoryService {
      * Record subscription pause.
      */
     public void recordPause(UUID tenantId, UUID subscriptionId, UUID performedBy, String performedByType, String reason) {
-        Map<String, Object> metadata = Map.of("reason", reason);
+        Map<String, Object> metadata = new java.util.HashMap<>();
+        metadata.put("reason", reason != null ? reason : "No reason provided");
         recordAction(tenantId, subscriptionId, "PAUSED", performedBy, performedByType, metadata, "Subscription paused");
     }
     
@@ -92,7 +93,8 @@ public class SubscriptionHistoryService {
      * Record subscription cancellation.
      */
     public void recordCancellation(UUID tenantId, UUID subscriptionId, UUID performedBy, String performedByType, String reason) {
-        Map<String, Object> metadata = Map.of("reason", reason);
+        Map<String, Object> metadata = new java.util.HashMap<>();
+        metadata.put("reason", reason != null ? reason : "No reason provided");
         recordAction(tenantId, subscriptionId, "CANCELED", performedBy, performedByType, metadata, "Subscription canceled");
     }
     

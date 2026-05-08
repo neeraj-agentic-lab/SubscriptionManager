@@ -1,7 +1,3 @@
-# Markdown files (except README.md)
-*.md
-!README.md
-
 # Compiled class files
 *.class
 

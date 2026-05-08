@@ -15,6 +15,8 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -40,6 +42,14 @@ public abstract class BaseIntegrationTest {
     
     protected RequestSpecification requestSpec;
     
+    // Cached super admin token to avoid repeated logins
+    private String cachedSuperAdminToken;
+    
+    // Cached tenant-scoped tokens: tenantId -> JWT token
+    private final Map<String, String> cachedTenantTokens = new HashMap<>();
+    
+    private static final String TENANT_ADMIN_PASSWORD = "TestPassword123!";
+    
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
         registry.add("spring.datasource.url", postgres::getJdbcUrl);
@@ -63,13 +73,29 @@ public abstract class BaseIntegrationTest {
             .addFilter(new AllureRestAssured())
             .log(LogDetail.ALL)
             .build();
+        
+        cachedSuperAdminToken = null;
+        cachedTenantTokens.clear();
     }
     
     /**
-     * Get base request specification with JWT authentication.
+     * Get base request specification with a real tenant-scoped JWT.
+     * Creates a tenant-admin user for the tenant, logs in, and returns a JWT with tenant claims.
+     * Tokens are cached per tenantId within a test.
      */
     protected RequestSpecification givenAuthenticated(String tenantId) {
-        String jwt = JwtTestHelper.generateToken(tenantId);
+        String jwt = getTenantScopedToken(tenantId);
+        return RestAssured.given(requestSpec)
+            .header("Authorization", "Bearer " + jwt);
+    }
+    
+    /**
+     * Get base request specification with the super admin token.
+     * Use this for admin-only endpoints that don't require tenant context
+     * (e.g. creating tenants, managing users).
+     */
+    protected RequestSpecification givenSuperAdmin() {
+        String jwt = getSuperAdminToken();
         return RestAssured.given(requestSpec)
             .header("Authorization", "Bearer " + jwt);
     }
@@ -79,6 +105,93 @@ public abstract class BaseIntegrationTest {
      */
     protected RequestSpecification given() {
         return RestAssured.given(requestSpec);
+    }
+    
+    /**
+     * Login as the bootstrap super admin and return the JWT token.
+     */
+    protected String getSuperAdminToken() {
+        if (cachedSuperAdminToken != null) {
+            return cachedSuperAdminToken;
+        }
+        
+        Map<String, Object> loginRequest = new HashMap<>();
+        loginRequest.put("email", "admin@subscriptionengine.com");
+        loginRequest.put("password", "ChangeMe123!");
+        
+        cachedSuperAdminToken = RestAssured.given(requestSpec)
+            .body(loginRequest)
+        .when()
+            .post("/v1/auth/login")
+        .then()
+            .statusCode(200)
+            .extract()
+            .path("token");
+        
+        return cachedSuperAdminToken;
+    }
+    
+    /**
+     * Get a real tenant-scoped JWT by creating a tenant-admin user, assigning them
+     * to the tenant, and logging in. The resulting JWT contains the tenantId claim.
+     * Tokens are cached per tenantId within a test.
+     */
+    protected String getTenantScopedToken(String tenantId) {
+        if (cachedTenantTokens.containsKey(tenantId)) {
+            return cachedTenantTokens.get(tenantId);
+        }
+        
+        String superAdminToken = getSuperAdminToken();
+        String email = "tenant-admin-" + UUID.randomUUID().toString().substring(0, 8) + "@test.com";
+        
+        // Create a user via admin API (uses super admin token)
+        Map<String, Object> userRequest = new HashMap<>();
+        userRequest.put("email", email);
+        userRequest.put("password", TENANT_ADMIN_PASSWORD);
+        userRequest.put("firstName", "Tenant");
+        userRequest.put("lastName", "Admin");
+        userRequest.put("role", "TENANT_ADMIN");
+        
+        String userId = RestAssured.given(requestSpec)
+            .header("Authorization", "Bearer " + superAdminToken)
+            .body(userRequest)
+        .when()
+            .post("/v1/admin/users")
+        .then()
+            .statusCode(201)
+            .extract()
+            .path("id");
+        
+        // Assign user to tenant with TENANT_ADMIN role
+        Map<String, Object> assignRequest = new HashMap<>();
+        assignRequest.put("userId", userId);
+        assignRequest.put("tenantId", tenantId);
+        assignRequest.put("role", "TENANT_ADMIN");
+        
+        RestAssured.given(requestSpec)
+            .header("Authorization", "Bearer " + superAdminToken)
+            .body(assignRequest)
+        .when()
+            .post("/v1/admin/user-tenants")
+        .then()
+            .statusCode(201);
+        
+        // Login as the tenant admin to get a JWT with real tenant claims
+        Map<String, Object> loginRequest = new HashMap<>();
+        loginRequest.put("email", email);
+        loginRequest.put("password", TENANT_ADMIN_PASSWORD);
+        
+        String token = RestAssured.given(requestSpec)
+            .body(loginRequest)
+        .when()
+            .post("/v1/auth/login")
+        .then()
+            .statusCode(200)
+            .extract()
+            .path("token");
+        
+        cachedTenantTokens.put(tenantId, token);
+        return token;
     }
     
     /**

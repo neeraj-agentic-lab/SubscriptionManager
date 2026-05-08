@@ -41,7 +41,7 @@ class PlanManagementTest extends BaseIntegrationTest {
         Response response = givenAuthenticated(tenantId)
             .body(planRequest)
             .when()
-            .post("/v1/plans")
+            .post("/v1/admin/plans")
             .then()
             .statusCode(201)
             .extract()
@@ -68,7 +68,7 @@ class PlanManagementTest extends BaseIntegrationTest {
         
         Response response = givenAuthenticated(tenantId)
             .when()
-            .get("/v1/plans/" + planId)
+            .get("/v1/admin/plans/" + planId)
             .then()
             .statusCode(200)
             .extract()
@@ -97,7 +97,7 @@ class PlanManagementTest extends BaseIntegrationTest {
             .queryParam("page", 0)
             .queryParam("size", 10)
             .when()
-            .get("/v1/plans")
+            .get("/v1/admin/plans")
             .then()
             .statusCode(200)
             .extract()
@@ -122,7 +122,7 @@ class PlanManagementTest extends BaseIntegrationTest {
         
         Response response = givenAuthenticated(tenantId)
             .when()
-            .get("/v1/plans/active")
+            .get("/v1/admin/plans/active")
             .then()
             .statusCode(200)
             .extract()
@@ -150,7 +150,7 @@ class PlanManagementTest extends BaseIntegrationTest {
         
         Response response = givenAuthenticated(tenantId)
             .when()
-            .get("/v1/plans/" + nonExistentPlanId)
+            .get("/v1/admin/plans/" + nonExistentPlanId)
             .then()
             .statusCode(404)
             .extract()
@@ -178,7 +178,7 @@ class PlanManagementTest extends BaseIntegrationTest {
         Response response = givenAuthenticated(tenantId)
             .body(invalidRequest)
             .when()
-            .post("/v1/plans")
+            .post("/v1/admin/plans")
             .then()
             .statusCode(400)
             .extract()
@@ -203,7 +203,7 @@ class PlanManagementTest extends BaseIntegrationTest {
         // Try to access from tenant2 - should get 404 due to tenant isolation
         Response response = givenAuthenticated(tenant2)
             .when()
-            .get("/v1/plans/" + plan1)
+            .get("/v1/admin/plans/" + plan1)
             .then()
             .statusCode(404)
             .extract()
@@ -229,7 +229,7 @@ class PlanManagementTest extends BaseIntegrationTest {
         Response monthlyResponse = givenAuthenticated(tenantId)
             .body(monthlyPlan)
             .when()
-            .post("/v1/plans")
+            .post("/v1/admin/plans")
             .then()
             .statusCode(201)
             .extract()
@@ -246,7 +246,7 @@ class PlanManagementTest extends BaseIntegrationTest {
         Response yearlyResponse = givenAuthenticated(tenantId)
             .body(yearlyPlan)
             .when()
-            .post("/v1/plans")
+            .post("/v1/admin/plans")
             .then()
             .statusCode(201)
             .extract()
@@ -274,7 +274,7 @@ class PlanManagementTest extends BaseIntegrationTest {
         Response response = givenAuthenticated(tenantId)
             .body(planRequest)
             .when()
-            .post("/v1/plans")
+            .post("/v1/admin/plans")
             .then()
             .statusCode(201)
             .extract()
@@ -298,7 +298,7 @@ class PlanManagementTest extends BaseIntegrationTest {
         Response response = givenAuthenticated(tenantId)
             .queryParam("active", false)
             .when()
-            .patch("/v1/plans/" + planId + "/status")
+            .patch("/v1/admin/plans/" + planId + "/status")
             .then()
             .statusCode(200)
             .extract()
@@ -310,7 +310,7 @@ class PlanManagementTest extends BaseIntegrationTest {
         Response response2 = givenAuthenticated(tenantId)
             .queryParam("active", true)
             .when()
-            .patch("/v1/plans/" + planId + "/status")
+            .patch("/v1/admin/plans/" + planId + "/status")
             .then()
             .statusCode(200)
             .extract()
@@ -334,7 +334,7 @@ class PlanManagementTest extends BaseIntegrationTest {
         // Check existing plan
         givenAuthenticated(tenantId)
             .when()
-            .get("/v1/plans/" + planId + "/exists")
+            .get("/v1/admin/plans/" + planId + "/exists")
             .then()
             .statusCode(200);
         
@@ -342,7 +342,7 @@ class PlanManagementTest extends BaseIntegrationTest {
         UUID nonExistentId = UUID.randomUUID();
         givenAuthenticated(tenantId)
             .when()
-            .get("/v1/plans/" + nonExistentId + "/exists")
+            .get("/v1/admin/plans/" + nonExistentId + "/exists")
             .then()
             .statusCode(404);
     }
@@ -360,11 +360,11 @@ class PlanManagementTest extends BaseIntegrationTest {
             "status", "ACTIVE"
         );
         
-        Response response = givenAuthenticated(tenantId.toString())
+        Response response = givenSuperAdmin()
             .contentType("application/json")
             .body(tenantRequest)
             .when()
-            .post("/v1/tenants")
+            .post("/v1/admin/tenants")
             .then()
             .statusCode(201)
             .extract()
@@ -380,7 +380,7 @@ class PlanManagementTest extends BaseIntegrationTest {
         Response response = givenAuthenticated(tenantId)
             .body(planRequest)
             .when()
-            .post("/v1/plans")
+            .post("/v1/admin/plans")
             .then()
             .statusCode(201)
             .extract()

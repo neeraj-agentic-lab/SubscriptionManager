@@ -43,12 +43,12 @@ public class CustomerAuthorizationAspect {
     /**
      * Intercept all customer controller methods and verify customer authorization.
      * Applies to CustomerSubscriptionsController methods.
+     * Customer ID is now extracted from JWT token, not from method parameters.
      */
-    @Before("execution(* com.subscriptionengine.api.controller.CustomerSubscriptionsController.*(..)) && args(customerId,..)")
-    public void checkCustomerAuthorization(JoinPoint joinPoint, UUID customerId) {
+    @Before("execution(* com.subscriptionengine.api.controller.CustomerSubscriptionsController.*(..))")
+    public void checkCustomerAuthorization(JoinPoint joinPoint) {
         String methodName = joinPoint.getSignature().toShortString();
-        logger.debug("CustomerAuthorizationAspect: Checking authorization for {} with customerId {}", 
-                    methodName, customerId);
+        logger.debug("CustomerAuthorizationAspect: Checking authorization for {}", methodName);
         
         // Get current authentication
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -69,14 +69,13 @@ public class CustomerAuthorizationAspect {
             throw new AccessDeniedException("User role not found in token");
         }
         
-        // Admin users can access any customer's data (for support purposes)
+        // Admin users can access customer endpoints (for support purposes)
         if (userRole.isAdmin()) {
-            logger.debug("CustomerAuthorizationAspect: Admin access granted for {} accessing customer {}", 
-                        userRole, customerId);
+            logger.debug("CustomerAuthorizationAspect: Admin access granted for {}", userRole);
             return;
         }
         
-        // For customer users, verify they own the resource
+        // For customer users, verify they have a customer_id in their token
         if (userRole.isCustomer()) {
             UUID tokenCustomerId = jwtTenantExtractor.extractCustomerId(jwt);
             
@@ -84,12 +83,6 @@ public class CustomerAuthorizationAspect {
                 String userId = jwtTenantExtractor.extractUserId(jwt);
                 logger.error("CustomerAuthorizationAspect: Customer {} has no customer_id in token", userId);
                 throw new AccessDeniedException("Customer ID not found in token");
-            }
-            
-            if (!tokenCustomerId.equals(customerId)) {
-                logger.error("CustomerAuthorizationAspect: Customer {} attempted to access customer {}'s data", 
-                            tokenCustomerId, customerId);
-                throw new AccessDeniedException("Access denied: You can only access your own data");
             }
             
             logger.debug("CustomerAuthorizationAspect: Customer access granted for {} accessing own data", 

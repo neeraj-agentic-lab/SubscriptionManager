@@ -1,6 +1,7 @@
 package com.subscriptionengine.subscriptions.service;
 
 import com.subscriptionengine.auth.TenantContext;
+import com.subscriptionengine.auth.UserContext;
 import com.subscriptionengine.scheduler.service.ScheduledTaskService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jooq.DSLContext;
@@ -314,7 +315,7 @@ public class SubscriptionManagementService {
                     requestId, subscriptionId);
                 
                 // Record cancellation in history
-                subscriptionHistoryService.recordCancellation(tenantId, subscriptionId, null, "CUSTOMER", reason);
+                subscriptionHistoryService.recordCancellation(tenantId, subscriptionId, UserContext.getUserId(), determinePerformedByType(), reason);
             } else {
                 int updated = dsl.update(SUBSCRIPTIONS)
                     .set(SUBSCRIPTIONS.CANCEL_AT_PERIOD_END, true)
@@ -336,7 +337,7 @@ public class SubscriptionManagementService {
                     requestId, subscriptionId, currentPeriodEnd);
                 
                 // Record cancellation in history
-                subscriptionHistoryService.recordCancellation(tenantId, subscriptionId, null, "CUSTOMER", reason);
+                subscriptionHistoryService.recordCancellation(tenantId, subscriptionId, UserContext.getUserId(), determinePerformedByType(), reason);
             }
 
             return true;
@@ -438,7 +439,7 @@ public class SubscriptionManagementService {
                        requestId, subscriptionId);
             
             // Record pause action in history
-            subscriptionHistoryService.recordPause(tenantId, subscriptionId, null, "CUSTOMER", 
+            subscriptionHistoryService.recordPause(tenantId, subscriptionId, UserContext.getUserId(), determinePerformedByType(), 
                 reason != null ? reason : "Customer requested pause");
             
             // TODO: Emit outbox event for subscription.paused
@@ -537,7 +538,7 @@ public class SubscriptionManagementService {
                        requestId, subscriptionId, nextRenewalAt);
             
             // Record resume action in history
-            subscriptionHistoryService.recordResume(tenantId, subscriptionId, null, "CUSTOMER");
+            subscriptionHistoryService.recordResume(tenantId, subscriptionId, UserContext.getUserId(), determinePerformedByType());
             
             // TODO: Emit outbox event for subscription.resumed
             
@@ -625,6 +626,27 @@ public class SubscriptionManagementService {
             logger.error("[SUBSCRIPTION_MGMT_DETAILS_ERROR] RequestId: {} - Error getting management details for subscription {}: {}", 
                         requestId, subscriptionId, e.getMessage(), e);
             return Optional.empty();
+        }
+    }
+    
+    /**
+     * Determine the performed_by_type based on the current user's role.
+     */
+    private String determinePerformedByType() {
+        String role = UserContext.getUserRole();
+        if (role == null) {
+            return "SYSTEM";
+        }
+        
+        switch (role) {
+            case "CUSTOMER":
+                return "CUSTOMER";
+            case "SUPER_ADMIN":
+            case "TENANT_ADMIN":
+            case "TENANT_USER":
+                return "ADMIN";
+            default:
+                return "SYSTEM";
         }
     }
 }

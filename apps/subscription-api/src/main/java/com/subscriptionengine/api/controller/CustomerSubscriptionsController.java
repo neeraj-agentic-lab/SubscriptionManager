@@ -19,6 +19,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -65,7 +68,8 @@ public class CustomerSubscriptionsController {
         summary = "Get my subscriptions",
         description = "Retrieves all subscriptions for the authenticated customer. "
             + "Returns subscription details including status, plan information, and next billing date. "
-            + "Useful for customer account pages and subscription management dashboards."
+            + "Useful for customer account pages and subscription management dashboards. "
+            + "Customer ID is automatically extracted from the authentication token."
     )
     @ApiResponses(value = {
         @ApiResponse(
@@ -79,10 +83,11 @@ public class CustomerSubscriptionsController {
         )
     })
     public ResponseEntity<Map<String, Object>> getCustomerSubscriptions(
-            @Parameter(description = "Customer ID (from authenticated context)", required = true)
-            @RequestParam UUID customerId,
             @Parameter(description = "Maximum number of subscriptions to return", example = "20")
             @RequestParam(defaultValue = "20") int limit) {
+        
+        // Extract customer ID from JWT token
+        UUID customerId = getCustomerIdFromAuth();
         
         String requestId = UUID.randomUUID().toString().substring(0, 8);
         logger.info("[CUSTOMER_SUBSCRIPTIONS_LIST] RequestId: {} - Getting subscriptions for customer {}", 
@@ -140,10 +145,11 @@ public class CustomerSubscriptionsController {
         )
     })
     public ResponseEntity<Map<String, Object>> getSubscriptionDashboard(
-            @Parameter(description = "Customer ID (from authenticated context)", required = true)
-            @RequestParam UUID customerId,
             @Parameter(description = "Unique identifier of the subscription", required = true)
             @PathVariable UUID subscriptionId) {
+        
+        // Extract customer ID from JWT token
+        UUID customerId = getCustomerIdFromAuth();
         
         String requestId = UUID.randomUUID().toString().substring(0, 8);
         logger.info("[SUBSCRIPTION_DASHBOARD] RequestId: {} - Getting dashboard for subscription {} customer {}", 
@@ -214,9 +220,10 @@ public class CustomerSubscriptionsController {
         )
     })
     public ResponseEntity<SubscriptionResponse> createMySubscription(
-            @Parameter(description = "Customer ID (from authenticated context)", required = true)
-            @RequestParam UUID customerId,
             @Valid @RequestBody CreateSubscriptionRequest request) {
+        
+        // Extract customer ID from JWT token
+        UUID customerId = getCustomerIdFromAuth();
         
         String requestId = UUID.randomUUID().toString().substring(0, 8);
         logger.info("[CUSTOMER_CREATE_SUBSCRIPTION] RequestId: {} - Customer {} creating subscription", 
@@ -301,11 +308,12 @@ public class CustomerSubscriptionsController {
         )
     })
     public ResponseEntity<Map<String, Object>> manageMySubscription(
-            @Parameter(description = "Customer ID (from authenticated context)", required = true)
-            @RequestParam UUID customerId,
             @Parameter(description = "Subscription ID", required = true)
             @PathVariable UUID subscriptionId,
             @RequestBody Map<String, Object> actionRequest) {
+        
+        // Extract customer ID from JWT token
+        UUID customerId = getCustomerIdFromAuth();
         
         String requestId = UUID.randomUUID().toString().substring(0, 8);
         String action = (String) actionRequest.get("action");
@@ -360,10 +368,11 @@ public class CustomerSubscriptionsController {
         )
     })
     public ResponseEntity<Map<String, Object>> getMyDeliveries(
-            @Parameter(description = "Customer ID (from authenticated context)", required = true)
-            @RequestParam UUID customerId,
             @Parameter(description = "Maximum number of deliveries to return", example = "10")
             @RequestParam(defaultValue = "10") int limit) {
+        
+        // Extract customer ID from JWT token
+        UUID customerId = getCustomerIdFromAuth();
         
         String requestId = UUID.randomUUID().toString().substring(0, 8);
         logger.info("[CUSTOMER_DELIVERIES_LIST] RequestId: {} - Getting deliveries for customer {}", 
@@ -498,9 +507,10 @@ public class CustomerSubscriptionsController {
             description = "Unauthorized - missing or invalid authentication token"
         )
     })
-    public ResponseEntity<Map<String, Object>> getAvailablePlans(
-            @Parameter(description = "Customer ID (from authenticated context)", required = true)
-            @RequestParam UUID customerId) {
+    public ResponseEntity<Map<String, Object>> getAvailablePlans() {
+        
+        // Extract customer ID from JWT token
+        UUID customerId = getCustomerIdFromAuth();
         
         String requestId = UUID.randomUUID().toString().substring(0, 8);
         logger.info("[CUSTOMER_PLANS_LIST] RequestId: {} - Getting available plans for customer {}", 
@@ -523,5 +533,24 @@ public class CustomerSubscriptionsController {
                    requestId, plans.size());
         
         return ResponseEntity.ok(response);
+    }
+    
+    /**
+     * Extract customer ID from JWT token.
+     * For CUSTOMER role users, the customer_id claim equals the user ID.
+     */
+    private UUID getCustomerIdFromAuth() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        
+        if (authentication != null && authentication.getPrincipal() instanceof Jwt) {
+            Jwt jwt = (Jwt) authentication.getPrincipal();
+            String customerIdStr = jwt.getClaimAsString("customer_id");
+            
+            if (customerIdStr != null) {
+                return UUID.fromString(customerIdStr);
+            }
+        }
+        
+        throw new IllegalStateException("Customer ID not found in authentication token");
     }
 }

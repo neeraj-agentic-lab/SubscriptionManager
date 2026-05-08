@@ -1,0 +1,104 @@
+!define TEST_SYSTEM {slim}
+
+!path build/fitnesse-lib/*.jar
+!path build/classes/java/main
+!path build/resources/main
+
+!|import|
+|com.subscriptionengine.fitnesse.fixtures|
+
+!1 Bulk User Operations (P2)
+
+This test validates bulk user creation and management for enterprise onboarding efficiency.
+
+!2 Step 1: Login as Super Admin
+
+!|script|RestApiFixture|
+|$ts=|timestamp|
+|post to|/v1/auth/login|with body|{"email":"admin@subscriptionengine.com","password":"ChangeMe123!"}|
+|check|status code|200|
+|show|response body|
+|$superToken=|json value|token|
+
+!2 Step 2: Create Tenant
+
+!|script|RestApiFixture|
+|set auth token|$superToken|
+|post to|/v1/admin/tenants|with body|{"name":"BulkTestCorp-$ts","slug":"bulk-test-$ts"}|
+|check|status code|201|
+|show|response body|
+|$tenantId=|json value|id|
+
+!2 Step 3: Create Multiple Users (Simulating Bulk Operation)
+
+!|script|RestApiFixture|
+|set auth token|$superToken|
+|post to|/v1/admin/users|with body|{"email":"user1-$ts@bulk.com","password":"Pass123!","firstName":"User","lastName":"One","role":"TENANT_USER"}|
+|check|status code|201|
+|$user1Id=|json value|id|
+
+!|script|RestApiFixture|
+|set auth token|$superToken|
+|post to|/v1/admin/users|with body|{"email":"user2-$ts@bulk.com","password":"Pass123!","firstName":"User","lastName":"Two","role":"TENANT_USER"}|
+|check|status code|201|
+|$user2Id=|json value|id|
+
+!|script|RestApiFixture|
+|set auth token|$superToken|
+|post to|/v1/admin/users|with body|{"email":"user3-$ts@bulk.com","password":"Pass123!","firstName":"User","lastName":"Three","role":"TENANT_ADMIN"}|
+|check|status code|201|
+|$user3Id=|json value|id|
+
+!2 Step 4: Assign Users to Tenant
+
+!|script|RestApiFixture|
+|set auth token|$superToken|
+|post to|/v1/admin/user-tenants|with body|{"userId":"$user1Id","tenantId":"$tenantId","role":"TENANT_USER"}|
+|check|status code|201|
+|$assignment1Id=|json value|id|
+
+!|script|RestApiFixture|
+|set auth token|$superToken|
+|post to|/v1/admin/user-tenants|with body|{"userId":"$user2Id","tenantId":"$tenantId","role":"TENANT_USER"}|
+|check|status code|201|
+|$assignment2Id=|json value|id|
+
+!|script|RestApiFixture|
+|set auth token|$superToken|
+|post to|/v1/admin/user-tenants|with body|{"userId":"$user3Id","tenantId":"$tenantId","role":"TENANT_ADMIN"}|
+|check|status code|201|
+|$assignment3Id=|json value|id|
+
+!2 Step 5: Verify Users Assigned to Tenant
+
+!|script|RestApiFixture|
+|set auth token|$superToken|
+|get from|/v1/admin/user-tenants/tenant/$tenantId|
+|check|status code|200|
+|show|response body|
+
+!2 Step 6: Update User Role in Tenant
+
+!|script|RestApiFixture|
+|set auth token|$superToken|
+|patchTo|/v1/admin/user-tenants/$assignment1Id|with body|{"role":"TENANT_ADMIN"}|
+|check|status code|200|
+|show|response body|
+
+!2 Step 7: Remove User from Tenant
+
+!|script|RestApiFixture|
+|set auth token|$superToken|
+|delete from|/v1/admin/user-tenants/$assignment2Id|
+|check|status code|204|
+
+!2 Summary
+
+This test validates:
+- ✓ Multiple user creation (simulating bulk operations)
+- ✓ Bulk assignment to tenant
+- ✓ Role updates for tenant users
+- ✓ User removal from tenant
+- ✓ Verification of tenant user list
+
+Note: This is a simplified version. True bulk operations with CSV upload would require additional API endpoints.

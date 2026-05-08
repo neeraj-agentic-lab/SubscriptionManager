@@ -24,7 +24,7 @@ import static org.hamcrest.Matchers.*;
 public class AdminUsersTest extends BaseIntegrationTest {
     
     @Step("Create tenant via admin API")
-    private UUID createTenant(String authTenantId, String name) {
+    private UUID createTenant(String name) {
         String tenantSlug = "test-tenant-" + UUID.randomUUID().toString().substring(0, 8);
         
         Map<String, Object> tenantRequest = Map.of(
@@ -33,7 +33,7 @@ public class AdminUsersTest extends BaseIntegrationTest {
             "status", "ACTIVE"
         );
         
-        Response response = givenAuthenticated(authTenantId)
+        Response response = givenSuperAdmin()
             .contentType("application/json")
             .body(tenantRequest)
             .when()
@@ -47,7 +47,7 @@ public class AdminUsersTest extends BaseIntegrationTest {
     }
     
     @Step("Create user via admin API")
-    private UUID createUser(String authTenantId, String email, String firstName, String lastName, String role) {
+    private UUID createUser(String email, String firstName, String lastName, String role) {
         Map<String, Object> userRequest = Map.of(
             "email", email,
             "password", "TestPassword123!",
@@ -56,7 +56,7 @@ public class AdminUsersTest extends BaseIntegrationTest {
             "role", role
         );
         
-        Response response = givenAuthenticated(authTenantId)
+        Response response = givenSuperAdmin()
             .contentType("application/json")
             .body(userRequest)
             .when()
@@ -74,8 +74,7 @@ public class AdminUsersTest extends BaseIntegrationTest {
     @DisplayName("Test 1: Create User")
     @Description("Verify admin can create a new user with all required fields")
     void testCreateUser() {
-        String authTenantId = generateUniqueTenantId();
-        createTenant(authTenantId, "Test Tenant");
+        createTenant("Test Tenant");
         
         String email = "newuser-" + UUID.randomUUID() + "@example.com";
         Map<String, Object> createRequest = Map.of(
@@ -86,7 +85,7 @@ public class AdminUsersTest extends BaseIntegrationTest {
             "role", "CUSTOMER"
         );
         
-        Response response = givenAuthenticated(authTenantId)
+        Response response = givenSuperAdmin()
             .contentType(ContentType.JSON)
             .body(createRequest)
             .when()
@@ -114,8 +113,7 @@ public class AdminUsersTest extends BaseIntegrationTest {
     @DisplayName("Test 2: Prevent Duplicate Email")
     @Description("Verify creating user with duplicate email returns 409 Conflict")
     void testPreventDuplicateEmail() {
-        String authTenantId = generateUniqueTenantId();
-        createTenant(authTenantId, "Test Tenant");
+        createTenant("Test Tenant");
         
         String email = "duplicate-" + UUID.randomUUID() + "@example.com";
         
@@ -128,7 +126,7 @@ public class AdminUsersTest extends BaseIntegrationTest {
             "role", "CUSTOMER"
         );
         
-        givenAuthenticated(authTenantId)
+        givenSuperAdmin()
             .contentType(ContentType.JSON)
             .body(createRequest)
             .when()
@@ -137,7 +135,7 @@ public class AdminUsersTest extends BaseIntegrationTest {
             .statusCode(201);
         
         // Attempt to create duplicate - should fail with 409
-        givenAuthenticated(authTenantId)
+        givenSuperAdmin()
             .contentType(ContentType.JSON)
             .body(createRequest)
             .when()
@@ -151,13 +149,12 @@ public class AdminUsersTest extends BaseIntegrationTest {
     @DisplayName("Test 3: Get User by ID")
     @Description("Verify retrieving user details by ID")
     void testGetUserById() {
-        String authTenantId = generateUniqueTenantId();
-        createTenant(authTenantId, "Test Tenant");
+        createTenant("Test Tenant");
         
         String email = "getuser-" + UUID.randomUUID() + "@example.com";
-        UUID userId = createUser(authTenantId, email, "Alice", "Johnson", "TENANT_ADMIN");
+        UUID userId = createUser(email, "Alice", "Johnson", "TENANT_ADMIN");
         
-        Response response = givenAuthenticated(authTenantId)
+        Response response = givenSuperAdmin()
             .when()
             .get("/v1/admin/users/" + userId)
             .then()
@@ -178,16 +175,15 @@ public class AdminUsersTest extends BaseIntegrationTest {
     @DisplayName("Test 4: List Users with Pagination and Filters")
     @Description("Verify listing users with pagination, status, and role filters")
     void testListUsersWithFilters() {
-        String authTenantId = generateUniqueTenantId();
-        createTenant(authTenantId, "Test Tenant");
+        createTenant("Test Tenant");
         
         // Create multiple users with different roles
-        createUser(authTenantId, "user1-" + UUID.randomUUID() + "@example.com", "User", "One", "CUSTOMER");
-        createUser(authTenantId, "user2-" + UUID.randomUUID() + "@example.com", "User", "Two", "CUSTOMER");
-        createUser(authTenantId, "admin1-" + UUID.randomUUID() + "@example.com", "Admin", "One", "TENANT_ADMIN");
+        createUser("user1-" + UUID.randomUUID() + "@example.com", "User", "One", "CUSTOMER");
+        createUser("user2-" + UUID.randomUUID() + "@example.com", "User", "Two", "CUSTOMER");
+        createUser("admin1-" + UUID.randomUUID() + "@example.com", "Admin", "One", "TENANT_ADMIN");
         
         // List all users
-        Response allUsersResponse = givenAuthenticated(authTenantId)
+        Response allUsersResponse = givenSuperAdmin()
             .when()
             .get("/v1/admin/users?page=0&size=10")
             .then()
@@ -201,7 +197,7 @@ public class AdminUsersTest extends BaseIntegrationTest {
         Allure.addAttachment("All Users", "application/json", allUsersResponse.asString());
         
         // Filter by role
-        Response customerResponse = givenAuthenticated(authTenantId)
+        Response customerResponse = givenSuperAdmin()
             .when()
             .get("/v1/admin/users?role=CUSTOMER")
             .then()
@@ -213,7 +209,7 @@ public class AdminUsersTest extends BaseIntegrationTest {
         Allure.addAttachment("Customers Only", "application/json", customerResponse.asString());
         
         // Filter by status
-        givenAuthenticated(authTenantId)
+        givenSuperAdmin()
             .when()
             .get("/v1/admin/users?status=ACTIVE")
             .then()
@@ -227,11 +223,10 @@ public class AdminUsersTest extends BaseIntegrationTest {
     @DisplayName("Test 5: Update User")
     @Description("Verify updating user information")
     void testUpdateUser() {
-        String authTenantId = generateUniqueTenantId();
-        createTenant(authTenantId, "Test Tenant");
+        createTenant("Test Tenant");
         
         String email = "updateuser-" + UUID.randomUUID() + "@example.com";
-        UUID userId = createUser(authTenantId, email, "Bob", "Smith", "CUSTOMER");
+        UUID userId = createUser(email, "Bob", "Smith", "CUSTOMER");
         
         // Update user details
         Map<String, Object> updateRequest = Map.of(
@@ -240,7 +235,7 @@ public class AdminUsersTest extends BaseIntegrationTest {
             "role", "TENANT_ADMIN"
         );
         
-        Response response = givenAuthenticated(authTenantId)
+        Response response = givenSuperAdmin()
             .contentType(ContentType.JSON)
             .body(updateRequest)
             .when()
@@ -262,14 +257,13 @@ public class AdminUsersTest extends BaseIntegrationTest {
     @DisplayName("Test 6: Suspend and Activate User")
     @Description("Verify suspending and activating user accounts")
     void testSuspendAndActivateUser() {
-        String authTenantId = generateUniqueTenantId();
-        createTenant(authTenantId, "Test Tenant");
+        createTenant("Test Tenant");
         
         String email = "suspenduser-" + UUID.randomUUID() + "@example.com";
-        UUID userId = createUser(authTenantId, email, "Charlie", "Brown", "CUSTOMER");
+        UUID userId = createUser(email, "Charlie", "Brown", "CUSTOMER");
         
         // Suspend user
-        Response suspendResponse = givenAuthenticated(authTenantId)
+        Response suspendResponse = givenSuperAdmin()
             .when()
             .post("/v1/admin/users/" + userId + "/suspend")
             .then()
@@ -281,7 +275,7 @@ public class AdminUsersTest extends BaseIntegrationTest {
         Allure.addAttachment("Suspend User Response", "application/json", suspendResponse.asString());
         
         // Verify user is suspended
-        givenAuthenticated(authTenantId)
+        givenSuperAdmin()
             .when()
             .get("/v1/admin/users/" + userId)
             .then()
@@ -289,7 +283,7 @@ public class AdminUsersTest extends BaseIntegrationTest {
             .body("status", equalTo("SUSPENDED"));
         
         // Activate user
-        Response activateResponse = givenAuthenticated(authTenantId)
+        Response activateResponse = givenSuperAdmin()
             .when()
             .post("/v1/admin/users/" + userId + "/activate")
             .then()
@@ -301,7 +295,7 @@ public class AdminUsersTest extends BaseIntegrationTest {
         Allure.addAttachment("Activate User Response", "application/json", activateResponse.asString());
         
         // Verify user is active again
-        givenAuthenticated(authTenantId)
+        givenSuperAdmin()
             .when()
             .get("/v1/admin/users/" + userId)
             .then()
@@ -314,21 +308,20 @@ public class AdminUsersTest extends BaseIntegrationTest {
     @DisplayName("Test 7: Delete User (Soft Delete)")
     @Description("Verify soft deleting a user account")
     void testDeleteUser() {
-        String authTenantId = generateUniqueTenantId();
-        createTenant(authTenantId, "Test Tenant");
+        createTenant("Test Tenant");
         
         String email = "deleteuser-" + UUID.randomUUID() + "@example.com";
-        UUID userId = createUser(authTenantId, email, "David", "Wilson", "CUSTOMER");
+        UUID userId = createUser(email, "David", "Wilson", "CUSTOMER");
         
         // Delete user (soft delete)
-        givenAuthenticated(authTenantId)
+        givenSuperAdmin()
             .when()
             .delete("/v1/admin/users/" + userId)
             .then()
             .statusCode(204);
         
         // Verify user is marked as DELETED
-        givenAuthenticated(authTenantId)
+        givenSuperAdmin()
             .when()
             .get("/v1/admin/users/" + userId)
             .then()
@@ -336,7 +329,7 @@ public class AdminUsersTest extends BaseIntegrationTest {
             .body("status", equalTo("DELETED"));
         
         // Verify deleted user doesn't appear in active users list
-        givenAuthenticated(authTenantId)
+        givenSuperAdmin()
             .when()
             .get("/v1/admin/users?status=ACTIVE")
             .then()

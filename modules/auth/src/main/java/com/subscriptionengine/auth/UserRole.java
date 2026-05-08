@@ -1,13 +1,15 @@
 package com.subscriptionengine.auth;
 
 /**
- * User roles for authorization.
+ * Unified user roles used across the entire system.
+ * These roles are used in: users table, user_tenants table, JWT claims, and authorization aspects.
  * 
  * @author Neeraj Yadav
  */
 public enum UserRole {
     /**
-     * Super admin with access to all tenants and system-wide operations
+     * Super admin with access to all tenants and system-wide operations.
+     * Only assigned at the users table level, not in user_tenants.
      */
     SUPER_ADMIN,
     
@@ -17,9 +19,9 @@ public enum UserRole {
     TENANT_ADMIN,
     
     /**
-     * Staff member with limited admin access to their tenant
+     * Tenant user with standard access to their tenant
      */
-    STAFF,
+    TENANT_USER,
     
     /**
      * Customer with access only to their own subscriptions and data
@@ -27,10 +29,10 @@ public enum UserRole {
     CUSTOMER;
     
     /**
-     * Check if this role is an admin role (SUPER_ADMIN, TENANT_ADMIN, or STAFF)
+     * Check if this role is an admin role (SUPER_ADMIN, TENANT_ADMIN, or TENANT_USER)
      */
     public boolean isAdmin() {
-        return this == SUPER_ADMIN || this == TENANT_ADMIN || this == STAFF;
+        return this == SUPER_ADMIN || this == TENANT_ADMIN || this == TENANT_USER;
     }
     
     /**

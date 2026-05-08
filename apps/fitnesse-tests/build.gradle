@@ -1,0 +1,110 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.2.1'
+    id 'io.spring.dependency-management' version '1.1.4'
+}
+
+group = 'com.subscriptionengine'
+version = '1.0.0'
+
+java {
+    sourceCompatibility = '17'
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // FitNesse core
+    implementation 'org.fitnesse:fitnesse:20230503'
+    
+    // Spring Boot for fixtures and REST client
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.springframework.boot:spring-boot-configuration-processor'
+    
+    // Domain modules (for testing)
+    implementation project(':modules:domain-subscriptions')
+    implementation project(':modules:domain-plans')
+    implementation project(':modules:domain-billing')
+    implementation project(':modules:common')
+    
+    // JSON processing
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+    
+    // JWT for test authentication
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3'
+    
+    // Logging
+    implementation 'org.slf4j:slf4j-api'
+    implementation 'ch.qos.logback:logback-classic'
+    
+    // Lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    
+    // Testing
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+// Custom task to start FitNesse server
+task startFitNesse(type: JavaExec) {
+    group = 'fitnesse'
+    description = 'Start FitNesse server for functional testing'
+    
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'com.subscriptionengine.fitnesse.FitNesseTestApplication'
+    
+    // JVM arguments
+    jvmArgs = [
+        '-Xmx512m',
+        '-Dfitnesse.port=9090'
+    ]
+    
+    // Standard input for interactive mode
+    standardInput = System.in
+}
+
+// Task to run FitNesse tests
+task runFitNesseTests(type: JavaExec) {
+    group = 'fitnesse'
+    description = 'Run all FitNesse tests'
+    
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'fitnesseMain.FitNesseMain'
+    
+    args = [
+        '-c', 'FrontPage?suite&format=text',
+        '-p', '9090',
+        '-d', '.'
+    ]
+}
+
+bootJar {
+    archiveBaseName = 'fitnesse-tests'
+    archiveVersion = '1.0.0'
+}
+
+// Task to copy all runtime dependencies for FitNesse classpath
+task copyDependencies(type: Copy) {
+    from configurations.runtimeClasspath
+    into 'build/fitnesse-lib'
+}
+
+// Ensure dependencies are copied when building
+build.dependsOn copyDependencies

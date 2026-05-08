@@ -1,0 +1,77 @@
+!define TEST_SYSTEM {slim}
+
+!path build/classes/java/main
+!path build/resources/main
+!path build/fitnesse-lib/*.jar
+
+!|import|
+|com.subscriptionengine.fitnesse.fixtures|
+
+!contents -R2 -g -p -f -h
+
+!1 Customer Scenario Test Suite
+
+This suite contains end-to-end customer workflow scenarios including self-service subscription management, plan browsing, and delivery control.
+
+!2 !-Overview-!
+
+!-Total Scenarios:-! 4
+!-Priority:-! P0-P1 (Critical to High)
+!-Coverage:-! Complete customer self-service testing
+
+!2 Test Scenarios
+
+!3 P0 (Critical) Scenarios
+
+| Scenario | Description | Business Value |
+| [[Customer Dashboard][>CustomerDashboard]] | Customer self-service dashboard for viewing and managing subscriptions | Customer self-service, reduced support load |
+| [[Customer Self-Signup][>CustomerSelfSignup]] | Customer browses plans and creates subscription (self-signup flow) | Customer acquisition, self-service onboarding |
+
+!3 P1 (High) Scenarios
+
+| Scenario | Description | Business Value |
+| [[Plan Upgrade][>PlanUpgrade]] | Customer upgrades plan mid-cycle with proration and billing adjustment | Revenue growth through upsells and plan flexibility |
+| [[Pause/Resume Journey][>PauseResumeJourney]] | Customer pauses and resumes subscription with delivery management | Customer retention and subscription flexibility |
+
+!2 Prerequisites
+
+Before running these tests:
+
+1. API Server Running: Subscription Engine API must be running on http://localhost:8080
+2. Database: PostgreSQL database must be accessible
+3. Test Data: Database should be in clean state
+4. Fixtures Built: Run ./gradlew build in fitnesse-tests directory
+
+!2 Running the Tests
+
+!3 Run All Customer Scenarios
+Click the Suite button above to run all customer scenario tests.
+
+!3 Run Individual Scenario
+Click on any scenario link above, then click the Test button.
+
+!2 Expected Results
+
+All tests should pass with:
+- Green tables indicating successful assertions
+- Customer authentication working correctly
+- Customer can only access their own data
+- All customer actions properly validated
+
+!2 Test Data Management
+
+Each scenario:
+- Creates its own test data in setup
+- Uses customer authentication tokens
+- Verifies customer data isolation
+- Cleans up resources in teardown
+
+!2 Fixtures Used
+
+These scenarios use the following Java fixture:
+- RestApiFixture: REST API client for making HTTP requests to the Subscription Engine API
+
+!2 Status
+
+Implementation Status: FitNesse pages created with RestApiFixture
+Next Steps: Run and validate all customer scenarios

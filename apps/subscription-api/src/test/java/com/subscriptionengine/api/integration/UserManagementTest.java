@@ -44,10 +44,10 @@ class UserManagementTest extends BaseIntegrationTest {
         );
         
         // When - Create user
-        Response createResponse = givenAuthenticated(testTenantId)
+        Response createResponse = givenSuperAdmin()
             .body(userRequest)
             .when()
-            .post("/api/admin/users")
+            .post("/v1/admin/users")
             .then()
             .statusCode(201)
             .extract()
@@ -76,35 +76,34 @@ class UserManagementTest extends BaseIntegrationTest {
             "role", "CUSTOMER"
         );
         
-        Response duplicateResponse = givenAuthenticated(testTenantId)
+        Response duplicateResponse = givenSuperAdmin()
             .body(duplicateRequest)
             .when()
-            .post("/api/admin/users")
+            .post("/v1/admin/users")
             .then()
             .statusCode(409)
             .extract()
             .response();
         
         // Then - Verify conflict error
-        String errorMessage = duplicateResponse.jsonPath().getString("message");
-        assertThat(errorMessage).containsIgnoringCase("email")
+        assertThat(duplicateResponse.jsonPath().getString("message")).containsIgnoringCase("email")
                                  .containsIgnoringCase("exists");
         
         Allure.addAttachment("Duplicate Email Error", "application/json", duplicateResponse.asString());
         
         // When - List users
-        Response listResponse = givenAuthenticated(testTenantId)
+        Response listResponse = givenSuperAdmin()
             .queryParam("page", 0)
             .queryParam("size", 20)
             .when()
-            .get("/api/admin/users")
+            .get("/v1/admin/users")
             .then()
             .statusCode(200)
             .extract()
             .response();
         
         // Then - Verify new user appears in list
-        List<Map<String, Object>> users = listResponse.jsonPath().getList("content");
+        List<Map<String, Object>> users = listResponse.jsonPath().getList("users");
         boolean userFound = users.stream()
             .anyMatch(u -> userId.toString().equals(u.get("id")));
         assertThat(userFound).isTrue();
@@ -112,9 +111,9 @@ class UserManagementTest extends BaseIntegrationTest {
         Allure.addAttachment("User List", "application/json", listResponse.asString());
         
         // When - Get user by ID
-        Response getUserResponse = givenAuthenticated(testTenantId)
+        Response getUserResponse = givenSuperAdmin()
             .when()
-            .get("/api/admin/users/" + userId)
+            .get("/v1/admin/users/" + userId)
             .then()
             .statusCode(200)
             .extract()
@@ -144,13 +143,13 @@ class UserManagementTest extends BaseIntegrationTest {
         Map<String, Object> assignmentARequest = Map.of(
             "userId", userId.toString(),
             "tenantId", tenantAId,
-            "role", "ADMIN"
+            "role", "TENANT_ADMIN"
         );
         
-        Response assignmentAResponse = givenAuthenticated(testTenantId)
+        Response assignmentAResponse = givenSuperAdmin()
             .body(assignmentARequest)
             .when()
-            .post("/api/admin/user-tenants")
+            .post("/v1/admin/user-tenants")
             .then()
             .statusCode(201)
             .extract()
@@ -160,7 +159,7 @@ class UserManagementTest extends BaseIntegrationTest {
         UUID assignmentAId = UUID.fromString(assignmentAResponse.jsonPath().getString("id"));
         assertThat(assignmentAResponse.jsonPath().getString("userId")).isEqualTo(userId.toString());
         assertThat(assignmentAResponse.jsonPath().getString("tenantId")).isEqualTo(tenantAId);
-        assertThat(assignmentAResponse.jsonPath().getString("role")).isEqualTo("ADMIN");
+        assertThat(assignmentAResponse.jsonPath().getString("role")).isEqualTo("TENANT_ADMIN");
         assertThat(assignmentAResponse.jsonPath().getString("assignedAt")).isNotNull();
         
         Allure.addAttachment("Tenant A Assignment", "application/json", assignmentAResponse.asString());
@@ -169,13 +168,13 @@ class UserManagementTest extends BaseIntegrationTest {
         Map<String, Object> assignmentBRequest = Map.of(
             "userId", userId.toString(),
             "tenantId", tenantBId,
-            "role", "MEMBER"
+            "role", "TENANT_USER"
         );
         
-        Response assignmentBResponse = givenAuthenticated(testTenantId)
+        Response assignmentBResponse = givenSuperAdmin()
             .body(assignmentBRequest)
             .when()
-            .post("/api/admin/user-tenants")
+            .post("/v1/admin/user-tenants")
             .then()
             .statusCode(201)
             .extract()
@@ -184,14 +183,14 @@ class UserManagementTest extends BaseIntegrationTest {
         // Then - Verify second assignment created
         assertThat(assignmentBResponse.jsonPath().getString("userId")).isEqualTo(userId.toString());
         assertThat(assignmentBResponse.jsonPath().getString("tenantId")).isEqualTo(tenantBId);
-        assertThat(assignmentBResponse.jsonPath().getString("role")).isEqualTo("MEMBER");
+        assertThat(assignmentBResponse.jsonPath().getString("role")).isEqualTo("TENANT_USER");
         
         Allure.addAttachment("Tenant B Assignment", "application/json", assignmentBResponse.asString());
         
         // When - Retrieve user's tenants
-        Response userTenantsResponse = givenAuthenticated(testTenantId)
+        Response userTenantsResponse = givenSuperAdmin()
             .when()
-            .get("/api/admin/user-tenants/user/" + userId)
+            .get("/v1/admin/user-tenants/user/" + userId)
             .then()
             .statusCode(200)
             .extract()
@@ -206,7 +205,7 @@ class UserManagementTest extends BaseIntegrationTest {
             .filter(t -> tenantAId.equals(t.get("tenantId")))
             .findFirst()
             .orElseThrow();
-        assertThat(tenantAAssignment.get("role")).isEqualTo("ADMIN");
+        assertThat(tenantAAssignment.get("role")).isEqualTo("TENANT_ADMIN");
         assertThat(tenantAAssignment.get("tenantName")).isEqualTo("Tenant A");
         
         // Verify Tenant B assignment
@@ -214,15 +213,15 @@ class UserManagementTest extends BaseIntegrationTest {
             .filter(t -> tenantBId.equals(t.get("tenantId")))
             .findFirst()
             .orElseThrow();
-        assertThat(tenantBAssignment.get("role")).isEqualTo("MEMBER");
+        assertThat(tenantBAssignment.get("role")).isEqualTo("TENANT_USER");
         assertThat(tenantBAssignment.get("tenantName")).isEqualTo("Tenant B");
         
         Allure.addAttachment("User's Tenants", "application/json", userTenantsResponse.asString());
         
         // When - Retrieve Tenant A's users
-        Response tenantAUsersResponse = givenAuthenticated(testTenantId)
+        Response tenantAUsersResponse = givenSuperAdmin()
             .when()
-            .get("/api/admin/user-tenants/tenant/" + tenantAId)
+            .get("/v1/admin/user-tenants/tenant/" + tenantAId)
             .then()
             .statusCode(200)
             .extract()
@@ -247,9 +246,9 @@ class UserManagementTest extends BaseIntegrationTest {
         UUID userId = createTestUser(testTenantId, "active-user@example.com");
         
         // Verify user is active
-        Response getUserResponse = givenAuthenticated(testTenantId)
+        Response getUserResponse = givenSuperAdmin()
             .when()
-            .get("/api/admin/users/" + userId)
+            .get("/v1/admin/users/" + userId)
             .then()
             .statusCode(200)
             .extract()
@@ -258,9 +257,9 @@ class UserManagementTest extends BaseIntegrationTest {
         assertThat(getUserResponse.jsonPath().getString("status")).isEqualTo("ACTIVE");
         
         // When - Suspend user
-        Response suspendResponse = givenAuthenticated(testTenantId)
+        Response suspendResponse = givenSuperAdmin()
             .when()
-            .post("/api/admin/users/" + userId + "/suspend")
+            .post("/v1/admin/users/" + userId + "/suspend")
             .then()
             .statusCode(200)
             .extract()
@@ -272,9 +271,9 @@ class UserManagementTest extends BaseIntegrationTest {
         Allure.addAttachment("User Suspended", "application/json", suspendResponse.asString());
         
         // Verify suspended status persists
-        Response suspendedUserResponse = givenAuthenticated(testTenantId)
+        Response suspendedUserResponse = givenSuperAdmin()
             .when()
-            .get("/api/admin/users/" + userId)
+            .get("/v1/admin/users/" + userId)
             .then()
             .statusCode(200)
             .extract()
@@ -283,9 +282,9 @@ class UserManagementTest extends BaseIntegrationTest {
         assertThat(suspendedUserResponse.jsonPath().getString("status")).isEqualTo("SUSPENDED");
         
         // When - Activate user
-        Response activateResponse = givenAuthenticated(testTenantId)
+        Response activateResponse = givenSuperAdmin()
             .when()
-            .post("/api/admin/users/" + userId + "/activate")
+            .post("/v1/admin/users/" + userId + "/activate")
             .then()
             .statusCode(200)
             .extract()
@@ -297,9 +296,9 @@ class UserManagementTest extends BaseIntegrationTest {
         Allure.addAttachment("User Activated", "application/json", activateResponse.asString());
         
         // Verify active status persists
-        Response activeUserResponse = givenAuthenticated(testTenantId)
+        Response activeUserResponse = givenSuperAdmin()
             .when()
-            .get("/api/admin/users/" + userId)
+            .get("/v1/admin/users/" + userId)
             .then()
             .statusCode(200)
             .extract()
@@ -321,47 +320,47 @@ class UserManagementTest extends BaseIntegrationTest {
         Map<String, Object> assignmentRequest = Map.of(
             "userId", userId.toString(),
             "tenantId", tenantId,
-            "role", "VIEWER"
+            "role", "CUSTOMER"
         );
         
-        Response assignmentResponse = givenAuthenticated(testTenantId)
+        Response assignmentResponse = givenSuperAdmin()
             .body(assignmentRequest)
             .when()
-            .post("/api/admin/user-tenants")
+            .post("/v1/admin/user-tenants")
             .then()
             .statusCode(201)
             .extract()
             .response();
         
         UUID assignmentId = UUID.fromString(assignmentResponse.jsonPath().getString("id"));
-        assertThat(assignmentResponse.jsonPath().getString("role")).isEqualTo("VIEWER");
+        assertThat(assignmentResponse.jsonPath().getString("role")).isEqualTo("CUSTOMER");
         
         Allure.addAttachment("Initial Assignment - VIEWER", "application/json", assignmentResponse.asString());
         
-        // When - Update role to ADMIN
+        // When - Update role to TENANT_ADMIN
         Map<String, Object> updateRequest = Map.of(
-            "role", "ADMIN"
+            "role", "TENANT_ADMIN"
         );
         
-        Response updateResponse = givenAuthenticated(testTenantId)
+        Response updateResponse = givenSuperAdmin()
             .body(updateRequest)
             .when()
-            .patch("/api/admin/user-tenants/" + assignmentId)
+            .patch("/v1/admin/user-tenants/" + assignmentId)
             .then()
             .statusCode(200)
             .extract()
             .response();
         
         // Then - Verify role updated
-        assertThat(updateResponse.jsonPath().getString("role")).isEqualTo("ADMIN");
+        assertThat(updateResponse.jsonPath().getString("role")).isEqualTo("TENANT_ADMIN");
         assertThat(updateResponse.jsonPath().getString("id")).isEqualTo(assignmentId.toString());
         
         Allure.addAttachment("Updated Assignment - ADMIN", "application/json", updateResponse.asString());
         
         // Verify role update persists
-        Response userTenantsResponse = givenAuthenticated(testTenantId)
+        Response userTenantsResponse = givenSuperAdmin()
             .when()
-            .get("/api/admin/user-tenants/user/" + userId)
+            .get("/v1/admin/user-tenants/user/" + userId)
             .then()
             .statusCode(200)
             .extract()
@@ -373,7 +372,7 @@ class UserManagementTest extends BaseIntegrationTest {
             .findFirst()
             .orElseThrow();
         
-        assertThat(assignment.get("role")).isEqualTo("ADMIN");
+        assertThat(assignment.get("role")).isEqualTo("TENANT_ADMIN");
     }
     
     @Test
@@ -391,13 +390,13 @@ class UserManagementTest extends BaseIntegrationTest {
         Map<String, Object> assignmentARequest = Map.of(
             "userId", userId.toString(),
             "tenantId", tenantAId,
-            "role", "MEMBER"
+            "role", "TENANT_USER"
         );
         
-        Response assignmentAResponse = givenAuthenticated(testTenantId)
+        Response assignmentAResponse = givenSuperAdmin()
             .body(assignmentARequest)
             .when()
-            .post("/api/admin/user-tenants")
+            .post("/v1/admin/user-tenants")
             .then()
             .statusCode(201)
             .extract()
@@ -409,20 +408,20 @@ class UserManagementTest extends BaseIntegrationTest {
         Map<String, Object> assignmentBRequest = Map.of(
             "userId", userId.toString(),
             "tenantId", tenantBId,
-            "role", "MEMBER"
+            "role", "TENANT_USER"
         );
         
-        givenAuthenticated(testTenantId)
+        givenSuperAdmin()
             .body(assignmentBRequest)
             .when()
-            .post("/api/admin/user-tenants")
+            .post("/v1/admin/user-tenants")
             .then()
             .statusCode(201);
         
         // Verify user has 2 tenant assignments
-        Response beforeRemovalResponse = givenAuthenticated(testTenantId)
+        Response beforeRemovalResponse = givenSuperAdmin()
             .when()
-            .get("/api/admin/user-tenants/user/" + userId)
+            .get("/v1/admin/user-tenants/user/" + userId)
             .then()
             .statusCode(200)
             .extract()
@@ -431,18 +430,18 @@ class UserManagementTest extends BaseIntegrationTest {
         assertThat(beforeRemovalResponse.jsonPath().getList("$")).hasSize(2);
         
         // When - Remove user from Tenant A
-        givenAuthenticated(testTenantId)
+        givenSuperAdmin()
             .when()
-            .delete("/api/admin/user-tenants/" + assignmentAId)
+            .delete("/v1/admin/user-tenants/" + assignmentAId)
             .then()
             .statusCode(204);
         
         Allure.addAttachment("Removed from Tenant A", "User removed from Tenant A");
         
         // Then - Verify user no longer has access to Tenant A
-        Response afterRemovalResponse = givenAuthenticated(testTenantId)
+        Response afterRemovalResponse = givenSuperAdmin()
             .when()
-            .get("/api/admin/user-tenants/user/" + userId)
+            .get("/v1/admin/user-tenants/user/" + userId)
             .then()
             .statusCode(200)
             .extract()
@@ -459,9 +458,9 @@ class UserManagementTest extends BaseIntegrationTest {
         Allure.addAttachment("Remaining Tenants", "application/json", afterRemovalResponse.asString());
         
         // Verify Tenant A no longer lists this user
-        Response tenantAUsersResponse = givenAuthenticated(testTenantId)
+        Response tenantAUsersResponse = givenSuperAdmin()
             .when()
-            .get("/api/admin/user-tenants/tenant/" + tenantAId)
+            .get("/v1/admin/user-tenants/tenant/" + tenantAId)
             .then()
             .statusCode(200)
             .extract()
@@ -497,45 +496,45 @@ class UserManagementTest extends BaseIntegrationTest {
         // Suspend 5 CUSTOMER users
         for (int i = 0; i < 5; i++) {
             UUID userId = userIds.get(10 + i);
-            givenAuthenticated(testTenantId)
+            givenSuperAdmin()
                 .when()
-                .post("/api/admin/users/" + userId + "/suspend")
+                .post("/v1/admin/users/" + userId + "/suspend")
                 .then()
                 .statusCode(200);
         }
         
         // When - List users with pagination (page=0, size=20)
-        Response page0Response = givenAuthenticated(testTenantId)
+        Response page0Response = givenSuperAdmin()
             .queryParam("page", 0)
             .queryParam("size", 20)
             .when()
-            .get("/api/admin/users")
+            .get("/v1/admin/users")
             .then()
             .statusCode(200)
             .extract()
             .response();
         
         // Then - Verify pagination
-        List<Map<String, Object>> page0Users = page0Response.jsonPath().getList("content");
+        List<Map<String, Object>> page0Users = page0Response.jsonPath().getList("users");
         assertThat(page0Users).hasSizeGreaterThanOrEqualTo(20);
-        assertThat(page0Response.jsonPath().getInt("totalElements")).isGreaterThanOrEqualTo(20);
+        assertThat(page0Response.jsonPath().getInt("totalCount")).isGreaterThanOrEqualTo(20);
         
         Allure.addAttachment("Page 0 - All Users", "application/json", page0Response.asString());
         
         // When - Filter by status=ACTIVE
-        Response activeUsersResponse = givenAuthenticated(testTenantId)
+        Response activeUsersResponse = givenSuperAdmin()
             .queryParam("status", "ACTIVE")
             .queryParam("page", 0)
             .queryParam("size", 50)
             .when()
-            .get("/api/admin/users")
+            .get("/v1/admin/users")
             .then()
             .statusCode(200)
             .extract()
             .response();
         
         // Then - Verify only active users returned
-        List<Map<String, Object>> activeUsers = activeUsersResponse.jsonPath().getList("content");
+        List<Map<String, Object>> activeUsers = activeUsersResponse.jsonPath().getList("users");
         boolean allActive = activeUsers.stream()
             .allMatch(u -> "ACTIVE".equals(u.get("status")));
         assertThat(allActive).isTrue();
@@ -543,19 +542,19 @@ class UserManagementTest extends BaseIntegrationTest {
         Allure.addAttachment("Active Users Only", "application/json", activeUsersResponse.asString());
         
         // When - Filter by role=TENANT_ADMIN
-        Response adminUsersResponse = givenAuthenticated(testTenantId)
+        Response adminUsersResponse = givenSuperAdmin()
             .queryParam("role", "TENANT_ADMIN")
             .queryParam("page", 0)
             .queryParam("size", 50)
             .when()
-            .get("/api/admin/users")
+            .get("/v1/admin/users")
             .then()
             .statusCode(200)
             .extract()
             .response();
         
         // Then - Verify only admins returned
-        List<Map<String, Object>> adminUsers = adminUsersResponse.jsonPath().getList("content");
+        List<Map<String, Object>> adminUsers = adminUsersResponse.jsonPath().getList("users");
         boolean allAdmins = adminUsers.stream()
             .allMatch(u -> "TENANT_ADMIN".equals(u.get("role")));
         assertThat(allAdmins).isTrue();
@@ -563,20 +562,20 @@ class UserManagementTest extends BaseIntegrationTest {
         Allure.addAttachment("Admin Users Only", "application/json", adminUsersResponse.asString());
         
         // When - Filter by status=SUSPENDED and role=CUSTOMER
-        Response suspendedCustomersResponse = givenAuthenticated(testTenantId)
+        Response suspendedCustomersResponse = givenSuperAdmin()
             .queryParam("status", "SUSPENDED")
             .queryParam("role", "CUSTOMER")
             .queryParam("page", 0)
             .queryParam("size", 50)
             .when()
-            .get("/api/admin/users")
+            .get("/v1/admin/users")
             .then()
             .statusCode(200)
             .extract()
             .response();
         
         // Then - Verify combined filters work
-        List<Map<String, Object>> suspendedCustomers = suspendedCustomersResponse.jsonPath().getList("content");
+        List<Map<String, Object>> suspendedCustomers = suspendedCustomersResponse.jsonPath().getList("users");
         boolean allSuspendedCustomers = suspendedCustomers.stream()
             .allMatch(u -> "SUSPENDED".equals(u.get("status")) && "CUSTOMER".equals(u.get("role")));
         assertThat(allSuspendedCustomers).isTrue();
@@ -603,11 +602,11 @@ class UserManagementTest extends BaseIntegrationTest {
             "status", "ACTIVE"
         );
         
-        Response response = givenAuthenticated(tenantId.toString())
+        Response response = givenSuperAdmin()
             .contentType("application/json")
             .body(tenantRequest)
             .when()
-            .post("/v1/tenants")
+            .post("/v1/admin/tenants")
             .then()
             .statusCode(201)
             .extract()
@@ -631,10 +630,10 @@ class UserManagementTest extends BaseIntegrationTest {
             "role", role
         );
         
-        Response response = givenAuthenticated(tenantId)
+        Response response = givenSuperAdmin()
             .body(userRequest)
             .when()
-            .post("/api/admin/users")
+            .post("/v1/admin/users")
             .then()
             .statusCode(201)
             .extract()

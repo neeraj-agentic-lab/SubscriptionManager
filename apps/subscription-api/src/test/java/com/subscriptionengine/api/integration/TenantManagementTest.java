@@ -36,11 +36,11 @@ class TenantManagementTest extends BaseIntegrationTest {
             "status", "ACTIVE"
         );
         
-        Response response = givenAuthenticated(tenantId)
+        Response response = givenSuperAdmin()
             .contentType("application/json")
             .body(tenantRequest)
             .when()
-            .post("/v1/tenants")
+            .post("/v1/admin/tenants")
             .then()
             .statusCode(201)
             .extract()
@@ -63,10 +63,10 @@ class TenantManagementTest extends BaseIntegrationTest {
         // Create tenant first
         UUID tenantId = createTenant("Retrieve Test Tenant");
         
-        Response response = givenAuthenticated(tenantId.toString())
+        Response response = givenSuperAdmin()
             .contentType("application/json")
             .when()
-            .get("/v1/tenants/" + tenantId)
+            .get("/v1/admin/tenants/" + tenantId)
             .then()
             .statusCode(200)
             .extract()
@@ -88,12 +88,12 @@ class TenantManagementTest extends BaseIntegrationTest {
         UUID tenantId1 = createTenant("List Test Tenant 1");
         createTenant("List Test Tenant 2");
         
-        Response response = givenAuthenticated(tenantId1.toString())
+        Response response = givenSuperAdmin()
             .contentType("application/json")
             .queryParam("page", 0)
             .queryParam("size", 10)
             .when()
-            .get("/v1/tenants")
+            .get("/v1/admin/tenants")
             .then()
             .statusCode(200)
             .extract()
@@ -119,11 +119,11 @@ class TenantManagementTest extends BaseIntegrationTest {
             "status", "ACTIVE"
         );
         
-        Response response = givenAuthenticated(tenantId.toString())
+        Response response = givenSuperAdmin()
             .contentType("application/json")
             .body(updateRequest)
             .when()
-            .put("/v1/tenants/" + tenantId)
+            .put("/v1/admin/tenants/" + tenantId)
             .then()
             .statusCode(200)
             .extract()
@@ -142,10 +142,10 @@ class TenantManagementTest extends BaseIntegrationTest {
     void shouldDeleteTenantWithoutData() {
         UUID tenantId = createTenant("Tenant To Delete");
         
-        Response response = givenAuthenticated(tenantId.toString())
+        Response response = givenSuperAdmin()
             .contentType("application/json")
             .when()
-            .delete("/v1/tenants/" + tenantId)
+            .delete("/v1/admin/tenants/" + tenantId)
             .then()
             .statusCode(200)
             .extract()
@@ -154,10 +154,10 @@ class TenantManagementTest extends BaseIntegrationTest {
         assertThat(response.jsonPath().getString("message")).contains("deleted successfully");
         
         // Verify tenant is deleted
-        givenAuthenticated(tenantId.toString())
+        givenSuperAdmin()
             .contentType("application/json")
             .when()
-            .get("/v1/tenants/" + tenantId)
+            .get("/v1/admin/tenants/" + tenantId)
             .then()
             .statusCode(404);
         
@@ -178,10 +178,10 @@ class TenantManagementTest extends BaseIntegrationTest {
         createSubscriptionDirectly(tenantId.toString(), planId);
         
         // Try to delete tenant - should fail because it has subscriptions
-        Response response = givenAuthenticated(tenantId.toString())
+        Response response = givenSuperAdmin()
             .contentType("application/json")
             .when()
-            .delete("/v1/tenants/" + tenantId)
+            .delete("/v1/admin/tenants/" + tenantId)
             .then()
             .statusCode(409)
             .extract()
@@ -201,10 +201,10 @@ class TenantManagementTest extends BaseIntegrationTest {
         UUID nonExistentId = UUID.randomUUID();
         UUID anyTenantId = createTenant("Any Tenant");
         
-        Response response = givenAuthenticated(anyTenantId.toString())
+        Response response = givenSuperAdmin()
             .contentType("application/json")
             .when()
-            .get("/v1/tenants/" + nonExistentId)
+            .get("/v1/admin/tenants/" + nonExistentId)
             .then()
             .statusCode(404)
             .extract()
@@ -231,11 +231,11 @@ class TenantManagementTest extends BaseIntegrationTest {
             "slug", tenantSlug
         );
         
-        Response response = givenAuthenticated(customId.toString())
+        Response response = givenSuperAdmin()
             .contentType("application/json")
             .body(tenantRequest)
             .when()
-            .post("/v1/tenants")
+            .post("/v1/admin/tenants")
             .then()
             .statusCode(201)
             .extract()
@@ -259,11 +259,11 @@ class TenantManagementTest extends BaseIntegrationTest {
             "status", "ACTIVE"
         );
         
-        Response response = givenAuthenticated(tenantId.toString())
+        Response response = givenSuperAdmin()
             .contentType("application/json")
             .body(tenantRequest)
             .when()
-            .post("/v1/tenants")
+            .post("/v1/admin/tenants")
             .then()
             .statusCode(201)
             .extract()
@@ -288,7 +288,7 @@ class TenantManagementTest extends BaseIntegrationTest {
         Response response = givenAuthenticated(tenantId)
             .body(planRequest)
             .when()
-            .post("/v1/plans")
+            .post("/v1/admin/plans")
             .then()
             .statusCode(201)
             .extract()
@@ -311,7 +311,7 @@ class TenantManagementTest extends BaseIntegrationTest {
         Response response = givenAuthenticated(tenantId)
             .body(subscriptionRequest)
             .when()
-            .post("/v1/subscriptions")
+            .post("/v1/admin/subscriptions")
             .then()
             .statusCode(201)
             .extract()

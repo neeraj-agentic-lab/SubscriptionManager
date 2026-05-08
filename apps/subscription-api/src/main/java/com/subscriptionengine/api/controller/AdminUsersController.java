@@ -17,10 +17,12 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.subscriptionengine.generated.tables.Users.USERS;
+import static com.subscriptionengine.generated.tables.Customers.CUSTOMERS;
 
 /**
  * Admin controller for user management.
@@ -45,7 +47,7 @@ public class AdminUsersController {
      */
     @PostMapping
     @Operation(summary = "Create user", description = "Create a new user account")
-    public ResponseEntity<UserResponse> createUser(@Valid @RequestBody CreateUserRequest request) {
+    public ResponseEntity<?> createUser(@Valid @RequestBody CreateUserRequest request) {
         
         // Check if email already exists
         boolean emailExists = dsl.fetchExists(
@@ -55,7 +57,12 @@ public class AdminUsersController {
         );
         
         if (emailExists) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+            Map<String, Object> error = Map.of(
+                "success", false,
+                "error", "DUPLICATE_EMAIL",
+                "message", "User with this email already exists"
+            );
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
         }
         
         // Hash password

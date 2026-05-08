@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- FitNesse debug logging -->
+    <logger name="fitnesse" level="DEBUG"/>
+    <logger name="fitnesse.slim" level="DEBUG"/>
+    
+    <!-- Our fixtures and API client - DEBUG level -->
+    <logger name="com.subscriptionengine.fitnesse" level="DEBUG"/>
+    <logger name="com.subscriptionengine.fitnesse.util.ApiClient" level="DEBUG"/>
+    <logger name="com.subscriptionengine.fitnesse.fixtures" level="DEBUG"/>
+    
+    <!-- Spring WebClient for HTTP request/response logging -->
+    <logger name="org.springframework.web.reactive.function.client" level="DEBUG"/>
+    
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>

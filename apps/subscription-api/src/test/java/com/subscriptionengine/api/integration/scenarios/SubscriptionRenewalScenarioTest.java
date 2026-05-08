@@ -42,7 +42,7 @@ class SubscriptionRenewalScenarioTest extends BaseIntegrationTest {
     @Description("Validates automatic renewal: scheduled task fires → payment charged → new cycle starts → next renewal scheduled → webhook sent")
     @Severity(SeverityLevel.BLOCKER)
     void shouldProcessSubscriptionRenewalAutomatically() {
-        String tenantId = TestDataFactory.DEFAULT_TENANT_ID;
+        String tenantId = createTestTenant();
         
         // Step 1: Create subscription with renewal in near future
         UUID subscriptionId = step1_CreateSubscriptionWithNearRenewal(tenantId);
@@ -132,7 +132,7 @@ class SubscriptionRenewalScenarioTest extends BaseIntegrationTest {
         
         Response response = givenAuthenticated(tenantId)
             .when()
-            .get("/v1/subscriptions/" + subscriptionId)
+            .get("/v1/admin/subscriptions/" + subscriptionId)
             .then()
             .statusCode(200)
             .extract()
@@ -149,7 +149,7 @@ class SubscriptionRenewalScenarioTest extends BaseIntegrationTest {
         // After renewal, the subscription should have updated period dates
         Response response = givenAuthenticated(tenantId)
             .when()
-            .get("/v1/subscriptions/" + subscriptionId)
+            .get("/v1/admin/subscriptions/" + subscriptionId)
             .then()
             .statusCode(200)
             .extract()
@@ -213,7 +213,7 @@ class SubscriptionRenewalScenarioTest extends BaseIntegrationTest {
         Response response = givenAuthenticated(tenantId)
             .body(customerRequest)
             .when()
-            .post("/v1/customers")
+            .post("/v1/admin/customers")
             .then()
             .statusCode(200)
             .extract()
@@ -222,19 +222,25 @@ class SubscriptionRenewalScenarioTest extends BaseIntegrationTest {
         return UUID.fromString(response.jsonPath().getString("data.customerId"));
     }
     
+    private String createTestTenant() {
+        Map<String, Object> tenantRequest = Map.of("name", "Test Tenant " + UUID.randomUUID().toString().substring(0, 8), "slug", "test-" + UUID.randomUUID().toString().substring(0, 8), "status", "ACTIVE");
+        Response response = givenSuperAdmin().contentType("application/json").body(tenantRequest).when().post("/v1/admin/tenants").then().statusCode(201).extract().response();
+        return response.jsonPath().getString("id");
+    }
+
     private UUID createPlan(String tenantId) {
         Map<String, Object> planRequest = TestDataFactory.createPlanRequest();
         
         Response response = givenAuthenticated(tenantId)
             .body(planRequest)
             .when()
-            .post("/v1/plans")
+            .post("/v1/admin/plans")
             .then()
-            .statusCode(200)
+            .statusCode(201)
             .extract()
             .response();
         
-        return UUID.fromString(response.jsonPath().getString("data.planId"));
+        return UUID.fromString(response.jsonPath().getString("id"));
     }
     
     private UUID createSubscription(String tenantId, UUID customerId, UUID planId) {
@@ -243,12 +249,12 @@ class SubscriptionRenewalScenarioTest extends BaseIntegrationTest {
         Response response = givenAuthenticated(tenantId)
             .body(subscriptionRequest)
             .when()
-            .post("/v1/subscriptions")
+            .post("/v1/admin/subscriptions")
             .then()
-            .statusCode(200)
+            .statusCode(201)
             .extract()
             .response();
         
-        return UUID.fromString(response.jsonPath().getString("data.subscriptionId"));
+        return UUID.fromString(response.jsonPath().getString("id"));
     }
 }

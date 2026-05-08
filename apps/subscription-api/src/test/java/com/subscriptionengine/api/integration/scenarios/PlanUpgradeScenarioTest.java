@@ -27,12 +27,13 @@ class PlanUpgradeScenarioTest extends BaseIntegrationTest {
     @Description("Validates upsell flow: upgrade plan → prorated charge → delivery updated → billing adjusted → webhook sent")
     @Severity(SeverityLevel.CRITICAL)
     void shouldUpgradePlanMidCycle() {
-        String tenantId = TestDataFactory.DEFAULT_TENANT_ID;
+        String tenantId = createTestTenant();
         
-        UUID customerId = createCustomer(tenantId);
         UUID basicPlanId = createPlan(tenantId, "Basic Plan", 2900);
         UUID premiumPlanId = createPlan(tenantId, "Premium Plan", 4900);
-        UUID subscriptionId = createSubscription(tenantId, customerId, basicPlanId);
+        Map<String, UUID> subResult = createSubscriptionWithCustomer(tenantId, basicPlanId);
+        UUID subscriptionId = subResult.get("subscriptionId");
+        UUID customerId = subResult.get("customerId");
         
         step1_VerifyCurrentPlan(tenantId, subscriptionId, basicPlanId);
         step2_UpgradeToPremiumPlan(tenantId, subscriptionId, customerId, premiumPlanId);
@@ -45,7 +46,7 @@ class PlanUpgradeScenarioTest extends BaseIntegrationTest {
     
     @Step("Step 1: Verify current plan")
     private void step1_VerifyCurrentPlan(String tenantId, UUID subscriptionId, UUID basicPlanId) {
-        Response response = givenAuthenticated(tenantId).when().get("/v1/subscriptions/" + subscriptionId).then().statusCode(200).extract().response();
+        Response response = givenAuthenticated(tenantId).when().get("/v1/admin/subscriptions/" + subscriptionId).then().statusCode(200).extract().response();
         assertThat(response.jsonPath().getString("planId")).isEqualTo(basicPlanId.toString());
         Allure.addAttachment("Current Plan", "application/json", response.asString());
     }
@@ -57,14 +58,14 @@ class PlanUpgradeScenarioTest extends BaseIntegrationTest {
         modifyRequest.put("operation", "MODIFY");
         modifyRequest.put("newPlanId", premiumPlanId.toString());
         
-        Response response = givenAuthenticated(tenantId).body(modifyRequest).when().put("/v1/subscription-mgmt/" + subscriptionId).then().statusCode(200).extract().response();
+        Response response = givenAuthenticated(tenantId).body(modifyRequest).when().put("/v1/admin/subscriptions/manage/" + subscriptionId).then().statusCode(200).extract().response();
         assertThat(response.jsonPath().getBoolean("success")).isTrue();
         Allure.addAttachment("Upgrade Response", "application/json", response.asString());
     }
     
     @Step("Step 3: Verify plan upgraded")
     private void step3_VerifyPlanUpgraded(String tenantId, UUID subscriptionId, UUID premiumPlanId) {
-        Response response = givenAuthenticated(tenantId).when().get("/v1/subscriptions/" + subscriptionId).then().statusCode(200).extract().response();
+        Response response = givenAuthenticated(tenantId).when().get("/v1/admin/subscriptions/" + subscriptionId).then().statusCode(200).extract().response();
         assertThat(response.jsonPath().getString("planId")).isEqualTo(premiumPlanId.toString());
         Allure.addAttachment("Upgraded Subscription", "application/json", response.asString());
     }
@@ -76,26 +77,29 @@ class PlanUpgradeScenarioTest extends BaseIntegrationTest {
     
     @Step("Step 5: Verify billing cycle adjusted")
     private void step5_VerifyBillingCycleAdjusted(String tenantId, UUID subscriptionId) {
-        Response response = givenAuthenticated(tenantId).when().get("/v1/subscriptions/" + subscriptionId).then().statusCode(200).extract().response();
+        Response response = givenAuthenticated(tenantId).when().get("/v1/admin/subscriptions/" + subscriptionId).then().statusCode(200).extract().response();
         assertThat(response.jsonPath().getString("nextRenewalAt")).isNotNull();
         Allure.addAttachment("Billing Cycle", "application/json", response.asString());
     }
     
-    private UUID createCustomer(String tenantId) {
-        Map<String, Object> customerRequest = TestDataFactory.createCustomerRequest();
-        Response response = givenAuthenticated(tenantId).body(customerRequest).when().post("/v1/customers").then().statusCode(200).extract().response();
-        return UUID.fromString(response.jsonPath().getString("data.customerId"));
+    private String createTestTenant() {
+        Map<String, Object> tenantRequest = Map.of("name", "Test Tenant " + UUID.randomUUID().toString().substring(0, 8), "slug", "test-" + UUID.randomUUID().toString().substring(0, 8), "status", "ACTIVE");
+        Response response = givenSuperAdmin().contentType("application/json").body(tenantRequest).when().post("/v1/admin/tenants").then().statusCode(201).extract().response();
+        return response.jsonPath().getString("id");
     }
-    
+
     private UUID createPlan(String tenantId, String name, int priceCents) {
         Map<String, Object> planRequest = Map.of("name", name, "description", "Test plan", "basePriceCents", priceCents, "currency", "USD", "billingInterval", "MONTHLY", "trialPeriodDays", 0, "active", true);
-        Response response = givenAuthenticated(tenantId).body(planRequest).when().post("/v1/plans").then().statusCode(200).extract().response();
-        return UUID.fromString(response.jsonPath().getString("data.planId"));
+        Response response = givenAuthenticated(tenantId).body(planRequest).when().post("/v1/admin/plans").then().statusCode(201).extract().response();
+        return UUID.fromString(response.jsonPath().getString("id"));
     }
     
-    private UUID createSubscription(String tenantId, UUID customerId, UUID planId) {
-        Map<String, Object> subscriptionRequest = TestDataFactory.createSubscriptionRequest(customerId, planId);
-        Response response = givenAuthenticated(tenantId).body(subscriptionRequest).when().post("/v1/subscriptions").then().statusCode(200).extract().response();
-        return UUID.fromString(response.jsonPath().getString("data.subscriptionId"));
+    private Map<String, UUID> createSubscriptionWithCustomer(String tenantId, UUID planId) {
+        Map<String, Object> subscriptionRequest = TestDataFactory.createSubscriptionRequest(UUID.randomUUID(), planId);
+        Response response = givenAuthenticated(tenantId).body(subscriptionRequest).when().post("/v1/admin/subscriptions").then().statusCode(201).extract().response();
+        Map<String, UUID> result = new java.util.HashMap<>();
+        result.put("subscriptionId", UUID.fromString(response.jsonPath().getString("id")));
+        result.put("customerId", UUID.fromString(response.jsonPath().getString("customerId")));
+        return result;
     }
 }

@@ -283,6 +283,51 @@ public class SubscriptionsService {
     }
     
     /**
+     * Get paginated subscriptions for a specific customer.
+     * 
+     * @param customerId the customer ID
+     * @param pageable pagination parameters
+     * @return paginated list of subscriptions
+     */
+    @Transactional(readOnly = true)
+    public Page<SubscriptionResponse> getSubscriptionsByCustomerId(UUID customerId, Pageable pageable) {
+        UUID tenantId = TenantContext.getRequiredTenantId();
+        
+        // Get total count
+        int totalCount = dsl.selectCount()
+                .from(SUBSCRIPTIONS)
+                .where(SUBSCRIPTIONS.TENANT_ID.eq(tenantId))
+                .and(SUBSCRIPTIONS.CUSTOMER_ID.eq(customerId))
+                .fetchOne(0, int.class);
+        
+        // Get paginated results with joins
+        var results = dsl.select()
+                .from(SUBSCRIPTIONS)
+                .join(CUSTOMERS).on(SUBSCRIPTIONS.CUSTOMER_ID.eq(CUSTOMERS.ID))
+                .join(PLANS).on(SUBSCRIPTIONS.PLAN_ID.eq(PLANS.ID))
+                .where(SUBSCRIPTIONS.TENANT_ID.eq(tenantId))
+                .and(SUBSCRIPTIONS.CUSTOMER_ID.eq(customerId))
+                .orderBy(SUBSCRIPTIONS.CREATED_AT.desc())
+                .limit(pageable.getPageSize())
+                .offset((int) pageable.getOffset())
+                .fetch();
+        
+        List<SubscriptionResponse> subscriptionResponses = results.stream()
+                .map(result -> {
+                    Subscriptions subscription = result.into(SUBSCRIPTIONS).into(Subscriptions.class);
+                    Customers customer = result.into(CUSTOMERS).into(Customers.class);
+                    Plans plan = result.into(PLANS).into(Plans.class);
+                    return mapToResponse(subscription, customer, plan);
+                })
+                .collect(Collectors.toList());
+        
+        logger.debug("Retrieved {} subscriptions for customer {} (page {}, size {})", 
+                    subscriptionResponses.size(), customerId, pageable.getPageNumber(), pageable.getPageSize());
+        
+        return new PageImpl<>(subscriptionResponses, pageable, totalCount);
+    }
+    
+    /**
      * Get all subscriptions for a specific customer.
      * 
      * @param customerId the customer ID
@@ -367,12 +412,27 @@ public class SubscriptionsService {
     }
     
     /**
-     * Upsert customer based on email or external customer ID.
+     * Upsert customer based on customerId (registered), email, or external customer ID (guest).
      */
     private Customers upsertCustomer(CreateSubscriptionRequest request, UUID tenantId) {
         Customers existingCustomer = null;
         
-        // Try to find existing customer by email or external ID
+        // Priority 1: Use customerId if provided (registered customer)
+        if (request.getCustomerId() != null) {
+            existingCustomer = dsl.selectFrom(CUSTOMERS)
+                    .where(CUSTOMERS.ID.eq(request.getCustomerId()))
+                    .and(CUSTOMERS.TENANT_ID.eq(tenantId))
+                    .fetchOneInto(Customers.class);
+            
+            if (existingCustomer != null) {
+                logger.debug("Found existing customer by ID: {}", existingCustomer.getId());
+                return existingCustomer; // Return immediately for registered customers, no update needed
+            } else {
+                throw new IllegalArgumentException("Customer with ID " + request.getCustomerId() + " not found");
+            }
+        }
+        
+        // Priority 2: Try to find existing customer by email (guest/new customer)
         if (request.getCustomerEmail() != null) {
             existingCustomer = dsl.selectFrom(CUSTOMERS)
                     .where(CUSTOMERS.EMAIL.eq(request.getCustomerEmail()))
@@ -446,7 +506,7 @@ public class SubscriptionsService {
             item.setId(UUID.randomUUID());
             item.setSubscriptionId(subscriptionId);
             item.setTenantId(tenantId);
-            item.setPlanId(UUID.randomUUID()); // Placeholder - products don't need plans
+            item.setPlanId(product.getPlanId());
             item.setQuantity(product.getQuantity());
             item.setUnitPriceCents(product.getUnitPriceCents());
             item.setCurrency(product.getCurrency());
@@ -511,7 +571,7 @@ public class SubscriptionsService {
                 return "CUSTOMER";
             case "SUPER_ADMIN":
             case "TENANT_ADMIN":
-            case "STAFF":
+            case "TENANT_USER":
                 return "ADMIN";
             default:
                 return "SYSTEM";

@@ -57,6 +57,11 @@ spring:
   #         # Optional: Configure JWT claim validation
   #         # audiences: ${JWT_AUDIENCES:api://subscription-manager}
 
+# JWT configuration
+jwt:
+  secret: ${JWT_SECRET:dev-secret-key-not-for-production}
+  expiration: ${JWT_EXPIRATION:86400000}
+
 # Server configuration
 server:
   port: ${PORT:8080}

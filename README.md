@@ -84,6 +84,16 @@
   - [Scale Tiers](#scale-tiers)
   - [Optimization Strategies](#optimization-strategies)
   - [Monitoring & Observability](#monitoring--observability)
+- [🖥️ Admin Console](#️-admin-console-react--typescript)
+  - [Overview](#overview-5)
+  - [Key Features](#key-features)
+  - [Technology Stack](#technology-stack-1)
+  - [Project Structure](#project-structure-1)
+  - [API Integration](#api-integration)
+  - [State Management](#state-management)
+  - [Running the Console](#running-the-console)
+  - [Recent Enhancements](#recent-enhancements-march-15-2026-)
+  - [Benefits](#benefits)
 - [🛣 Evolution Path](#-evolution-path-future)
 - [🤝 Contributing](#-contributing)
 - [📄 License](#-license)
@@ -2957,6 +2967,252 @@ management:
 - [ ] Enable distributed tracing (Jaeger, Zipkin)
 - [ ] Set up log aggregation (ELK, Datadog)
 - [ ] Monitor database query performance
+
+---
+
+## 🖥️ Admin Console (React + TypeScript)
+
+### Overview
+
+**Modern React-based admin console** for managing subscriptions, customers, plans, and tenants. Built with TypeScript, React Router, Zustand state management, and TailwindCSS for a beautiful, responsive UI.
+
+**Console URL**: `http://localhost:5173` (Vite dev server)
+
+### Key Features
+
+#### **1. Multi-Tenant Context Switching**
+- **Platform View**: Manage all tenants, users, and system settings
+- **Tenant View**: Manage customers, subscriptions, plans for a specific tenant
+- **Seamless Switching**: Dropdown selector with recent tenants and search
+- **Context Banner**: Visual indicator showing current tenant context
+- **TenantGuard Protection**: Automatic redirect to dashboard when switching views
+
+#### **2. Customer Management**
+- **Customer List Page** (`/customers`)
+  - Search by name or email
+  - Filter by status (Active/Inactive)
+  - View subscription counts (fetched via parallel API calls)
+  - Clickable customer names for navigation
+  - Create new customers with validation
+
+- **Customer Detail Page** (`/customers/:id`) ✨ NEW
+  - Comprehensive customer information display
+  - Contact details (email, first name, last name, external ID)
+  - List of all customer subscriptions with clickable links
+  - Quick stats (active subscriptions, total subscriptions)
+  - Timeline showing creation and update dates
+  - Back button for easy navigation
+
+#### **3. Subscription Management**
+- **Subscription List Page** (`/subscriptions`)
+  - Paginated table with 20 subscriptions per page
+  - Filter by status (All/Active/Paused/Canceled)
+  - Search by subscription ID or customer name
+  - Clickable subscription IDs for navigation ✨ NEW
+  - Clickable customer names for cross-navigation ✨ NEW
+  - Status badges with color coding
+
+- **Subscription Detail Page** (`/subscriptions/:id`) ✨ NEW
+  - Full subscription information display
+  - Customer information with navigation link
+  - Plan details (name, price, billing interval)
+  - Billing information (current period, next renewal, cancellation)
+  - Status indicators with color-coded badges
+  - Timeline and quick stats panel
+  - Back button to subscriptions list
+
+#### **4. Plan Management**
+- **Plans Page** (`/plans`)
+  - Create, edit, and manage subscription plans
+  - Filter by status and billing cycle
+  - View subscriber counts
+  - Plan categories (Digital/Product/Hybrid)
+  - Pricing and trial period configuration
+
+#### **5. Platform Administration**
+- **Tenants Page** (`/tenants`)
+  - Manage all tenants in the system
+  - View subscription counts and MRR per tenant
+  - Create new tenants
+  - Tenant detail pages with comprehensive stats
+
+- **Users Page** (`/users`)
+  - User management with role-based access
+  - Assign users to tenants
+  - User status management (Active/Inactive)
+
+#### **6. Navigation & UX Enhancements** ✨ NEW
+
+**TenantGuard Component**:
+- Global route protection for tenant-scoped pages
+- Prevents "Access Denied" errors during view switching
+- Automatically redirects to dashboard when tenant context is cleared
+- Wraps all tenant-scoped routes: `/customers`, `/plans`, `/subscriptions`, `/deliveries`, `/webhooks`, `/api-clients`, `/reports`
+
+**Cross-Navigation**:
+- Navigate from customer details → subscription details
+- Navigate from subscription details → customer details
+- Clickable IDs and names throughout the application
+- Breadcrumb navigation with back buttons
+
+**Optimized Data Fetching**:
+- Parallel API calls using `Promise.all()` for subscription counts
+- Efficient pagination with minimal payload
+- Client-side aggregation for better performance
+
+### Technology Stack
+
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| **React** | 18.x | UI framework |
+| **TypeScript** | 5.x | Type safety |
+| **Vite** | 5.x | Build tool & dev server |
+| **React Router** | 6.x | Client-side routing |
+| **Zustand** | 4.x | State management |
+| **Axios** | 1.x | HTTP client |
+| **TailwindCSS** | 3.x | Styling |
+| **Lucide React** | Latest | Icon library |
+
+### Project Structure
+
+```
+apps/subscription-manager-console/
+├── src/
+│   ├── components/
+│   │   ├── layout/
+│   │   │   ├── Header.tsx (Tenant selector, navigation)
+│   │   │   └── Sidebar.tsx (Main navigation menu)
+│   │   ├── common/
+│   │   │   └── LoadingOverlay.tsx
+│   │   ├── TenantGuard.tsx ✨ NEW (Route protection)
+│   │   ├── TenantSearchModal.tsx
+│   │   └── ErrorBoundary.tsx
+│   ├── pages/
+│   │   ├── DashboardPage.tsx
+│   │   ├── CustomersPage.tsx
+│   │   ├── CustomerDetailPage.tsx ✨ NEW
+│   │   ├── SubscriptionsPage.tsx
+│   │   ├── SubscriptionDetailPage.tsx ✨ NEW
+│   │   ├── PlansPage.tsx
+│   │   ├── TenantsPage.tsx
+│   │   ├── UsersPage.tsx
+│   │   └── ... (other pages)
+│   ├── store/
+│   │   ├── authStore.ts (Zustand - authentication)
+│   │   └── tenantStore.ts (Zustand - tenant context)
+│   ├── lib/
+│   │   └── api.ts (Axios API client)
+│   ├── App.tsx (Routes with TenantGuard)
+│   └── main.tsx
+├── public/
+├── index.html
+├── package.json
+├── tsconfig.json
+├── tailwind.config.js
+└── vite.config.ts
+```
+
+### API Integration
+
+**Base URL**: `http://localhost:8080/api`
+
+**Authentication**:
+- JWT tokens stored in localStorage
+- Automatic token refresh
+- `X-Tenant-Id` header for tenant-scoped requests
+
+**API Endpoints Used**:
+```typescript
+// Customers
+GET    /v1/admin/customers
+GET    /v1/admin/customers/{customerId} ✨ NEW
+POST   /v1/admin/customers
+
+// Subscriptions
+GET    /v1/admin/subscriptions?page=0&size=20
+GET    /v1/admin/subscriptions?customerId={id} ✨ NEW
+GET    /v1/admin/subscriptions/{subscriptionId}
+POST   /v1/admin/subscriptions
+
+// Plans
+GET    /v1/admin/plans?page=0&size=20
+POST   /v1/admin/plans
+
+// Tenants
+GET    /v1/admin/tenants
+POST   /v1/admin/tenants
+
+// Users
+GET    /v1/admin/users
+POST   /v1/admin/users
+```
+
+### State Management
+
+**Zustand Stores**:
+
+```typescript
+// authStore.ts
+interface AuthState {
+  user: User | null;
+  token: string | null;
+  isAuthenticated: boolean;
+  login: (email: string, password: string) => Promise<void>;
+  logout: () => void;
+}
+
+// tenantStore.ts
+interface TenantState {
+  selectedTenant: Tenant | null;
+  tenants: Tenant[];
+  recentTenants: Tenant[];
+  setSelectedTenant: (tenant: Tenant) => void;
+  clearTenantContext: () => void;
+  loadTenants: () => Promise<void>;
+}
+```
+
+### Running the Console
+
+**Development**:
+```bash
+cd apps/subscription-manager-console
+npm install
+npm run dev
+# Opens at http://localhost:5173
+```
+
+**Production Build**:
+```bash
+npm run build
+npm run preview
+```
+
+**Docker**:
+```bash
+docker build -t subscription-console .
+docker run -p 5173:5173 subscription-console
+```
+
+### Recent Enhancements (March 15, 2026) ✨
+
+1. **Customer Detail Page**: Comprehensive view with subscription list
+2. **Subscription Detail Page**: Full subscription information with customer link
+3. **TenantGuard Component**: Global route protection preventing navigation errors
+4. **Parallel API Calls**: Optimized subscription count fetching with `Promise.all()`
+5. **Cross-Navigation**: Clickable IDs and names for seamless navigation
+6. **Navigation Flow**: Navigate to dashboard first, then update context (prevents errors)
+7. **Backend API**: New endpoints for customer and subscription filtering
+
+### Benefits
+
+✅ **Modern UI/UX**: Beautiful, responsive design with TailwindCSS  
+✅ **Type Safety**: Full TypeScript coverage  
+✅ **Fast Development**: Vite HMR for instant feedback  
+✅ **State Management**: Zustand for simple, performant state  
+✅ **Error Prevention**: TenantGuard prevents navigation errors  
+✅ **Performance**: Parallel API calls and efficient pagination  
+✅ **Maintainability**: Clean component structure and separation of concerns
 
 ---
 

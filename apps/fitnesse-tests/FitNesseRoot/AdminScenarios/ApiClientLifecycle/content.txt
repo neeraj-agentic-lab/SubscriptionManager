@@ -1,0 +1,85 @@
+!define TEST_SYSTEM {slim}
+
+!path build/fitnesse-lib/*.jar
+!path build/classes/java/main
+!path build/resources/main
+
+!|import|
+|com.subscriptionengine.fitnesse.fixtures|
+
+!1 API Client Lifecycle (P1)
+
+This test validates the complete API client lifecycle from creation to revocation - core security feature for API access control.
+
+!2 Step 1: Login as Super Admin
+
+!|script|RestApiFixture|
+|$ts=|timestamp|
+|post to|/v1/auth/login|with body|{"email":"admin@subscriptionengine.com","password":"ChangeMe123!"}|
+|check|status code|200|
+|show|response body|
+|$superToken=|json value|token|
+
+!2 Step 2: Create Tenant
+
+!|script|RestApiFixture|
+|set auth token|$superToken|
+|post to|/v1/admin/tenants|with body|{"name":"ApiTestCorp-$ts","slug":"api-test-$ts"}|
+|check|status code|201|
+|show|response body|
+|$tenantId=|json value|id|
+
+!2 Step 3: Create API Client
+
+!|script|RestApiFixture|
+|set auth token|$superToken|
+|post to|/v1/admin/api-clients|with body|{"tenantId":"$tenantId","name":"production-api-client","clientType":"SERVER","authMethod":"API_KEY"}|
+|check|status code|201|
+|show|response body|
+|$clientId=|json value|id|
+|$clientKey=|json value|clientId|
+|$clientSecret=|json value|clientSecret|
+
+!2 Step 4: Verify API Client Created
+
+!|script|RestApiFixture|
+|set auth token|$superToken|
+|get from|/v1/admin/api-clients/$clientId|
+|check|status code|200|
+|show|response body|
+
+!2 Step 5: Update API Client
+
+!|script|RestApiFixture|
+|set auth token|$superToken|
+|patch to|/v1/admin/api-clients/$clientId|with body|{"status":"SUSPENDED"}|
+|check|status code|200|
+|show|response body|
+
+!2 Step 6: List API Clients for Tenant
+
+!|script|RestApiFixture|
+|set auth token|$superToken|
+|get from|/v1/admin/api-clients?tenantId=$tenantId|
+|check|status code|200|
+|show|response body|
+
+!2 Step 7: Delete API Client
+
+!|script|RestApiFixture|
+|set auth token|$superToken|
+|delete from|/v1/admin/api-clients/$clientId|
+|check|status code|200|
+|show|response body|
+
+!2 Summary
+
+This test validates:
+- ✓ API client created with credentials (apiKey and apiSecret returned)
+- ✓ API client can be retrieved by ID
+- ✓ API client can be updated
+- ✓ API clients can be listed for a tenant
+- ✓ API client can be deleted
+- ✓ Complete API client lifecycle managed
+
+Note: API key authentication and secret rotation features are not yet fully implemented in the API.

@@ -27,11 +27,12 @@ class AddressChangeScenarioTest extends BaseIntegrationTest {
     @Description("Validates logistics update: change address → upcoming delivery updated → past deliveries unchanged")
     @Severity(SeverityLevel.NORMAL)
     void shouldChangeAddressBeforeDelivery() {
-        String tenantId = TestDataFactory.DEFAULT_TENANT_ID;
+        String tenantId = createTestTenant();
         
-        UUID customerId = createCustomer(tenantId);
         UUID planId = createPlan(tenantId);
-        UUID subscriptionId = createSubscription(tenantId, customerId, planId);
+        Map<String, UUID> subResult = createSubscriptionWithCustomer(tenantId, planId);
+        UUID subscriptionId = subResult.get("subscriptionId");
+        UUID customerId = subResult.get("customerId");
         
         step1_VerifyCurrentAddress(tenantId, subscriptionId);
         step2_UpdateShippingAddress(tenantId, subscriptionId, customerId);
@@ -42,7 +43,7 @@ class AddressChangeScenarioTest extends BaseIntegrationTest {
     
     @Step("Step 1: Verify current address")
     private void step1_VerifyCurrentAddress(String tenantId, UUID subscriptionId) {
-        Response response = givenAuthenticated(tenantId).when().get("/v1/subscriptions/" + subscriptionId).then().statusCode(200).extract().response();
+        Response response = givenAuthenticated(tenantId).when().get("/v1/admin/subscriptions/" + subscriptionId).then().statusCode(200).extract().response();
         Allure.addAttachment("Current Subscription", "application/json", response.asString());
     }
     
@@ -60,32 +61,35 @@ class AddressChangeScenarioTest extends BaseIntegrationTest {
         modifyRequest.put("operation", "MODIFY");
         modifyRequest.put("shippingAddress", newAddress);
         
-        Response response = givenAuthenticated(tenantId).body(modifyRequest).when().put("/v1/subscription-mgmt/" + subscriptionId).then().statusCode(200).extract().response();
+        Response response = givenAuthenticated(tenantId).body(modifyRequest).when().put("/v1/admin/subscriptions/manage/" + subscriptionId).then().statusCode(200).extract().response();
         assertThat(response.jsonPath().getBoolean("success")).isTrue();
         Allure.addAttachment("Address Update Response", "application/json", response.asString());
     }
     
     @Step("Step 3: Verify address updated")
     private void step3_VerifyAddressUpdated(String tenantId, UUID subscriptionId) {
-        Response response = givenAuthenticated(tenantId).when().get("/v1/subscriptions/" + subscriptionId).then().statusCode(200).extract().response();
+        Response response = givenAuthenticated(tenantId).when().get("/v1/admin/subscriptions/" + subscriptionId).then().statusCode(200).extract().response();
         Allure.addAttachment("Updated Subscription", "application/json", response.asString());
     }
     
-    private UUID createCustomer(String tenantId) {
-        Map<String, Object> customerRequest = TestDataFactory.createCustomerRequest();
-        Response response = givenAuthenticated(tenantId).body(customerRequest).when().post("/v1/customers").then().statusCode(200).extract().response();
-        return UUID.fromString(response.jsonPath().getString("data.customerId"));
+    private String createTestTenant() {
+        Map<String, Object> tenantRequest = Map.of("name", "Test Tenant " + UUID.randomUUID().toString().substring(0, 8), "slug", "test-" + UUID.randomUUID().toString().substring(0, 8), "status", "ACTIVE");
+        Response response = givenSuperAdmin().contentType("application/json").body(tenantRequest).when().post("/v1/admin/tenants").then().statusCode(201).extract().response();
+        return response.jsonPath().getString("id");
     }
-    
+
     private UUID createPlan(String tenantId) {
         Map<String, Object> planRequest = TestDataFactory.createPlanRequest();
-        Response response = givenAuthenticated(tenantId).body(planRequest).when().post("/v1/plans").then().statusCode(200).extract().response();
-        return UUID.fromString(response.jsonPath().getString("data.planId"));
+        Response response = givenAuthenticated(tenantId).body(planRequest).when().post("/v1/admin/plans").then().statusCode(201).extract().response();
+        return UUID.fromString(response.jsonPath().getString("id"));
     }
     
-    private UUID createSubscription(String tenantId, UUID customerId, UUID planId) {
-        Map<String, Object> subscriptionRequest = TestDataFactory.createSubscriptionRequest(customerId, planId);
-        Response response = givenAuthenticated(tenantId).body(subscriptionRequest).when().post("/v1/subscriptions").then().statusCode(200).extract().response();
-        return UUID.fromString(response.jsonPath().getString("data.subscriptionId"));
+    private Map<String, UUID> createSubscriptionWithCustomer(String tenantId, UUID planId) {
+        Map<String, Object> subscriptionRequest = TestDataFactory.createSubscriptionRequest(UUID.randomUUID(), planId);
+        Response response = givenAuthenticated(tenantId).body(subscriptionRequest).when().post("/v1/admin/subscriptions").then().statusCode(201).extract().response();
+        Map<String, UUID> result = new HashMap<>();
+        result.put("subscriptionId", UUID.fromString(response.jsonPath().getString("id")));
+        result.put("customerId", UUID.fromString(response.jsonPath().getString("customerId")));
+        return result;
     }
 }

@@ -1,0 +1,135 @@
+!define TEST_SYSTEM {slim}
+
+!path build/fitnesse-lib/*.jar
+!path build/classes/java/main
+!path build/resources/main
+
+!|import|
+|com.subscriptionengine.fitnesse.fixtures|
+
+!1 Cross-Tenant Data Isolation (P0)
+
+This test validates that tenant admins cannot access other tenants' data - core security requirement for multi-tenant SaaS.
+
+!2 Step 1: Login as Super Admin
+
+!|script|RestApiFixture|
+|$ts=|timestamp|
+|post to|/v1/auth/login|with body|{"email":"admin@subscriptionengine.com","password":"ChangeMe123!"}|
+|check|status code|200|
+|show|response body|
+|$superToken=|json value|token|
+
+!2 Step 2: Create Tenant A
+
+!|script|RestApiFixture|
+|set auth token|$superToken|
+|post to|/v1/admin/tenants|with body|{"name":"TenantA-$ts","slug":"tenant-a-$ts"}|
+|check|status code|201|
+|show|response body|
+|$tenantAId=|json value|id|
+
+!2 Step 3: Create Tenant B
+
+!|script|RestApiFixture|
+|set auth token|$superToken|
+|post to|/v1/admin/tenants|with body|{"name":"TenantB-$ts","slug":"tenant-b-$ts"}|
+|check|status code|201|
+|show|response body|
+|$tenantBId=|json value|id|
+
+!2 Step 4: Create Admin User for Tenant A
+
+!|script|RestApiFixture|
+|set auth token|$superToken|
+|post to|/v1/admin/users|with body|{"email":"admin-a-$ts@example.com","password":"SecurePass123","firstName":"Admin","lastName":"A","role":"TENANT_ADMIN"}|
+|check|status code|201|
+|show|response body|
+|$userAId=|json value|id|
+
+!2 Step 5: Assign User A to Tenant A
+
+!|script|RestApiFixture|
+|set auth token|$superToken|
+|post to|/v1/admin/user-tenants|with body|{"userId":"$userAId","tenantId":"$tenantAId","role":"TENANT_ADMIN"}|
+|check|status code|201|
+|show|response body|
+
+!2 Step 6: Create Admin User for Tenant B
+
+!|script|RestApiFixture|
+|set auth token|$superToken|
+|post to|/v1/admin/users|with body|{"email":"admin-b-$ts@example.com","password":"SecurePass123","firstName":"Admin","lastName":"B","role":"TENANT_ADMIN"}|
+|check|status code|201|
+|show|response body|
+|$userBId=|json value|id|
+
+!2 Step 7: Assign User B to Tenant B
+
+!|script|RestApiFixture|
+|set auth token|$superToken|
+|post to|/v1/admin/user-tenants|with body|{"userId":"$userBId","tenantId":"$tenantBId","role":"TENANT_ADMIN"}|
+|check|status code|201|
+|show|response body|
+
+!2 Step 8: Login as Tenant A Admin
+
+!|script|RestApiFixture|
+|post to|/v1/auth/login|with body|{"email":"admin-a-$ts@example.com","password":"SecurePass123"}|
+|check|status code|200|
+|show|response body|
+|$tokenA=|json value|token|
+
+!2 Step 9: Login as Tenant B Admin
+
+!|script|RestApiFixture|
+|post to|/v1/auth/login|with body|{"email":"admin-b-$ts@example.com","password":"SecurePass123"}|
+|check|status code|200|
+|show|response body|
+|$tokenB=|json value|token|
+
+!2 Step 10: Tenant A Admin Tries to Access Tenant B (Should Fail with 403)
+
+!|script|RestApiFixture|
+|set auth token|$tokenA|
+|get from|/v1/admin/tenants/$tenantBId|
+|check|status code|403|
+|show|response body|
+
+!2 Step 11: Tenant B Admin Can Access Tenant B
+
+!|script|RestApiFixture|
+|set auth token|$tokenB|
+|get from|/v1/admin/tenants/$tenantBId|
+|check|status code|200|
+|show|response body|
+
+!2 Step 12: Tenant B Admin Tries to Access Tenant A (Should Fail with 403)
+
+!|script|RestApiFixture|
+|set auth token|$tokenB|
+|get from|/v1/admin/tenants/$tenantAId|
+|check|status code|403|
+|show|response body|
+
+!2 Step 13: Tenant A Admin Can Access Tenant A
+
+!|script|RestApiFixture|
+|set auth token|$tokenA|
+|get from|/v1/admin/tenants/$tenantAId|
+|check|status code|200|
+|show|response body|
+
+!2 Step 14: Super Admin Can Access Both Tenants
+
+!|script|RestApiFixture|
+|set auth token|$superToken|
+|get from|/v1/admin/tenants/$tenantAId|
+|check|status code|200|
+|show|response body|
+
+!|script|RestApiFixture|
+|set auth token|$superToken|
+|get from|/v1/admin/tenants/$tenantBId|
+|check|status code|200|
+|show|response body|

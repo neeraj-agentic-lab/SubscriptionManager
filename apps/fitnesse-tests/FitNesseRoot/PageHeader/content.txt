@@ -1,0 +1,41 @@
+#page header
+
+!- <style>
+/* ── Modern FitNesse Theme ─────────────────────────────── */
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  color: #1e293b;
+  line-height: 1.6;
+  background: #f8fafc;
+}
+
+h1 { color: #0f172a; font-weight: 700; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; }
+h2 { color: #334155; font-weight: 600; }
+
+/* Tables: keep FitNesse default layout, just modernize look */
+table { border-collapse: collapse; margin: 0.75rem 0; }
+table td, table th {
+  padding: 8px 12px !important;
+  border: 1px solid #cbd5e1 !important;
+  font-size: 14px !important;
+}
+
+/* Wrap long content like tokens and JSON */
+td { max-width: 500px; word-break: break-all; white-space: pre-wrap; }
+
+/* Header row */
+table tr:first-child td { background: #1e293b !important; color: #f1f5f9 !important; font-weight: 600; }
+
+/* Zebra stripes */
+table tr:nth-child(even) { background: #f8fafc; }
+table tr:nth-child(odd)  { background: #fff; }
+
+/* Pass/fail */
+td.pass, .pass { background-color: #dcfce7 !important; color: #166534 !important; }
+td.fail, .fail { background-color: #fee2e2 !important; color: #991b1b !important; }
+td.error, .error { background-color: #fef3c7 !important; color: #92400e !important; }
+
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
+</style> -!

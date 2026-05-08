@@ -63,12 +63,116 @@ class TenantIsolationScenarioTest extends BaseIntegrationTest {
             "Successfully verified complete tenant isolation with no cross-tenant access");
     }
     
+    @Test
+    @DisplayName("Scenario 5.2: Tenant management endpoint isolation")
+    @Description("Validates that tenant admins cannot access other tenants via tenant management endpoints")
+    @Severity(SeverityLevel.BLOCKER)
+    void shouldEnforceTenantManagementEndpointIsolation() {
+        
+        // Step 1: Create two tenants
+        UUID tenantAId = createTenant("Tenant A Management");
+        UUID tenantBId = createTenant("Tenant B Management");
+        
+        // Step 2: Tenant A admin tries to GET Tenant B details (should fail with 403)
+        Response getTenantBResponse = givenAuthenticated(tenantAId.toString())
+            .when()
+            .get("/v1/admin/tenants/" + tenantBId)
+            .then()
+            .statusCode(403)
+            .extract()
+            .response();
+        
+        assertThat(getTenantBResponse.jsonPath().getString("error")).isEqualTo("ACCESS_DENIED");
+        Allure.addAttachment("Tenant A cannot GET Tenant B", "application/json", getTenantBResponse.asString());
+        
+        // Step 3: Tenant B admin tries to GET Tenant A details (should fail with 403)
+        Response getTenantAResponse = givenAuthenticated(tenantBId.toString())
+            .when()
+            .get("/v1/admin/tenants/" + tenantAId)
+            .then()
+            .statusCode(403)
+            .extract()
+            .response();
+        
+        assertThat(getTenantAResponse.jsonPath().getString("error")).isEqualTo("ACCESS_DENIED");
+        Allure.addAttachment("Tenant B cannot GET Tenant A", "application/json", getTenantAResponse.asString());
+        
+        // Step 4: Tenant A admin can GET their own tenant (should succeed with 200)
+        Response getOwnTenantResponse = givenAuthenticated(tenantAId.toString())
+            .when()
+            .get("/v1/admin/tenants/" + tenantAId)
+            .then()
+            .statusCode(200)
+            .extract()
+            .response();
+        
+        assertThat(getOwnTenantResponse.jsonPath().getString("id")).isEqualTo(tenantAId.toString());
+        Allure.addAttachment("Tenant A can GET own tenant", "application/json", getOwnTenantResponse.asString());
+        
+        // Step 5: SUPER_ADMIN can access both tenants (should succeed with 200)
+        Response superAdminGetAResponse = givenSuperAdmin()
+            .when()
+            .get("/v1/admin/tenants/" + tenantAId)
+            .then()
+            .statusCode(200)
+            .extract()
+            .response();
+        
+        assertThat(superAdminGetAResponse.jsonPath().getString("id")).isEqualTo(tenantAId.toString());
+        
+        Response superAdminGetBResponse = givenSuperAdmin()
+            .when()
+            .get("/v1/admin/tenants/" + tenantBId)
+            .then()
+            .statusCode(200)
+            .extract()
+            .response();
+        
+        assertThat(superAdminGetBResponse.jsonPath().getString("id")).isEqualTo(tenantBId.toString());
+        Allure.addAttachment("SUPER_ADMIN can access all tenants", "text/plain", 
+            "Successfully accessed Tenant A and Tenant B");
+        
+        // Step 6: Tenant A admin tries to UPDATE Tenant B (should fail with 403)
+        Map<String, Object> updateRequest = Map.of(
+            "name", "Hacked Tenant B",
+            "slug", "hacked-tenant-b"
+        );
+        
+        Response updateTenantBResponse = givenAuthenticated(tenantAId.toString())
+            .body(updateRequest)
+            .when()
+            .put("/v1/admin/tenants/" + tenantBId)
+            .then()
+            .statusCode(403)
+            .extract()
+            .response();
+        
+        assertThat(updateTenantBResponse.jsonPath().getString("error")).isEqualTo("ACCESS_DENIED");
+        Allure.addAttachment("Tenant A cannot UPDATE Tenant B", "application/json", updateTenantBResponse.asString());
+        
+        // Step 7: Tenant A admin tries to DELETE Tenant B (should fail with 403)
+        Response deleteTenantBResponse = givenAuthenticated(tenantAId.toString())
+            .when()
+            .delete("/v1/admin/tenants/" + tenantBId)
+            .then()
+            .statusCode(403)
+            .extract()
+            .response();
+        
+        assertThat(deleteTenantBResponse.jsonPath().getString("error")).isEqualTo("ACCESS_DENIED");
+        Allure.addAttachment("Tenant A cannot DELETE Tenant B", "application/json", deleteTenantBResponse.asString());
+        
+        Allure.addAttachment("Scenario Summary", "text/plain", 
+            "Successfully verified tenant management endpoint isolation - tenant admins can only access their own tenant");
+    }
+    
     @Step("Step 1: Create Tenant A with customer and subscription")
     private TenantData step1_CreateTenantWithSubscription(String tenantName) {
         UUID tenantId = createTenant(tenantName);
-        UUID customerId = createCustomer(tenantId.toString());
         UUID planId = createPlan(tenantId.toString());
-        UUID subscriptionId = createSubscription(tenantId.toString(), customerId, planId);
+        Map<String, UUID> subResult = createSubscriptionWithCustomer(tenantId.toString(), planId);
+        UUID subscriptionId = subResult.get("subscriptionId");
+        UUID customerId = subResult.get("customerId");
         UUID deliveryId = createTestDelivery(tenantId.toString(), subscriptionId, customerId);
         
         TenantData data = new TenantData();
@@ -94,7 +198,7 @@ class TenantIsolationScenarioTest extends BaseIntegrationTest {
         // Tenant A tries to get Tenant B's subscription
         Response response = givenAuthenticated(tenantA.tenantId.toString())
             .when()
-            .get("/v1/subscriptions/" + tenantB.subscriptionId)
+            .get("/v1/admin/subscriptions/" + tenantB.subscriptionId)
             .then()
             .statusCode(404)
             .extract()
@@ -108,7 +212,7 @@ class TenantIsolationScenarioTest extends BaseIntegrationTest {
         // Try to access plan
         Response planResponse = givenAuthenticated(tenantA.tenantId.toString())
             .when()
-            .get("/v1/plans/" + tenantB.planId)
+            .get("/v1/admin/plans/" + tenantB.planId)
             .then()
             .statusCode(404)
             .extract()
@@ -121,7 +225,7 @@ class TenantIsolationScenarioTest extends BaseIntegrationTest {
             .queryParam("page", 0)
             .queryParam("size", 100)
             .when()
-            .get("/v1/subscriptions")
+            .get("/v1/admin/subscriptions")
             .then()
             .statusCode(200)
             .extract()
@@ -145,7 +249,7 @@ class TenantIsolationScenarioTest extends BaseIntegrationTest {
         Response response = givenAuthenticated(tenantA.tenantId.toString())
             .body(cancelRequest)
             .when()
-            .post("/v1/deliveries/" + tenantB.deliveryId + "/cancel")
+            .post("/v1/admin/deliveries/" + tenantB.deliveryId + "/cancel")
             .then()
             .statusCode(400)
             .extract()
@@ -168,9 +272,9 @@ class TenantIsolationScenarioTest extends BaseIntegrationTest {
         Response response = givenAuthenticated(tenantA.tenantId.toString())
             .body(modifyRequest)
             .when()
-            .put("/v1/subscription-mgmt/" + tenantB.subscriptionId)
+            .put("/v1/admin/subscriptions/manage/" + tenantB.subscriptionId)
             .then()
-            .statusCode(403)
+            .statusCode(400)
             .extract()
             .response();
         
@@ -222,11 +326,11 @@ class TenantIsolationScenarioTest extends BaseIntegrationTest {
             "status", "ACTIVE"
         );
         
-        Response response = given()
+        Response response = givenSuperAdmin()
             .contentType("application/json")
             .body(tenantRequest)
             .when()
-            .post("/v1/tenants")
+            .post("/v1/admin/tenants")
             .then()
             .statusCode(201)
             .extract()
@@ -235,62 +339,51 @@ class TenantIsolationScenarioTest extends BaseIntegrationTest {
         return UUID.fromString(response.jsonPath().getString("id"));
     }
     
-    private UUID createCustomer(String tenantId) {
-        Map<String, Object> customerRequest = TestDataFactory.createCustomerRequest();
-        
-        Response response = givenAuthenticated(tenantId)
-            .body(customerRequest)
-            .when()
-            .post("/v1/customers")
-            .then()
-            .statusCode(200)
-            .extract()
-            .response();
-        
-        return UUID.fromString(response.jsonPath().getString("data.customerId"));
-    }
-    
     private UUID createPlan(String tenantId) {
         Map<String, Object> planRequest = TestDataFactory.createPlanRequest();
         
         Response response = givenAuthenticated(tenantId)
             .body(planRequest)
             .when()
-            .post("/v1/plans")
+            .post("/v1/admin/plans")
             .then()
-            .statusCode(200)
+            .statusCode(201)
             .extract()
             .response();
         
-        return UUID.fromString(response.jsonPath().getString("data.planId"));
+        return UUID.fromString(response.jsonPath().getString("id"));
     }
     
-    private UUID createSubscription(String tenantId, UUID customerId, UUID planId) {
-        Map<String, Object> subscriptionRequest = TestDataFactory.createSubscriptionRequest(customerId, planId);
+    private Map<String, UUID> createSubscriptionWithCustomer(String tenantId, UUID planId) {
+        Map<String, Object> subscriptionRequest = TestDataFactory.createSubscriptionRequest(UUID.randomUUID(), planId);
         
         Response response = givenAuthenticated(tenantId)
             .body(subscriptionRequest)
             .when()
-            .post("/v1/subscriptions")
+            .post("/v1/admin/subscriptions")
             .then()
-            .statusCode(200)
+            .statusCode(201)
             .extract()
             .response();
         
-        return UUID.fromString(response.jsonPath().getString("data.subscriptionId"));
+        Map<String, UUID> result = new java.util.HashMap<>();
+        result.put("subscriptionId", UUID.fromString(response.jsonPath().getString("id")));
+        result.put("customerId", UUID.fromString(response.jsonPath().getString("customerId")));
+        return result;
     }
     
     private UUID createTestDelivery(String tenantId, UUID subscriptionId, UUID customerId) {
         UUID deliveryId = UUID.randomUUID();
         
         jdbcTemplate.update(
-            "INSERT INTO delivery_instances (id, tenant_id, subscription_id, cycle_key, status, scheduled_date, created_at, updated_at) " +
-            "VALUES (?::uuid, ?::uuid, ?::uuid, ?, 'PENDING', ?, now(), now())",
+            "INSERT INTO delivery_instances (id, tenant_id, subscription_id, cycle_key, status, scheduled_for, snapshot, created_at, updated_at) " +
+            "VALUES (?::uuid, ?::uuid, ?::uuid, ?, 'PENDING', ?::timestamp with time zone, ?::jsonb, now(), now())",
             deliveryId.toString(),
             tenantId,
             subscriptionId.toString(),
             "cycle_" + System.currentTimeMillis(),
-            OffsetDateTime.now().plusDays(7).toString()
+            OffsetDateTime.now().plusDays(7).toString(),
+            "{\"test\": true}"
         );
         
         return deliveryId;

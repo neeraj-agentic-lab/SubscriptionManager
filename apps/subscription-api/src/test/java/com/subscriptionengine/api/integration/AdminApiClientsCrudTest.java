@@ -26,7 +26,7 @@ import static org.hamcrest.Matchers.*;
 public class AdminApiClientsCrudTest extends BaseIntegrationTest {
     
     @Step("Create tenant via admin API")
-    private UUID createTenant(String authTenantId) {
+    private UUID createTenant() {
         String tenantName = "Test Tenant " + UUID.randomUUID().toString().substring(0, 8);
         String tenantSlug = "test-tenant-" + UUID.randomUUID().toString().substring(0, 8);
         
@@ -36,7 +36,7 @@ public class AdminApiClientsCrudTest extends BaseIntegrationTest {
             "status", "ACTIVE"
         );
         
-        Response response = givenAuthenticated(authTenantId)
+        Response response = givenSuperAdmin()
             .contentType("application/json")
             .body(tenantRequest)
             .when()
@@ -54,8 +54,7 @@ public class AdminApiClientsCrudTest extends BaseIntegrationTest {
     @DisplayName("Test 1: Create API Client with API_KEY auth method")
     @Description("Verify API client creation returns client_id and client_secret (shown only once)")
     void testCreateApiClient() {
-        String tenantIdStr = generateUniqueTenantId();
-        UUID tenantId = createTenant(tenantIdStr);
+        UUID tenantId = createTenant();
         
         Map<String, Object> createRequest = Map.of(
             "tenantId", tenantId.toString(),
@@ -67,7 +66,7 @@ public class AdminApiClientsCrudTest extends BaseIntegrationTest {
             "description", "Integration test API client"
         );
         
-        Response response = givenAuthenticated(tenantIdStr)
+        Response response = givenSuperAdmin()
             .contentType(ContentType.JSON)
             .body(createRequest)
             .when()
@@ -99,8 +98,7 @@ public class AdminApiClientsCrudTest extends BaseIntegrationTest {
     @DisplayName("Test 2: List API Clients with pagination")
     @Description("Verify listing API clients returns paginated results without secrets")
     void testListApiClients() {
-        String tenantIdStr = generateUniqueTenantId();
-        UUID tenantId = createTenant(tenantIdStr);
+        UUID tenantId = createTenant();
         
         // Create 3 API clients
         for (int i = 1; i <= 3; i++) {
@@ -111,7 +109,7 @@ public class AdminApiClientsCrudTest extends BaseIntegrationTest {
                 "authMethod", "API_KEY"
             );
             
-            givenAuthenticated(tenantIdStr)
+            givenSuperAdmin()
                 .contentType(ContentType.JSON)
                 .body(createRequest)
                 .post("/v1/admin/api-clients")
@@ -120,7 +118,7 @@ public class AdminApiClientsCrudTest extends BaseIntegrationTest {
         }
         
         // List clients
-        Response response = givenAuthenticated(tenantIdStr)
+        Response response = givenSuperAdmin()
             .queryParam("tenantId", tenantId.toString())
             .queryParam("page", 0)
             .queryParam("size", 10)
@@ -150,8 +148,7 @@ public class AdminApiClientsCrudTest extends BaseIntegrationTest {
     @DisplayName("Test 3: Get API Client by ID")
     @Description("Verify fetching API client details by ID returns complete info without secret")
     void testGetApiClientById() {
-        String tenantIdStr = generateUniqueTenantId();
-        UUID tenantId = createTenant(tenantIdStr);
+        UUID tenantId = createTenant();
         
         // Create API client
         Map<String, Object> createRequest = Map.of(
@@ -164,7 +161,7 @@ public class AdminApiClientsCrudTest extends BaseIntegrationTest {
             "rateLimitPerHour", 2000
         );
         
-        Response createResponse = givenAuthenticated(tenantIdStr)
+        Response createResponse = givenSuperAdmin()
             .contentType(ContentType.JSON)
             .body(createRequest)
             .post("/v1/admin/api-clients")
@@ -175,7 +172,7 @@ public class AdminApiClientsCrudTest extends BaseIntegrationTest {
         UUID clientId = UUID.fromString(createResponse.jsonPath().getString("id"));
         
         // Get client by ID
-        Response getResponse = givenAuthenticated(tenantIdStr)
+        Response getResponse = givenSuperAdmin()
             .when()
             .get("/v1/admin/api-clients/" + clientId)
             .then()
@@ -203,8 +200,7 @@ public class AdminApiClientsCrudTest extends BaseIntegrationTest {
     @DisplayName("Test 4: Update API Client and Rotate Secret")
     @Description("Verify updating API client settings and rotating secret returns new secret only once")
     void testUpdateApiClientAndRotateSecret() {
-        String tenantIdStr = generateUniqueTenantId();
-        UUID tenantId = createTenant(tenantIdStr);
+        UUID tenantId = createTenant();
         
         // Create API client
         Map<String, Object> createRequest = Map.of(
@@ -215,7 +211,7 @@ public class AdminApiClientsCrudTest extends BaseIntegrationTest {
             "scopes", List.of("subscriptions:read")
         );
         
-        Response createResponse = givenAuthenticated(tenantIdStr)
+        Response createResponse = givenSuperAdmin()
             .contentType(ContentType.JSON)
             .body(createRequest)
             .post("/v1/admin/api-clients")
@@ -234,7 +230,7 @@ public class AdminApiClientsCrudTest extends BaseIntegrationTest {
             "rotateSecret", true
         );
         
-        Response updateResponse = givenAuthenticated(tenantIdStr)
+        Response updateResponse = givenSuperAdmin()
             .contentType(ContentType.JSON)
             .body(updateRequest)
             .when()
@@ -256,7 +252,7 @@ public class AdminApiClientsCrudTest extends BaseIntegrationTest {
         assertThat(newSecret).hasSize(67);
         
         // Verify subsequent GET does not return secret
-        givenAuthenticated(tenantIdStr)
+        givenSuperAdmin()
             .when()
             .get("/v1/admin/api-clients/" + clientId)
             .then()
@@ -273,8 +269,7 @@ public class AdminApiClientsCrudTest extends BaseIntegrationTest {
     @DisplayName("Test 5: Delete (Revoke) API Client")
     @Description("Verify revoking API client sets status to REVOKED (soft delete)")
     void testDeleteApiClient() {
-        String tenantIdStr = generateUniqueTenantId();
-        UUID tenantId = createTenant(tenantIdStr);
+        UUID tenantId = createTenant();
         
         // Create API client
         Map<String, Object> createRequest = Map.of(
@@ -284,7 +279,7 @@ public class AdminApiClientsCrudTest extends BaseIntegrationTest {
             "authMethod", "API_KEY"
         );
         
-        Response createResponse = givenAuthenticated(tenantIdStr)
+        Response createResponse = givenSuperAdmin()
             .contentType(ContentType.JSON)
             .body(createRequest)
             .post("/v1/admin/api-clients")
@@ -296,7 +291,7 @@ public class AdminApiClientsCrudTest extends BaseIntegrationTest {
         String clientIdString = createResponse.jsonPath().getString("clientId");
         
         // Delete (revoke) client
-        Response deleteResponse = givenAuthenticated(tenantIdStr)
+        Response deleteResponse = givenSuperAdmin()
             .when()
             .delete("/v1/admin/api-clients/" + clientId)
             .then()
@@ -306,7 +301,7 @@ public class AdminApiClientsCrudTest extends BaseIntegrationTest {
             .extract().response();
         
         // Verify client status is REVOKED (soft delete)
-        givenAuthenticated(tenantIdStr)
+        givenSuperAdmin()
             .when()
             .get("/v1/admin/api-clients/" + clientId)
             .then()
@@ -321,10 +316,9 @@ public class AdminApiClientsCrudTest extends BaseIntegrationTest {
     @DisplayName("Test 6: Get Non-Existent API Client Returns 404")
     @Description("Verify fetching non-existent API client returns proper error")
     void testGetNonExistentApiClient() {
-        String tenantIdStr = generateUniqueTenantId();
         UUID nonExistentId = UUID.randomUUID();
         
-        givenAuthenticated(tenantIdStr)
+        givenSuperAdmin()
             .when()
             .get("/v1/admin/api-clients/" + nonExistentId)
             .then()
@@ -338,8 +332,7 @@ public class AdminApiClientsCrudTest extends BaseIntegrationTest {
     @DisplayName("Test 7: Create API Client with OAUTH auth method")
     @Description("Verify OAuth API client creation includes redirect URIs")
     void testCreateOAuthApiClient() {
-        String tenantIdStr = generateUniqueTenantId();
-        UUID tenantId = createTenant(tenantIdStr);
+        UUID tenantId = createTenant();
         
         Map<String, Object> createRequest = Map.of(
             "tenantId", tenantId.toString(),
@@ -350,7 +343,7 @@ public class AdminApiClientsCrudTest extends BaseIntegrationTest {
             "redirectUris", List.of("https://example.com/callback", "https://app.example.com/auth")
         );
         
-        Response response = givenAuthenticated(tenantIdStr)
+        Response response = givenSuperAdmin()
             .contentType(ContentType.JSON)
             .body(createRequest)
             .when()
@@ -372,8 +365,7 @@ public class AdminApiClientsCrudTest extends BaseIntegrationTest {
     @DisplayName("Test 8: Create API Client with MTLS auth method")
     @Description("Verify mTLS API client creation sets status to PENDING_CERTIFICATE")
     void testCreateMtlsApiClient() {
-        String tenantIdStr = generateUniqueTenantId();
-        UUID tenantId = createTenant(tenantIdStr);
+        UUID tenantId = createTenant();
         
         Map<String, Object> createRequest = Map.of(
             "tenantId", tenantId.toString(),
@@ -383,7 +375,7 @@ public class AdminApiClientsCrudTest extends BaseIntegrationTest {
             "scopes", List.of("subscriptions:read", "subscriptions:write")
         );
         
-        Response response = givenAuthenticated(tenantIdStr)
+        Response response = givenSuperAdmin()
             .contentType(ContentType.JSON)
             .body(createRequest)
             .when()

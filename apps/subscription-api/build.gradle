@@ -63,10 +63,10 @@ dependencies {
     // WireMock for mocking HTTP services
     testImplementation 'org.wiremock:wiremock-standalone:3.3.1'
     
-    // JWT for test token generation
-    testImplementation 'io.jsonwebtoken:jjwt-api:0.12.3'
-    testRuntimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
-    testRuntimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3'
+    // JWT for authentication
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3'
     
     // AssertJ for fluent assertions
     testImplementation 'org.assertj:assertj-core:3.25.1'
@@ -95,7 +95,7 @@ test {
     testLogging {
         events "passed", "skipped", "failed"
         exceptionFormat "full"
-        showStandardStreams = false  // Don't flood console, logs go to file
+        showStandardStreams = true  // Temporarily enabled for debugging
     }
     
     // Write test output to centralized logs folder at project root

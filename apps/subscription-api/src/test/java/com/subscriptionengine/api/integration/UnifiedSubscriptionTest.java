@@ -37,15 +37,16 @@ class UnifiedSubscriptionTest extends BaseIntegrationTest {
     void shouldCreateProductBasedSubscription() {
         String tenantId = testTenantId;
         
-        // Create plan for subscription
-        UUID planId = createBasePlan(tenantId);
+        // Create product-based plan for subscription
+        UUID planId = createProductBasedPlan(tenantId);
         
         Map<String, Object> product1 = Map.of(
             "productId", "coffee-beans-001",
             "productName", "Premium Coffee Beans",
             "quantity", 2,
             "unitPriceCents", 1599,
-            "currency", "USD"
+            "currency", "USD",
+            "planId", planId.toString()
         );
         
         Map<String, Object> product2 = Map.of(
@@ -53,7 +54,8 @@ class UnifiedSubscriptionTest extends BaseIntegrationTest {
             "productName", "Coffee Filters Pack",
             "quantity", 1,
             "unitPriceCents", 599,
-            "currency", "USD"
+            "currency", "USD",
+            "planId", planId.toString()
         );
         
         Map<String, Object> unifiedRequest = Map.of(
@@ -116,14 +118,15 @@ class UnifiedSubscriptionTest extends BaseIntegrationTest {
     @Story("Unified subscription creation")
     void shouldCreateSubscriptionWithSingleProduct() {
         String tenantId = testTenantId;
-        UUID basePlanId = createBasePlan(tenantId);
+        UUID basePlanId = createProductBasedPlan(tenantId);
         
         Map<String, Object> product = Map.of(
             "productId", "single-product-001",
             "productName", "Monthly Box",
             "quantity", 1,
             "unitPriceCents", 2999,
-            "currency", "USD"
+            "currency", "USD",
+            "planId", basePlanId.toString()
         );
         
         Map<String, Object> unifiedRequest = Map.of(
@@ -188,14 +191,15 @@ class UnifiedSubscriptionTest extends BaseIntegrationTest {
     @Story("Input validation")
     void shouldValidateProductPricing() {
         String tenantId = testTenantId;
-        UUID basePlanId = createBasePlan(tenantId);
+        UUID basePlanId = createProductBasedPlan(tenantId);
         
         Map<String, Object> invalidProduct = Map.of(
             "productId", "invalid-price-001",
             "productName", "Invalid Product",
             "quantity", 1,
             "unitPriceCents", -100, // Negative price
-            "currency", "USD"
+            "currency", "USD",
+            "planId", basePlanId.toString()
         );
         
         Map<String, Object> unifiedRequest = Map.of(
@@ -246,6 +250,31 @@ class UnifiedSubscriptionTest extends BaseIntegrationTest {
         return UUID.fromString(response.jsonPath().getString("id"));
     }
     
+    @Step("Create product-based plan")
+    private UUID createProductBasedPlan(String tenantId) {
+        Map<String, Object> planRequest = Map.of(
+            "name", "Product-Based Subscription Plan",
+            "description", "Plan for product-based subscriptions",
+            "basePriceCents", 0,
+            "currency", "USD",
+            "billingInterval", "MONTHLY",
+            "trialPeriodDays", 0,
+            "status", "ACTIVE",
+            "planCategory", "PRODUCT_BASED"
+        );
+        
+        Response response = givenAuthenticated(tenantId)
+            .body(planRequest)
+            .when()
+            .post("/v1/admin/plans")
+            .then()
+            .statusCode(201)
+            .extract()
+            .response();
+        
+        return UUID.fromString(response.jsonPath().getString("id"));
+    }
+    
     @Step("Create test tenant")
     private String createTestTenant() {
         UUID tenantId = UUID.randomUUID();
@@ -257,7 +286,7 @@ class UnifiedSubscriptionTest extends BaseIntegrationTest {
             "status", "ACTIVE"
         );
         
-        Response response = givenAuthenticated(tenantId.toString())
+        Response response = givenSuperAdmin()
             .contentType("application/json")
             .body(tenantRequest)
             .when()

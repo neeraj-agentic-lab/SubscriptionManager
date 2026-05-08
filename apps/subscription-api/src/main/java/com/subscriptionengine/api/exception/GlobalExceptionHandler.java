@@ -5,8 +5,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -23,6 +25,21 @@ import java.util.Map;
 public class GlobalExceptionHandler {
     
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+    
+    /**
+     * Handle access denied exceptions from authorization aspects
+     */
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAccessDeniedException(AccessDeniedException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(
+            "ACCESS_DENIED",
+            ex.getMessage(),
+            Map.of("type", "AccessDeniedException")
+        );
+        
+        logger.warn("Access denied: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
+    }
     
     /**
      * Handle validation errors from @Valid annotations
@@ -74,8 +91,10 @@ public class GlobalExceptionHandler {
                 status = HttpStatus.CONFLICT; // 409 for duplicates
                 if (message.contains("tenants_slug_key")) {
                     userMessage = "A tenant with this slug already exists";
+                } else if (message.contains("api_clients_client_id_key")) {
+                    userMessage = "An API client with this client ID already exists";
                 } else {
-                    userMessage = "A record with this value already exists";
+                    userMessage = "A record with this value already exists. " + extractConstraintDetails(message);
                 }
             } else if (message.contains("foreign key constraint")) {
                 errorCode = "INVALID_REFERENCE";
@@ -91,13 +110,21 @@ public class GlobalExceptionHandler {
             }
         }
         
+        // Extract root cause for better debugging
+        Throwable rootCause = ex.getRootCause();
+        String rootCauseMessage = rootCause != null ? rootCause.getMessage() : ex.getMessage();
+        
         ErrorResponse errorResponse = new ErrorResponse(
             errorCode,
             userMessage,
-            Map.of("details", extractConstraintDetails(message))
+            Map.of(
+                "details", extractConstraintDetails(message),
+                "rootCause", rootCauseMessage != null ? rootCauseMessage : "No root cause available"
+            )
         );
         
-        logger.error("Data integrity violation: {}", errorCode, ex);
+        logger.error("Data integrity violation: {} - Full message: {} - Root cause: {}", 
+                    errorCode, ex.getMessage(), rootCauseMessage, ex);
         return ResponseEntity.status(status).body(errorResponse);
     }
     
@@ -116,6 +143,43 @@ public class GlobalExceptionHandler {
         );
         
         logger.warn("Type mismatch for parameter '{}': {}", paramName, ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+    
+    /**
+     * Handle missing request parameters
+     */
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<ErrorResponse> handleMissingParameter(MissingServletRequestParameterException ex) {
+        String paramName = ex.getParameterName();
+        String paramType = ex.getParameterType();
+        
+        ErrorResponse errorResponse = new ErrorResponse(
+            "MISSING_PARAMETER",
+            String.format("Required parameter '%s' is missing. Please provide '%s' as a query parameter.", paramName, paramName),
+            Map.of(
+                "parameter", paramName,
+                "type", paramType,
+                "example", String.format("?%s=<value>", paramName)
+            )
+        );
+        
+        logger.warn("Missing required parameter '{}' of type '{}'", paramName, paramType);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+    
+    /**
+     * Handle illegal argument exceptions (business validation errors)
+     */
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(
+            "VALIDATION_ERROR",
+            ex.getMessage(),
+            Map.of("type", "IllegalArgumentException")
+        );
+        
+        logger.warn("Validation error: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
     

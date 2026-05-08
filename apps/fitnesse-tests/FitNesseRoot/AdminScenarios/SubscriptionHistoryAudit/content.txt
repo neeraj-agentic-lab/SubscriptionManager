@@ -1,0 +1,135 @@
+!define TEST_SYSTEM {slim}
+
+!path build/fitnesse-lib/*.jar
+!path build/classes/java/main
+!path build/resources/main
+
+!|import|
+|com.subscriptionengine.fitnesse.fixtures|
+
+!1 Subscription History Audit Trail (P0)
+
+This test validates that all subscription lifecycle events are properly tracked in the audit trail for compliance, dispute resolution, and customer support.
+
+!2 Step 1: Login as Super Admin
+
+!|script|RestApiFixture|
+|$ts=|timestamp|
+|post to|/v1/auth/login|with body|!-{"email":"admin@subscriptionengine.com","password":"ChangeMe123!"}-!|
+|check|status code|200|
+|show|response body|
+|$token=|json value|token|
+
+!2 Step 2: Create Test Tenant
+
+!|script|RestApiFixture|
+|set auth token|$token|
+|post to|/v1/admin/tenants|with body|{"name":"AuditTest-$ts","slug":"audit-test-$ts"}|
+|check|status code|201|
+|show|response body|
+|$tenantId=|json value|id|
+
+!2 Step 3: Create Plan
+
+!|script|RestApiFixture|
+|set auth token|$token|
+|set header name value|X-Tenant-Id:$tenantId|
+|post to|/v1/admin/plans|with body|{"name":"Monthly Plan","billingInterval":"MONTHLY","basePriceCents":2999,"currency":"USD"}|
+|check|status code|201|
+|show|response body|
+|$planId=|json value|id|
+
+!2 Step 4: Create Customer
+
+!|script|RestApiFixture|
+|set auth token|$token|
+|set header name value|X-Tenant-Id:$tenantId|
+|post to|/v1/admin/customers|with body|{"email":"audit-$ts@test.com","name":"Audit Customer"}|
+|check|status code|201|
+|show|response body|
+|$customerId=|json value|data.customerId|
+
+!2 Step 5: Create Subscription
+
+!|script|RestApiFixture|
+|set auth token|$token|
+|set header name value|X-Tenant-Id:$tenantId|
+|post to|/v1/admin/subscriptions|with body|{"customerId":"$customerId","planId":"$planId","customerEmail":"audit-$ts@test.com","paymentMethodRef":"pm_test_123"}|
+|check|status code|201|
+|show|response body|
+|$subscriptionId=|json value|id|
+
+!2 Step 6: Verify Initial History Entry
+
+!|script|RestApiFixture|
+|set auth token|$token|
+|set header name value|X-Tenant-Id:$tenantId|
+|get from|/v1/admin/subscriptions/$subscriptionId/history?page=0&size=20|
+|check|status code|200|
+|show|response body|
+|$historyCount=|json value|totalCount|
+
+!2 Step 7: Pause Subscription
+
+!|script|RestApiFixture|
+|set auth token|$token|
+|set header name value|X-Tenant-Id:$tenantId|
+|put to|/v1/admin/subscriptions/manage/$subscriptionId|with body|{"customerId":"$customerId","operation":"PAUSE","reason":"Customer requested pause"}|
+|check|status code|200|
+|show|response body|
+
+!2 Step 8: Verify History Shows Pause Event
+
+!|script|RestApiFixture|
+|set auth token|$token|
+|set header name value|X-Tenant-Id:$tenantId|
+|get from|/v1/admin/subscriptions/$subscriptionId/history?page=0&size=20|
+|check|status code|200|
+|show|response body|
+|$pauseHistoryCount=|json value|totalCount|
+
+!2 Step 9: Resume Subscription
+
+!|script|RestApiFixture|
+|set auth token|$token|
+|set header name value|X-Tenant-Id:$tenantId|
+|put to|/v1/admin/subscriptions/manage/$subscriptionId|with body|{"customerId":"$customerId","operation":"RESUME"}|
+|check|status code|200|
+|show|response body|
+
+!2 Step 10: Verify History Shows Resume Event
+
+!|script|RestApiFixture|
+|set auth token|$token|
+|set header name value|X-Tenant-Id:$tenantId|
+|get from|/v1/admin/subscriptions/$subscriptionId/history?page=0&size=20|
+|check|status code|200|
+|show|response body|
+|$resumeHistoryCount=|json value|totalCount|
+
+!2 Step 11: Get Complete History (No Pagination)
+
+!|script|RestApiFixture|
+|set auth token|$token|
+|set header name value|X-Tenant-Id:$tenantId|
+|get from|/v1/admin/subscriptions/$subscriptionId/history/all|
+|check|status code|200|
+|show|response body|
+
+!2 Step 12: Cancel Subscription
+
+!|script|RestApiFixture|
+|set auth token|$token|
+|set header name value|X-Tenant-Id:$tenantId|
+|put to|/v1/admin/subscriptions/manage/$subscriptionId|with body|{"customerId":"$customerId","operation":"CANCEL","cancellationType":"immediate","reason":"Test completion"}|
+|check|status code|200|
+|show|response body|
+
+!2 Step 13: Verify Final Audit Trail
+
+!|script|RestApiFixture|
+|set auth token|$token|
+|set header name value|X-Tenant-Id:$tenantId|
+|get from|/v1/admin/subscriptions/$subscriptionId/history/all|
+|check|status code|200|
+|show|response body|

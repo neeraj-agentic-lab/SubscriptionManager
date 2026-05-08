@@ -51,23 +51,37 @@ public class JwtTenantAuthenticationFilter extends OncePerRequestFilter {
                 logger.info("JWT token found, extracting tenant information...");
                 
                 try {
-                    // Extract tenant ID from JWT
-                    UUID tenantId = jwtTenantExtractor.extractTenantId(jwt);
-                    logger.info("Extracted tenant ID from JWT: {}", tenantId);
-                    
-                    // Set tenant context for this request
-                    TenantContext.setTenantId(tenantId);
-                    logger.info("Set tenant context: {}", tenantId);
-                    
-                    // Verify tenant context was set
-                    UUID verifyTenantId = TenantContext.getTenantId();
-                    logger.info("Verified tenant context: {}", verifyTenantId);
-                    
-                    // Log tenant context for debugging
-                    String userId = jwtTenantExtractor.extractUserId(jwt);
-                    String userEmail = jwtTenantExtractor.extractUserEmail(jwt);
-                    logger.info("JwtTenantAuthenticationFilter: SUCCESSFULLY set tenant context - tenantId: {}, userId: {}, userEmail: {}, thread: {}", 
-                               tenantId, userId, userEmail, Thread.currentThread().getName());
+                    // Check if this is a SUPER_ADMIN token (no tenant required)
+                    String role = jwtTenantExtractor.extractUserRole(jwt);
+                    if ("SUPER_ADMIN".equals(role) && !jwtTenantExtractor.hasTenantClaim(jwt)) {
+                        logger.info("SUPER_ADMIN token without tenant claim - global access granted");
+                        String userId = jwtTenantExtractor.extractUserId(jwt);
+                        String userEmail = jwtTenantExtractor.extractUserEmail(jwt);
+                        
+                        // Allow SUPER_ADMIN to act on behalf of a tenant via X-Tenant-Id header
+                        String tenantIdHeader = request.getHeader("X-Tenant-Id");
+                        if (tenantIdHeader != null && !tenantIdHeader.isBlank()) {
+                            UUID tenantId = UUID.fromString(tenantIdHeader);
+                            TenantContext.setTenantId(tenantId);
+                            logger.info("JwtTenantAuthenticationFilter: SUPER_ADMIN acting as tenant {} - userId: {}, userEmail: {}", tenantId, userId, userEmail);
+                        } else {
+                            logger.info("JwtTenantAuthenticationFilter: SUPER_ADMIN access - userId: {}, userEmail: {}", userId, userEmail);
+                        }
+                    } else {
+                        // Extract tenant ID from JWT
+                        UUID tenantId = jwtTenantExtractor.extractTenantId(jwt);
+                        logger.info("Extracted tenant ID from JWT: {}", tenantId);
+                        
+                        // Set tenant context for this request
+                        TenantContext.setTenantId(tenantId);
+                        logger.info("Set tenant context: {}", tenantId);
+                        
+                        // Log tenant context for debugging
+                        String userId = jwtTenantExtractor.extractUserId(jwt);
+                        String userEmail = jwtTenantExtractor.extractUserEmail(jwt);
+                        logger.info("JwtTenantAuthenticationFilter: SUCCESSFULLY set tenant context - tenantId: {}, userId: {}, userEmail: {}, thread: {}", 
+                                   tenantId, userId, userEmail, Thread.currentThread().getName());
+                    }
                     
                 } catch (IllegalArgumentException e) {
                     logger.error("Failed to extract tenant ID from JWT token: {}", e.getMessage(), e);

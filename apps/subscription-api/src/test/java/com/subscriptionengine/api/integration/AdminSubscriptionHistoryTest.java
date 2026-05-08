@@ -23,7 +23,7 @@ import static org.hamcrest.Matchers.*;
 public class AdminSubscriptionHistoryTest extends BaseIntegrationTest {
     
     @Step("Create tenant via admin API")
-    private UUID createTenant(String authTenantId, String name) {
+    private UUID createTenant(String name) {
         String tenantSlug = "test-tenant-" + UUID.randomUUID().toString().substring(0, 8);
         
         Map<String, Object> tenantRequest = Map.of(
@@ -32,7 +32,7 @@ public class AdminSubscriptionHistoryTest extends BaseIntegrationTest {
             "status", "ACTIVE"
         );
         
-        Response response = givenAuthenticated(authTenantId)
+        Response response = givenSuperAdmin()
             .contentType("application/json")
             .body(tenantRequest)
             .when()
@@ -46,7 +46,7 @@ public class AdminSubscriptionHistoryTest extends BaseIntegrationTest {
     }
     
     @Step("Create subscription plan")
-    private UUID createPlan(String authTenantId) {
+    private UUID createPlan() {
         Map<String, Object> planRequest = Map.of(
             "name", "Test Plan",
             "description", "Test subscription plan",
@@ -57,7 +57,7 @@ public class AdminSubscriptionHistoryTest extends BaseIntegrationTest {
             "isActive", true
         );
         
-        Response response = givenAuthenticated(authTenantId)
+        Response response = givenSuperAdmin()
             .contentType(ContentType.JSON)
             .body(planRequest)
             .when()
@@ -71,17 +71,17 @@ public class AdminSubscriptionHistoryTest extends BaseIntegrationTest {
     }
     
     @Step("Create subscription")
-    private UUID createSubscription(String authTenantId, UUID planId) {
+    private UUID createSubscription(UUID planId) {
         Map<String, Object> subscriptionRequest = Map.of(
             "planId", planId.toString(),
             "customerId", "cust_" + UUID.randomUUID().toString().substring(0, 8)
         );
         
-        Response response = givenAuthenticated(authTenantId)
+        Response response = givenSuperAdmin()
             .contentType(ContentType.JSON)
             .body(subscriptionRequest)
             .when()
-            .post("/v1/subscriptions")
+            .post("/v1/admin/subscriptions")
             .then()
             .statusCode(201)
             .extract()
@@ -95,13 +95,11 @@ public class AdminSubscriptionHistoryTest extends BaseIntegrationTest {
     @DisplayName("Test 1: Get Subscription History with Pagination")
     @Description("Verify retrieving subscription audit trail with pagination returns proper structure")
     void testGetSubscriptionHistoryWithPagination() {
-        String authTenantId = generateUniqueTenantId();
-        
         // Use a random subscription ID - endpoint should return empty history with proper structure
         UUID subscriptionId = UUID.randomUUID();
         
         // Get subscription history with pagination
-        Response response = givenAuthenticated(authTenantId)
+        Response response = givenSuperAdmin()
             .when()
             .get("/v1/admin/subscriptions/" + subscriptionId + "/history?page=0&size=10")
             .then()
@@ -121,13 +119,11 @@ public class AdminSubscriptionHistoryTest extends BaseIntegrationTest {
     @DisplayName("Test 2: Get All Subscription History")
     @Description("Verify retrieving complete subscription audit trail without pagination returns proper structure")
     void testGetAllSubscriptionHistory() {
-        String authTenantId = generateUniqueTenantId();
-        
         // Use a random subscription ID - endpoint should return empty list
         UUID subscriptionId = UUID.randomUUID();
         
         // Get all subscription history
-        Response response = givenAuthenticated(authTenantId)
+        Response response = givenSuperAdmin()
             .when()
             .get("/v1/admin/subscriptions/" + subscriptionId + "/history/all")
             .then()
@@ -143,13 +139,11 @@ public class AdminSubscriptionHistoryTest extends BaseIntegrationTest {
     @DisplayName("Test 3: Verify History Endpoint Pagination Parameters")
     @Description("Verify that history endpoint accepts different pagination parameters")
     void testHistoryPaginationParameters() {
-        String authTenantId = generateUniqueTenantId();
-        
         // Use a random subscription ID
         UUID subscriptionId = UUID.randomUUID();
         
         // Test with different page sizes
-        Response response1 = givenAuthenticated(authTenantId)
+        Response response1 = givenSuperAdmin()
             .when()
             .get("/v1/admin/subscriptions/" + subscriptionId + "/history?page=0&size=5")
             .then()
@@ -161,7 +155,7 @@ public class AdminSubscriptionHistoryTest extends BaseIntegrationTest {
         Allure.addAttachment("History Page 0 Size 5", "application/json", response1.asString());
         
         // Test with different page number
-        Response response2 = givenAuthenticated(authTenantId)
+        Response response2 = givenSuperAdmin()
             .when()
             .get("/v1/admin/subscriptions/" + subscriptionId + "/history?page=1&size=20")
             .then()

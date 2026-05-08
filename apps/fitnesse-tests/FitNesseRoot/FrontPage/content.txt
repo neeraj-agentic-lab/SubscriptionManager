@@ -1,0 +1,67 @@
+!contents -R2 -g -p -f -h
+
+!1 Subscription Manager FitNesse Tests
+
+Welcome to the FitNesse functional test suite for the Subscription Manager API.
+
+!2 Test Suites
+
+!3 [[AdminScenarios][AdminScenarios]]
+End-to-end admin workflow scenarios including tenant onboarding, user management, subscription lifecycle, delivery management, webhooks, and audit trails.
+
+**Total Scenarios:** 10
+**Coverage:** Tenant management, user management, subscriptions, deliveries, webhooks, API clients, audit trails
+
+!3 [[CustomerScenarios][CustomerScenarios]]
+End-to-end customer self-service scenarios including plan browsing, self-signup, subscription management, and delivery control.
+
+**Total Scenarios:** 2
+**Coverage:** Customer dashboard, self-signup, subscription management, delivery management
+
+!2 Test Coverage Summary
+
+| Category | Scenarios | Status |
+| Admin - Tenant & Users | 5 scenarios | ✅ Complete |
+| Admin - Subscriptions | 3 scenarios | ✅ Complete |
+| Admin - Deliveries & Webhooks | 2 scenarios | ✅ Complete |
+| Customer Self-Service | 2 scenarios | ✅ Complete |
+| **Total** | **12 scenarios** | **✅ Complete** |
+
+!2 Getting Started
+
+To run tests:
+ 1. Ensure the Subscription API is running on http://localhost:8080
+ 2. Ensure PostgreSQL database is accessible
+ 3. Click on a test suite above (AdminScenarios or CustomerScenarios)
+ 4. Click the "Suite" button to run all tests in the suite
+ 5. Or click individual test pages to run specific tests
+
+!2 Configuration
+
+Base API URL: http://localhost:8080
+FitNesse Port: 9090
+Test System: Slim
+Fixtures: RestApiFixture (REST API client)
+
+!2 Key Features Tested
+
+**Admin Capabilities:**
+- Tenant onboarding and isolation
+- User management and bulk operations
+- Subscription lifecycle (create, pause, resume, cancel, modify)
+- Subscription history and audit trails
+- Delivery management and cancellation
+- Webhook management for integrations
+- API client lifecycle management
+- Multi-tenant user workflows
+
+**Customer Capabilities:**
+- Browse available plans (public endpoint)
+- Self-signup and subscription creation
+- View subscription dashboard
+- Manage subscriptions (pause, resume, cancel)
+- View and manage deliveries
+
+!2 Documentation
+
+For more information, see the [[README][https://github.com/neeraj-agentic-lab/SubscriptionManager/tree/main/apps/fitnesse-tests]]

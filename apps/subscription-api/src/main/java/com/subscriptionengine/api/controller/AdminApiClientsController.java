@@ -1,5 +1,7 @@
 package com.subscriptionengine.api.controller;
 
+import com.subscriptionengine.auth.TenantContext;
+import com.subscriptionengine.auth.TenantSecured;
 import com.subscriptionengine.generated.tables.daos.ApiClientsDao;
 import com.subscriptionengine.generated.tables.pojos.ApiClients;
 import io.swagger.v3.oas.annotations.Operation;
@@ -140,12 +142,56 @@ public class AdminApiClientsController {
     }
     
     /**
-     * List all API clients for a tenant.
+     * List API clients for current tenant (tenant-scoped).
+     */
+    @GetMapping("/tenant")
+    @TenantSecured
+    @Operation(
+        summary = "List API clients for current tenant",
+        description = "Retrieves a paginated list of API clients for the current tenant. Automatically filters by tenant context from X-Tenant-Id header."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "API clients retrieved successfully",
+            content = @Content(schema = @Schema(implementation = Page.class))
+        )
+    })
+    public ResponseEntity<Page<ApiClientResponse>> listApiClientsForTenant(
+        @Parameter(description = "Pagination parameters")
+        @PageableDefault(size = 20) Pageable pageable) {
+        
+        UUID tenantId = TenantContext.getRequiredTenantId();
+        logger.info("Listing API clients for current tenant: {}", tenantId);
+        
+        List<ApiClients> clients = dsl.selectFrom(API_CLIENTS)
+                .where(API_CLIENTS.TENANT_ID.eq(tenantId))
+                .orderBy(API_CLIENTS.CREATED_AT.desc())
+                .limit(pageable.getPageSize())
+                .offset((int) pageable.getOffset())
+                .fetchInto(ApiClients.class);
+        
+        long totalCount = dsl.selectCount()
+                .from(API_CLIENTS)
+                .where(API_CLIENTS.TENANT_ID.eq(tenantId))
+                .fetchOne(0, Long.class);
+        
+        List<ApiClientResponse> responses = clients.stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+        
+        Page<ApiClientResponse> page = new PageImpl<>(responses, pageable, totalCount);
+        
+        return ResponseEntity.ok(page);
+    }
+    
+    /**
+     * List all API clients (super admin view - can filter by tenant or see all).
      */
     @GetMapping
     @Operation(
-        summary = "List API clients",
-        description = "Retrieves a paginated list of API clients with usage statistics. Does NOT include client secrets."
+        summary = "List API clients (super admin)",
+        description = "Retrieves a paginated list of API clients with usage statistics. Super admin can optionally filter by tenant or see all. Does NOT include client secrets."
     )
     @ApiResponses(value = {
         @ApiResponse(
@@ -155,7 +201,7 @@ public class AdminApiClientsController {
         )
     })
     public ResponseEntity<Page<ApiClientResponse>> listApiClients(
-        @Parameter(description = "Tenant ID to filter clients")
+        @Parameter(description = "Tenant ID to filter clients (optional - super admin can see all)")
         @RequestParam(required = false) UUID tenantId,
         @Parameter(description = "Pagination parameters")
         @PageableDefault(size = 20) Pageable pageable) {

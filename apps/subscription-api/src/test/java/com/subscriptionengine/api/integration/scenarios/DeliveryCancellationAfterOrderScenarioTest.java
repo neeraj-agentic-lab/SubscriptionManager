@@ -32,11 +32,12 @@ class DeliveryCancellationAfterOrderScenarioTest extends BaseIntegrationTest {
     @Description("Validates business rules: order placed → cancellation attempted → rejected → proper error message")
     @Severity(SeverityLevel.NORMAL)
     void shouldRejectCancellationAfterOrderPlaced() {
-        String tenantId = TestDataFactory.DEFAULT_TENANT_ID;
+        String tenantId = createTestTenant();
         
-        UUID customerId = createCustomer(tenantId);
         UUID planId = createPlan(tenantId);
-        UUID subscriptionId = createSubscription(tenantId, customerId, planId);
+        Map<String, UUID> subResult = createSubscriptionWithCustomer(tenantId, planId);
+        UUID subscriptionId = subResult.get("subscriptionId");
+        UUID customerId = subResult.get("customerId");
         UUID deliveryId = createDeliveryWithOrder(tenantId, subscriptionId, customerId);
         
         step1_VerifyOrderPlaced(tenantId, deliveryId);
@@ -63,7 +64,7 @@ class DeliveryCancellationAfterOrderScenarioTest extends BaseIntegrationTest {
         Response response = givenAuthenticated(tenantId)
             .body(cancelRequest)
             .when()
-            .post("/v1/deliveries/" + deliveryId + "/cancel")
+            .post("/v1/admin/deliveries/" + deliveryId + "/cancel")
             .then()
             .statusCode(400)
             .extract()
@@ -78,31 +79,34 @@ class DeliveryCancellationAfterOrderScenarioTest extends BaseIntegrationTest {
         Allure.addAttachment("Business Rule", "text/plain", "Cancellation rejected - order already placed with external system");
     }
     
-    private UUID createCustomer(String tenantId) {
-        Map<String, Object> customerRequest = TestDataFactory.createCustomerRequest();
-        Response response = givenAuthenticated(tenantId).body(customerRequest).when().post("/v1/customers").then().statusCode(200).extract().response();
-        return UUID.fromString(response.jsonPath().getString("data.customerId"));
+    private String createTestTenant() {
+        Map<String, Object> tenantRequest = Map.of("name", "Test Tenant " + UUID.randomUUID().toString().substring(0, 8), "slug", "test-" + UUID.randomUUID().toString().substring(0, 8), "status", "ACTIVE");
+        Response response = givenSuperAdmin().contentType("application/json").body(tenantRequest).when().post("/v1/admin/tenants").then().statusCode(201).extract().response();
+        return response.jsonPath().getString("id");
     }
-    
+
     private UUID createPlan(String tenantId) {
         Map<String, Object> planRequest = TestDataFactory.createPlanRequest();
-        Response response = givenAuthenticated(tenantId).body(planRequest).when().post("/v1/plans").then().statusCode(200).extract().response();
-        return UUID.fromString(response.jsonPath().getString("data.planId"));
+        Response response = givenAuthenticated(tenantId).body(planRequest).when().post("/v1/admin/plans").then().statusCode(201).extract().response();
+        return UUID.fromString(response.jsonPath().getString("id"));
     }
     
-    private UUID createSubscription(String tenantId, UUID customerId, UUID planId) {
-        Map<String, Object> subscriptionRequest = TestDataFactory.createSubscriptionRequest(customerId, planId);
-        Response response = givenAuthenticated(tenantId).body(subscriptionRequest).when().post("/v1/subscriptions").then().statusCode(200).extract().response();
-        return UUID.fromString(response.jsonPath().getString("data.subscriptionId"));
+    private Map<String, UUID> createSubscriptionWithCustomer(String tenantId, UUID planId) {
+        Map<String, Object> subscriptionRequest = TestDataFactory.createSubscriptionRequest(UUID.randomUUID(), planId);
+        Response response = givenAuthenticated(tenantId).body(subscriptionRequest).when().post("/v1/admin/subscriptions").then().statusCode(201).extract().response();
+        Map<String, UUID> result = new java.util.HashMap<>();
+        result.put("subscriptionId", UUID.fromString(response.jsonPath().getString("id")));
+        result.put("customerId", UUID.fromString(response.jsonPath().getString("customerId")));
+        return result;
     }
     
     private UUID createDeliveryWithOrder(String tenantId, UUID subscriptionId, UUID customerId) {
         UUID deliveryId = UUID.randomUUID();
         jdbcTemplate.update(
-            "INSERT INTO delivery_instances (id, tenant_id, subscription_id, cycle_key, status, scheduled_date, external_order_ref, created_at, updated_at) " +
-            "VALUES (?::uuid, ?::uuid, ?::uuid, ?, 'PENDING', ?, ?, now(), now())",
+            "INSERT INTO delivery_instances (id, tenant_id, subscription_id, cycle_key, status, scheduled_for, snapshot, external_order_ref, created_at, updated_at) " +
+            "VALUES (?::uuid, ?::uuid, ?::uuid, ?, 'PENDING', ?::timestamp with time zone, ?::jsonb, ?, now(), now())",
             deliveryId.toString(), tenantId, subscriptionId.toString(), "cycle_" + System.currentTimeMillis(),
-            OffsetDateTime.now().plusDays(1).toString(), "order_" + UUID.randomUUID().toString().substring(0, 8)
+            OffsetDateTime.now().plusDays(1).toString(), "{\"test\": true}", "order_" + UUID.randomUUID().toString().substring(0, 8)
         );
         return deliveryId;
     }

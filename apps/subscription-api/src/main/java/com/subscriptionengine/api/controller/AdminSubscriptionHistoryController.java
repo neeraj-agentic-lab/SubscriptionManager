@@ -8,8 +8,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -24,6 +28,7 @@ import java.util.stream.Collectors;
 public class AdminSubscriptionHistoryController {
     
     private final SubscriptionHistoryService subscriptionHistoryService;
+    private final ObjectMapper objectMapper = new ObjectMapper();
     
     public AdminSubscriptionHistoryController(SubscriptionHistoryService subscriptionHistoryService) {
         this.subscriptionHistoryService = subscriptionHistoryService;
@@ -85,19 +90,20 @@ public class AdminSubscriptionHistoryController {
         response.setPerformedBy(history.getPerformedBy());
         response.setPerformedByType(history.getPerformedByType());
         response.setPerformedAt(history.getPerformedAt() != null ? 
-            OffsetDateTime.parse(history.getPerformedAt().toString()) : null);
+            history.getPerformedAt().atOffset(java.time.ZoneOffset.UTC) : null);
         response.setNotes(history.getNotes());
         response.setCreatedAt(history.getCreatedAt() != null ? 
-            OffsetDateTime.parse(history.getCreatedAt().toString()) : null);
+            history.getCreatedAt().atOffset(java.time.ZoneOffset.UTC) : null);
         
         // Parse metadata JSONB if present
         if (history.getMetadata() != null) {
             try {
                 String metadataJson = history.getMetadata().data();
-                // Simple parsing - in production use Jackson
-                response.setMetadata(java.util.Map.of("raw", metadataJson));
+                Map<String, Object> metadata = objectMapper.readValue(metadataJson, new TypeReference<Map<String, Object>>() {});
+                response.setMetadata(metadata);
             } catch (Exception e) {
-                // Ignore parsing errors
+                // Fallback to raw string wrapper
+                response.setMetadata(Map.of("raw", history.getMetadata().data()));
             }
         }
         

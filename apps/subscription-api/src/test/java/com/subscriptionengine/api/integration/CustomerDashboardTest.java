@@ -48,7 +48,7 @@ class CustomerDashboardTest extends BaseIntegrationTest {
         // List customer subscriptions
         Response response = givenAuthenticated(tenantId)
             .when()
-            .get("/v1/customers/" + customerId + "/subscriptions")
+            .get("/v1/customers/me/subscriptions?customerId=" + customerId)
             .then()
             .statusCode(200)
             .extract()
@@ -83,7 +83,7 @@ class CustomerDashboardTest extends BaseIntegrationTest {
         // Get dashboard
         Response response = givenAuthenticated(tenantId)
             .when()
-            .get("/v1/customers/" + customerId + "/subscriptions/" + subscriptionId + "/dashboard")
+            .get("/v1/customers/me/subscriptions/" + subscriptionId + "/dashboard?customerId=" + customerId)
             .then()
             .statusCode(200)
             .extract()
@@ -123,7 +123,7 @@ class CustomerDashboardTest extends BaseIntegrationTest {
         // Get dashboard
         Response response = givenAuthenticated(tenantId)
             .when()
-            .get("/v1/customers/" + customerId + "/subscriptions/" + subscriptionId + "/dashboard")
+            .get("/v1/customers/me/subscriptions/" + subscriptionId + "/dashboard?customerId=" + customerId)
             .then()
             .statusCode(200)
             .extract()
@@ -157,7 +157,7 @@ class CustomerDashboardTest extends BaseIntegrationTest {
         // Get dashboard
         Response response = givenAuthenticated(tenantId)
             .when()
-            .get("/v1/customers/" + customerId + "/subscriptions/" + subscriptionId + "/dashboard")
+            .get("/v1/customers/me/subscriptions/" + subscriptionId + "/dashboard?customerId=" + customerId)
             .then()
             .statusCode(200)
             .extract()
@@ -185,7 +185,7 @@ class CustomerDashboardTest extends BaseIntegrationTest {
         
         givenAuthenticated(tenantId)
             .when()
-            .get("/v1/customers/" + customerId + "/subscriptions/" + nonExistentSubId + "/dashboard")
+            .get("/v1/customers/me/subscriptions/" + nonExistentSubId + "/dashboard?customerId=" + customerId)
             .then()
             .statusCode(404);
     }
@@ -206,7 +206,7 @@ class CustomerDashboardTest extends BaseIntegrationTest {
         // Try to access customer1's subscription as customer2
         givenAuthenticated(tenantId)
             .when()
-            .get("/v1/customers/" + customer2.get("customerId") + "/subscriptions/" + sub1 + "/dashboard")
+            .get("/v1/customers/me/subscriptions/" + sub1 + "/dashboard?customerId=" + UUID.fromString(customer2.get("customerId")))
             .then()
             .statusCode(404);
     }
@@ -220,7 +220,7 @@ class CustomerDashboardTest extends BaseIntegrationTest {
         Response response = givenAuthenticated(tenantId)
             .body(customerRequest)
             .when()
-            .post("/v1/customers")
+            .post("/v1/admin/customers")
             .then()
             .statusCode(200)
             .extract()
@@ -243,7 +243,7 @@ class CustomerDashboardTest extends BaseIntegrationTest {
         Response response = givenAuthenticated(tenantId)
             .body(planRequest)
             .when()
-            .post("/v1/plans")
+            .post("/v1/admin/plans")
             .then()
             .statusCode(201)
             .extract()
@@ -262,7 +262,7 @@ class CustomerDashboardTest extends BaseIntegrationTest {
         Response response = givenAuthenticated(tenantId)
             .body(subscriptionRequest)
             .when()
-            .post("/v1/subscriptions")
+            .post("/v1/admin/subscriptions")
             .then()
             .statusCode(201)
             .extract()
@@ -281,7 +281,7 @@ class CustomerDashboardTest extends BaseIntegrationTest {
         givenAuthenticated(tenantId)
             .body(pauseRequest)
             .when()
-            .put("/v1/subscription-mgmt/" + subscriptionId)
+            .put("/v1/admin/subscriptions/manage/" + subscriptionId)
             .then()
             .statusCode(200);
     }
@@ -297,7 +297,7 @@ class CustomerDashboardTest extends BaseIntegrationTest {
         givenAuthenticated(tenantId)
             .body(cancelRequest)
             .when()
-            .put("/v1/subscription-mgmt/" + subscriptionId)
+            .put("/v1/admin/subscriptions/manage/" + subscriptionId)
             .then()
             .statusCode(200);
     }
@@ -313,11 +313,11 @@ class CustomerDashboardTest extends BaseIntegrationTest {
             "status", "ACTIVE"
         );
         
-        Response response = givenAuthenticated(tenantId.toString())
+        Response response = givenSuperAdmin()
             .contentType("application/json")
             .body(tenantRequest)
             .when()
-            .post("/v1/tenants")
+            .post("/v1/admin/tenants")
             .then()
             .statusCode(201)
             .extract()

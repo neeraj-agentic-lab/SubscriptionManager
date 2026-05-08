@@ -37,7 +37,7 @@ class SecurityAndErrorHandlingTest extends BaseIntegrationTest {
         Response response = given()
             .contentType("application/json")
             .when()
-            .get("/v1/subscriptions")
+            .get("/v1/admin/subscriptions")
             .then()
             .statusCode(401)
             .extract()
@@ -56,7 +56,7 @@ class SecurityAndErrorHandlingTest extends BaseIntegrationTest {
             .contentType("application/json")
             .header("Authorization", "Bearer invalid.jwt.token")
             .when()
-            .get("/v1/subscriptions")
+            .get("/v1/admin/subscriptions")
             .then()
             .statusCode(401)
             .extract()
@@ -82,7 +82,7 @@ class SecurityAndErrorHandlingTest extends BaseIntegrationTest {
         // Try to access from tenant2 (should return 404 due to tenant isolation)
         givenAuthenticated(tenant2)
             .when()
-            .get("/v1/subscriptions/" + sub1)
+            .get("/v1/admin/subscriptions/" + sub1)
             .then()
             .statusCode(404);
     }
@@ -104,7 +104,7 @@ class SecurityAndErrorHandlingTest extends BaseIntegrationTest {
         givenAuthenticated(tenantId)
             .body(invalidRequest)
             .when()
-            .post("/v1/subscriptions")
+            .post("/v1/admin/subscriptions")
             .then()
             .statusCode(400);
     }
@@ -120,7 +120,7 @@ class SecurityAndErrorHandlingTest extends BaseIntegrationTest {
         
         givenAuthenticated(tenantId)
             .when()
-            .get("/v1/subscriptions/" + nonExistentId)
+            .get("/v1/admin/subscriptions/" + nonExistentId)
             .then()
             .statusCode(404);
     }
@@ -135,7 +135,7 @@ class SecurityAndErrorHandlingTest extends BaseIntegrationTest {
         
         Response response = givenAuthenticated(tenantId)
             .when()
-            .get("/v1/subscriptions/not-a-valid-uuid")
+            .get("/v1/admin/subscriptions/not-a-valid-uuid")
             .then()
             .statusCode(400)
             .extract()
@@ -160,7 +160,7 @@ class SecurityAndErrorHandlingTest extends BaseIntegrationTest {
         givenAuthenticated(tenantId)
             .body(invalidCustomer)
             .when()
-            .post("/v1/customers")
+            .post("/v1/admin/customers")
             .then()
             .statusCode(400);
     }
@@ -179,7 +179,7 @@ class SecurityAndErrorHandlingTest extends BaseIntegrationTest {
         givenAuthenticated(tenantId)
             .body(customer1)
             .when()
-            .post("/v1/customers")
+            .post("/v1/admin/customers")
             .then()
             .statusCode(200);
         
@@ -188,7 +188,7 @@ class SecurityAndErrorHandlingTest extends BaseIntegrationTest {
         Response response = givenAuthenticated(tenantId)
             .body(customer2)
             .when()
-            .post("/v1/customers")
+            .post("/v1/admin/customers")
             .then()
             .statusCode(409)
             .extract()
@@ -216,7 +216,7 @@ class SecurityAndErrorHandlingTest extends BaseIntegrationTest {
         givenAuthenticated(tenantId)
             .body(invalidWebhook)
             .when()
-            .post("/v1/webhooks")
+            .post("/v1/admin/webhooks")
             .then()
             .statusCode(200);
     }
@@ -241,7 +241,7 @@ class SecurityAndErrorHandlingTest extends BaseIntegrationTest {
         givenAuthenticated(tenantId)
             .body(pauseRequest)
             .when()
-            .put("/v1/subscription-mgmt/" + subscriptionId)
+            .put("/v1/admin/subscriptions/manage/" + subscriptionId)
             .then()
             .statusCode(200);
         
@@ -249,7 +249,7 @@ class SecurityAndErrorHandlingTest extends BaseIntegrationTest {
         Response response = givenAuthenticated(tenantId)
             .body(pauseRequest)
             .when()
-            .put("/v1/subscription-mgmt/" + subscriptionId)
+            .put("/v1/admin/subscriptions/manage/" + subscriptionId)
             .then()
             .statusCode(400)
             .extract()
@@ -273,7 +273,7 @@ class SecurityAndErrorHandlingTest extends BaseIntegrationTest {
         givenAuthenticated(tenantId)
             .body(invalidPlan)
             .when()
-            .post("/v1/plans")
+            .post("/v1/admin/plans")
             .then()
             .statusCode(400);
     }
@@ -295,7 +295,7 @@ class SecurityAndErrorHandlingTest extends BaseIntegrationTest {
         givenAuthenticated(tenantId)
             .body(invalidRequest)
             .when()
-            .post("/v1/subscriptions")
+            .post("/v1/admin/subscriptions")
             .then()
             .statusCode(400);
     }
@@ -323,7 +323,7 @@ class SecurityAndErrorHandlingTest extends BaseIntegrationTest {
         Response response = givenAuthenticated(tenantId)
             .body(pauseRequest)
             .when()
-            .put("/v1/subscription-mgmt/" + sub1)
+            .put("/v1/admin/subscriptions/manage/" + sub1)
             .then()
             .statusCode(400)
             .extract()
@@ -342,7 +342,7 @@ class SecurityAndErrorHandlingTest extends BaseIntegrationTest {
         Response response = givenAuthenticated(tenantId)
             .body(customerRequest)
             .when()
-            .post("/v1/customers")
+            .post("/v1/admin/customers")
             .then()
             .statusCode(200)
             .extract()
@@ -360,7 +360,7 @@ class SecurityAndErrorHandlingTest extends BaseIntegrationTest {
         Response response = givenAuthenticated(tenantId)
             .body(planRequest)
             .when()
-            .post("/v1/plans")
+            .post("/v1/admin/plans")
             .then()
             .statusCode(201)
             .extract()
@@ -379,7 +379,7 @@ class SecurityAndErrorHandlingTest extends BaseIntegrationTest {
         Response response = givenAuthenticated(tenantId)
             .body(subscriptionRequest)
             .when()
-            .post("/v1/subscriptions")
+            .post("/v1/admin/subscriptions")
             .then()
             .statusCode(201)
             .extract()
@@ -399,11 +399,11 @@ class SecurityAndErrorHandlingTest extends BaseIntegrationTest {
             "status", "ACTIVE"
         );
         
-        Response response = givenAuthenticated(tenantId.toString())
+        Response response = givenSuperAdmin()
             .contentType("application/json")
             .body(tenantRequest)
             .when()
-            .post("/v1/tenants")
+            .post("/v1/admin/tenants")
             .then()
             .statusCode(201)
             .extract()

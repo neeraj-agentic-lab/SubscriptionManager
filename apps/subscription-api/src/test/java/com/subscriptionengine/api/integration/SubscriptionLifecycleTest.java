@@ -82,7 +82,7 @@ class SubscriptionLifecycleTest extends BaseIntegrationTest {
         // Verify subscription is paused
         Response response = givenAuthenticated(tenantId)
             .when()
-            .get("/v1/subscriptions/" + subscriptionId)
+            .get("/v1/admin/subscriptions/" + subscriptionId)
             .then()
             .statusCode(200)
             .extract()
@@ -112,7 +112,7 @@ class SubscriptionLifecycleTest extends BaseIntegrationTest {
         // Verify subscription has next renewal scheduled
         Response response = givenAuthenticated(tenantId)
             .when()
-            .get("/v1/subscriptions/" + subscriptionId)
+            .get("/v1/admin/subscriptions/" + subscriptionId)
             .then()
             .statusCode(200)
             .extract()
@@ -146,14 +146,14 @@ class SubscriptionLifecycleTest extends BaseIntegrationTest {
         givenAuthenticated(tenantId)
             .body(cancelRequest)
             .when()
-            .put("/v1/subscription-mgmt/" + subscriptionId)
+            .put("/v1/admin/subscriptions/manage/" + subscriptionId)
             .then()
             .statusCode(200);
         
         // Verify canceled
         Response response = givenAuthenticated(tenantId)
             .when()
-            .get("/v1/subscriptions/" + subscriptionId)
+            .get("/v1/admin/subscriptions/" + subscriptionId)
             .then()
             .statusCode(200)
             .extract()
@@ -187,14 +187,14 @@ class SubscriptionLifecycleTest extends BaseIntegrationTest {
         givenAuthenticated(tenantId)
             .body(cancelRequest)
             .when()
-            .put("/v1/subscription-mgmt/" + subscriptionId)
+            .put("/v1/admin/subscriptions/manage/" + subscriptionId)
             .then()
             .statusCode(200);
         
         // Verify still active but flagged for cancellation
         Response response = givenAuthenticated(tenantId)
             .when()
-            .get("/v1/subscriptions/" + subscriptionId)
+            .get("/v1/admin/subscriptions/" + subscriptionId)
             .then()
             .statusCode(200)
             .extract()
@@ -214,7 +214,7 @@ class SubscriptionLifecycleTest extends BaseIntegrationTest {
         Response response = givenAuthenticated(tenantId)
             .body(planRequest)
             .when()
-            .post("/v1/plans")
+            .post("/v1/admin/plans")
             .then()
             .statusCode(201)
             .extract()
@@ -233,7 +233,7 @@ class SubscriptionLifecycleTest extends BaseIntegrationTest {
         Response response = givenAuthenticated(tenantId)
             .body(customerRequest)
             .when()
-            .post("/v1/customers")
+            .post("/v1/admin/customers")
             .then()
             .statusCode(200)
             .extract()
@@ -256,11 +256,16 @@ class SubscriptionLifecycleTest extends BaseIntegrationTest {
         Response response = givenAuthenticated(tenantId)
             .body(subscriptionRequest)
             .when()
-            .post("/v1/subscriptions")
+            .post("/v1/admin/subscriptions")
             .then()
-            .statusCode(201)
             .extract()
             .response();
+        
+        System.out.println("=== CREATE SUBSCRIPTION RESPONSE ===");
+        System.out.println("Status: " + response.statusCode());
+        System.out.println("Body: " + response.asString());
+        System.out.println("=== END RESPONSE ===");
+        assertThat(response.statusCode()).as("Create subscription status").isEqualTo(201);
         
         String subscriptionId = response.jsonPath().getString("id");
         Allure.addAttachment("Subscription Created", "application/json", response.asString());
@@ -278,11 +283,16 @@ class SubscriptionLifecycleTest extends BaseIntegrationTest {
         Response response = givenAuthenticated(tenantId)
             .body(pauseRequest)
             .when()
-            .put("/v1/subscription-mgmt/" + subscriptionId)
+            .put("/v1/admin/subscriptions/manage/" + subscriptionId)
             .then()
-            .statusCode(200)
             .extract()
             .response();
+        
+        System.out.println("=== PAUSE SUBSCRIPTION RESPONSE ===");
+        System.out.println("Status: " + response.statusCode());
+        System.out.println("Body: " + response.asString());
+        System.out.println("=== END PAUSE RESPONSE ===");
+        assertThat(response.statusCode()).as("Pause subscription status").isEqualTo(200);
         
         Allure.addAttachment("Subscription Paused", "application/json", response.asString());
     }
@@ -297,7 +307,7 @@ class SubscriptionLifecycleTest extends BaseIntegrationTest {
         Response response = givenAuthenticated(tenantId)
             .body(resumeRequest)
             .when()
-            .put("/v1/subscription-mgmt/" + subscriptionId)
+            .put("/v1/admin/subscriptions/manage/" + subscriptionId)
             .then()
             .statusCode(200)
             .extract()
@@ -317,7 +327,7 @@ class SubscriptionLifecycleTest extends BaseIntegrationTest {
         Response response = givenAuthenticated(tenantId)
             .body(cancelRequest)
             .when()
-            .put("/v1/subscription-mgmt/" + subscriptionId)
+            .put("/v1/admin/subscriptions/manage/" + subscriptionId)
             .then()
             .statusCode(200)
             .extract()
@@ -330,7 +340,7 @@ class SubscriptionLifecycleTest extends BaseIntegrationTest {
     private void verifySubscriptionStatus(String tenantId, UUID subscriptionId, String expectedStatus) {
         Response response = givenAuthenticated(tenantId)
             .when()
-            .get("/v1/subscriptions/" + subscriptionId)
+            .get("/v1/admin/subscriptions/" + subscriptionId)
             .then()
             .statusCode(200)
             .extract()
@@ -353,11 +363,11 @@ class SubscriptionLifecycleTest extends BaseIntegrationTest {
             "status", "ACTIVE"
         );
         
-        Response response = givenAuthenticated(tenantId.toString())
+        Response response = givenSuperAdmin()
             .contentType("application/json")
             .body(tenantRequest)
             .when()
-            .post("/v1/tenants")
+            .post("/v1/admin/tenants")
             .then()
             .statusCode(201)
             .extract()

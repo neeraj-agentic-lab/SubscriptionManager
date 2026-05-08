@@ -37,20 +37,18 @@ public class CustomerSelfServiceTest extends BaseIntegrationTest {
     
     @BeforeEach
     void setUpCustomerTest() {
-        tenantId = generateUniqueTenantId();
+        // Create a real tenant via API
+        tenantId = createTenantViaApi();
         customerId = UUID.randomUUID().toString();
         customerUserId = UUID.randomUUID().toString();
         // Use unique email per test to avoid conflicts
         customerEmail = "customer-" + tenantId.substring(0, 8) + "@example.com";
         
-        // Create tenant
-        createTenant(tenantId);
-        
         // Create user record for the customer (required for foreign key constraints)
         createUser(tenantId, customerUserId, customerEmail, "CUSTOMER");
         
         // Create a plan for subscription tests
-        planId = createPlan(tenantId);
+        planId = createPlanViaApi(tenantId);
     }
     
     @Test
@@ -313,8 +311,11 @@ public class CustomerSelfServiceTest extends BaseIntegrationTest {
         // Try to access with customer2's JWT
         String customer2Id = UUID.randomUUID().toString();
         String customer2UserId = UUID.randomUUID().toString();
+        String customer2Email = "customer2-" + customer2Id.substring(0, 8) + "@example.com";
+        createUser(tenantId, customer2UserId, customer2Email, "CUSTOMER");
+        
         String jwt = JwtTestHelper.generateTokenWithRole(
-            tenantId, customer2UserId, "customer2@example.com", "CUSTOMER", customer2Id
+            tenantId, customer2UserId, customer2Email, "CUSTOMER", customer2Id
         );
         
         given()
@@ -329,23 +330,21 @@ public class CustomerSelfServiceTest extends BaseIntegrationTest {
     
     // Helper methods
     
-    private void createTenant(String tenantId) {
-        String adminJwt = JwtTestHelper.generateTokenWithRole(
-            tenantId, UUID.randomUUID().toString(), "admin@example.com", "SUPER_ADMIN", null
-        );
-        
+    private String createTenantViaApi() {
         Map<String, Object> tenant = new HashMap<>();
-        tenant.put("id", tenantId);
         tenant.put("name", "Test Tenant");
         tenant.put("slug", "test-tenant-" + UUID.randomUUID().toString().substring(0, 8));
+        tenant.put("status", "ACTIVE");
         
-        given()
-            .header("Authorization", "Bearer " + adminJwt)
+        Response response = givenSuperAdmin()
             .body(tenant)
         .when()
             .post("/v1/admin/tenants")
         .then()
-            .statusCode(anyOf(is(200), is(201)));
+            .statusCode(201)
+            .extract().response();
+        
+        return response.jsonPath().getString("id");
     }
     
     private void createUser(String tenantId, String userId, String email, String role) {
@@ -370,9 +369,8 @@ public class CustomerSelfServiceTest extends BaseIntegrationTest {
             .execute();
         
         // Also insert into user_tenants to associate user with tenant
-        // Note: user_tenants.role uses tenant-level permissions (OWNER, ADMIN, MEMBER, VIEWER)
-        // while users.role uses system-level roles (SUPER_ADMIN, TENANT_ADMIN, STAFF, CUSTOMER)
-        String tenantRole = role.equals("CUSTOMER") ? "MEMBER" : "ADMIN";
+        // Unified roles: TENANT_ADMIN, TENANT_USER, CUSTOMER
+        String tenantRole = role;
         
         dsl.insertInto(table("user_tenants"))
             .set(field("id"), UUID.randomUUID())
@@ -386,11 +384,7 @@ public class CustomerSelfServiceTest extends BaseIntegrationTest {
             .execute();
     }
     
-    private String createPlan(String tenantId) {
-        String adminJwt = JwtTestHelper.generateTokenWithRole(
-            tenantId, UUID.randomUUID().toString(), "admin@example.com", "TENANT_ADMIN", null
-        );
-        
+    private String createPlanViaApi(String tenantId) {
         Map<String, Object> plan = new HashMap<>();
         plan.put("name", "Test Plan");
         plan.put("description", "Test plan for customer tests");
@@ -400,19 +394,13 @@ public class CustomerSelfServiceTest extends BaseIntegrationTest {
         plan.put("billingIntervalCount", 1);
         plan.put("planCategory", "DIGITAL");
         
-        Response response = given()
-            .header("Authorization", "Bearer " + adminJwt)
+        Response response = givenAuthenticated(tenantId)
             .body(plan)
         .when()
             .post("/v1/admin/plans")
         .then()
-            .statusCode(anyOf(is(200), is(201)))
+            .statusCode(201)
             .extract().response();
-        
-        // Debug: print response body
-        System.out.println("=== Plan Creation Response ===");
-        System.out.println(response.asString());
-        System.out.println("==============================");
         
         String planId = response.path("id");
         if (planId == null) {

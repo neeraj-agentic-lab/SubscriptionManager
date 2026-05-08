@@ -1,0 +1,25 @@
+# FitNesse generated files
+FitNesseRoot/files/
+FitNesseRoot/RecentChanges/
+FitNesseRoot/updateList
+FitNesseRoot/updateDoNotCopyOverList
+FitNesseRoot/properties
+FitNesseRoot/ErrorLogs/
+
+# Keep wiki content but ignore generated files
+!FitNesseRoot/FrontPage/
+!FitNesseRoot/SubscriptionTests/
+!FitNesseRoot/PlanTests/
+!FitNesseRoot/BillingTests/
+
+# Build files
+build/
+.gradle/
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+
+# Logs
+*.log

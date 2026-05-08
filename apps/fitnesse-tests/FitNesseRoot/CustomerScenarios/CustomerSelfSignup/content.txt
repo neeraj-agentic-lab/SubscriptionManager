@@ -1,0 +1,117 @@
+!define TEST_SYSTEM {slim}
+
+!path build/fitnesse-lib/*.jar
+!path build/classes/java/main
+!path build/resources/main
+
+!|import|
+|com.subscriptionengine.fitnesse.fixtures|
+
+!1 Customer Self-Signup (P0)
+
+This test validates customer self-service signup flow where customers can browse plans and create their own subscriptions.
+
+!2 Step 1: Login as Super Admin
+
+!|script|RestApiFixture|
+|$ts=|timestamp|
+|post to|/v1/auth/login|with body|!-{"email":"admin@subscriptionengine.com","password":"ChangeMe123!"}-!|
+|check|status code|200|
+|show|response body|
+|$token=|json value|token|
+
+!2 Step 2: Create Test Tenant
+
+!|script|RestApiFixture|
+|set auth token|$token|
+|post to|/v1/admin/tenants|with body|{"name":"SelfSignup-$ts","slug":"self-signup-$ts"}|
+|check|status code|201|
+|show|response body|
+|$tenantId=|json value|id|
+
+!2 Step 3: Create Basic Plan
+
+!|script|RestApiFixture|
+|set auth token|$token|
+|set header name value|X-Tenant-Id:$tenantId|
+|post to|/v1/admin/plans|with body|{"name":"Basic Plan","billingInterval":"MONTHLY","basePriceCents":999,"currency":"USD"}|
+|check|status code|201|
+|show|response body|
+|$basicPlanId=|json value|id|
+
+!2 Step 4: Create Pro Plan
+
+!|script|RestApiFixture|
+|set auth token|$token|
+|set header name value|X-Tenant-Id:$tenantId|
+|post to|/v1/admin/plans|with body|{"name":"Pro Plan","billingInterval":"MONTHLY","basePriceCents":2999,"currency":"USD"}|
+|check|status code|201|
+|show|response body|
+|$proPlanId=|json value|id|
+
+!2 Step 5: Create Enterprise Plan
+
+!|script|RestApiFixture|
+|set auth token|$token|
+|set header name value|X-Tenant-Id:$tenantId|
+|post to|/v1/admin/plans|with body|{"name":"Enterprise Plan","billingInterval":"YEARLY","basePriceCents":29999,"currency":"USD"}|
+|check|status code|201|
+|show|response body|
+|$enterprisePlanId=|json value|id|
+
+!|Comment|
+|Step 6: Browse Available Plans - SKIPPED (no public /v1/plans endpoint exists, only /v1/admin/plans)|
+
+!2 Step 6: Create Customer User Account
+
+!|script|RestApiFixture|
+|set auth token|$token|
+|post to|/v1/admin/users|with body|{"email":"newcustomer-$ts@test.com","password":"Customer123!","firstName":"New","lastName":"Customer","role":"CUSTOMER"}|
+|check|status code|201|
+|show|response body|
+|$userId=|json value|id|
+
+!2 Step 7: Assign User to Tenant
+
+!|script|RestApiFixture|
+|set auth token|$token|
+|post to|/v1/admin/user-tenants|with body|{"userId":"$userId","tenantId":"$tenantId","role":"CUSTOMER"}|
+|check|status code|201|
+|show|response body|
+
+!|Comment|
+|Step 8: Customer record is automatically created when CUSTOMER user is created (same ID as user)|
+
+!2 Step 8: Customer Login
+
+!|script|RestApiFixture|
+|post to|/v1/auth/login|with body|{"email":"newcustomer-$ts@test.com","password":"Customer123!"}|
+|check|status code|200|
+|show|response body|
+|$customerToken=|json value|token|
+|check|json value|role|CUSTOMER|
+
+!2 Step 9: Customer Creates Subscription (Self-Signup)
+
+!|script|RestApiFixture|
+|set auth token|$customerToken|
+|post to|/v1/customers/me/subscriptions|with body|{"planId":"$proPlanId","customerEmail":"newcustomer-$ts@test.com","paymentMethodRef":"pm_test_123"}|
+|check|status code|201|
+|show|response body|
+|$subscriptionId=|json value|id|
+
+!2 Step 10: Verify Subscription is Active
+
+!|script|RestApiFixture|
+|set auth token|$customerToken|
+|get from|/v1/customers/me/subscriptions|
+|check|status code|200|
+|show|response body|
+
+!2 Step 11: Customer Views Their Subscriptions
+
+!|script|RestApiFixture|
+|set auth token|$customerToken|
+|get from|/v1/customers/me/subscriptions|
+|check|status code|200|
+|show|response body|

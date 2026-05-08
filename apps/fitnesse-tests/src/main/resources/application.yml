@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: fitnesse-tests
+  
+  main:
+    web-application-type: none
+    banner-mode: console
+
+# FitNesse Configuration
+fitnesse:
+  enabled: true
+  port: 9090
+  root-path: FitNesseRoot
+  root-page-path: FrontPage
+  
+  # API under test
+  api:
+    base-url: ${API_BASE_URL:http://localhost:8080/api}
+    timeout: 30000
+    
+  # Test data configuration
+  test-data:
+    cleanup-after-test: true
+    use-test-database: false
+
+# Logging
+logging:
+  level:
+    root: INFO
+    com.subscriptionengine.fitnesse: DEBUG
+    fitnesse: INFO
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"

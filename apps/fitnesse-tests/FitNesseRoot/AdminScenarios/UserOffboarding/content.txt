@@ -1,0 +1,123 @@
+!define TEST_SYSTEM {slim}
+
+!path build/fitnesse-lib/*.jar
+!path build/classes/java/main
+!path build/resources/main
+
+!|import|
+|com.subscriptionengine.fitnesse.fixtures|
+
+!1 User Offboarding (P1)
+
+This test validates graceful user offboarding and access removal - security and compliance requirement.
+
+!2 Step 1: Login as Super Admin
+
+!|script|RestApiFixture|
+|$ts=|timestamp|
+|post to|/v1/auth/login|with body|{"email":"admin@subscriptionengine.com","password":"ChangeMe123!"}|
+|check|status code|200|
+|show|response body|
+|$superToken=|json value|token|
+
+!2 Step 2: Create User
+
+!|script|RestApiFixture|
+|set auth token|$superToken|
+|post to|/v1/admin/users|with body|{"email":"employee-$ts@example.com","password":"SecurePass123","firstName":"Bob","lastName":"Smith","role":"TENANT_USER"}|
+|check|status code|201|
+|show|response body|
+|$userId=|json value|id|
+
+!2 Step 3: Create Tenant Alpha
+
+!|script|RestApiFixture|
+|set auth token|$superToken|
+|post to|/v1/admin/tenants|with body|{"name":"TenantAlpha-$ts","slug":"tenant-alpha-$ts"}|
+|check|status code|201|
+|show|response body|
+|$tenantAlphaId=|json value|id|
+
+!2 Step 4: Create Tenant Beta
+
+!|script|RestApiFixture|
+|set auth token|$superToken|
+|post to|/v1/admin/tenants|with body|{"name":"TenantBeta-$ts","slug":"tenant-beta-$ts"}|
+|check|status code|201|
+|show|response body|
+|$tenantBetaId=|json value|id|
+
+!2 Step 5: Assign User to Tenant Alpha
+
+!|script|RestApiFixture|
+|set auth token|$superToken|
+|post to|/v1/admin/user-tenants|with body|{"userId":"$userId","tenantId":"$tenantAlphaId","role":"TENANT_ADMIN"}|
+|check|status code|201|
+|show|response body|
+
+!2 Step 6: Assign User to Tenant Beta
+
+!|script|RestApiFixture|
+|set auth token|$superToken|
+|post to|/v1/admin/user-tenants|with body|{"userId":"$userId","tenantId":"$tenantBetaId","role":"TENANT_USER"}|
+|check|status code|201|
+|show|response body|
+
+!2 Step 7: Verify User Can Login
+
+!|script|RestApiFixture|
+|post to|/v1/auth/login|with body|{"email":"employee-$ts@example.com","password":"SecurePass123"}|
+|check|status code|200|
+|show|response body|
+|$userToken=|json value|token|
+
+!2 Step 8: Suspend User Account
+
+!|script|RestApiFixture|
+|set auth token|$superToken|
+|post to|/v1/admin/users/$userId/suspend|with body|{}|
+|check|status code|200|
+|show|response body|
+
+!2 Step 9: Verify User Cannot Login After Suspension
+
+!|script|RestApiFixture|
+|post to|/v1/auth/login|with body|{"email":"employee-$ts@example.com","password":"SecurePass123"}|
+|check|status code|403|
+|show|response body|
+
+!2 Step 10: Reactivate User
+
+!|script|RestApiFixture|
+|set auth token|$superToken|
+|post to|/v1/admin/users/$userId/activate|with body|{}|
+|check|status code|200|
+|show|response body|
+
+!2 Step 11: Verify User Can Login After Reactivation
+
+!|script|RestApiFixture|
+|post to|/v1/auth/login|with body|{"email":"employee-$ts@example.com","password":"SecurePass123"}|
+|check|status code|200|
+|show|response body|
+
+!2 Step 12: Delete User
+
+!|script|RestApiFixture|
+|set auth token|$superToken|
+|delete from|/v1/admin/users/$userId|
+|check|status code|204|
+|show|response body|
+
+!2 Summary
+
+This test validates:
+- ✓ User can be created and assigned to multiple tenants
+- ✓ User can login when active
+- ✓ Suspended user cannot login (403)
+- ✓ User can be reactivated
+- ✓ User can login after reactivation
+- ✓ User can be deleted
+- ✓ Complete user lifecycle management
+
+Note: Soft delete and audit log features are not yet fully implemented in the API.

@@ -31,7 +31,7 @@ class FailedRenewalRetryScenarioTest extends BaseIntegrationTest {
     @Description("Validates payment failure handling: renewal fails → retry scheduled → after 3 failures → subscription paused → webhook sent")
     @Severity(SeverityLevel.NORMAL)
     void shouldHandleFailedRenewalWithRetries() {
-        String tenantId = TestDataFactory.DEFAULT_TENANT_ID;
+        String tenantId = createTestTenant();
         
         UUID customerId = createCustomer(tenantId);
         UUID planId = createPlan(tenantId);
@@ -95,19 +95,25 @@ class FailedRenewalRetryScenarioTest extends BaseIntegrationTest {
     
     private UUID createCustomer(String tenantId) {
         Map<String, Object> customerRequest = TestDataFactory.createCustomerRequest();
-        Response response = givenAuthenticated(tenantId).body(customerRequest).when().post("/v1/customers").then().statusCode(200).extract().response();
+        Response response = givenAuthenticated(tenantId).body(customerRequest).when().post("/v1/admin/customers").then().statusCode(200).extract().response();
         return UUID.fromString(response.jsonPath().getString("data.customerId"));
     }
     
+    private String createTestTenant() {
+        Map<String, Object> tenantRequest = Map.of("name", "Test Tenant " + UUID.randomUUID().toString().substring(0, 8), "slug", "test-" + UUID.randomUUID().toString().substring(0, 8), "status", "ACTIVE");
+        Response response = givenSuperAdmin().contentType("application/json").body(tenantRequest).when().post("/v1/admin/tenants").then().statusCode(201).extract().response();
+        return response.jsonPath().getString("id");
+    }
+
     private UUID createPlan(String tenantId) {
         Map<String, Object> planRequest = TestDataFactory.createPlanRequest();
-        Response response = givenAuthenticated(tenantId).body(planRequest).when().post("/v1/plans").then().statusCode(200).extract().response();
-        return UUID.fromString(response.jsonPath().getString("data.planId"));
+        Response response = givenAuthenticated(tenantId).body(planRequest).when().post("/v1/admin/plans").then().statusCode(201).extract().response();
+        return UUID.fromString(response.jsonPath().getString("id"));
     }
     
     private UUID createSubscription(String tenantId, UUID customerId, UUID planId) {
         Map<String, Object> subscriptionRequest = TestDataFactory.createSubscriptionRequest(customerId, planId);
-        Response response = givenAuthenticated(tenantId).body(subscriptionRequest).when().post("/v1/subscriptions").then().statusCode(200).extract().response();
-        return UUID.fromString(response.jsonPath().getString("data.subscriptionId"));
+        Response response = givenAuthenticated(tenantId).body(subscriptionRequest).when().post("/v1/admin/subscriptions").then().statusCode(201).extract().response();
+        return UUID.fromString(response.jsonPath().getString("id"));
     }
 }

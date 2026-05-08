@@ -36,12 +36,15 @@ public class SecurityConfig {
     
     private final JwtTenantAuthenticationFilter jwtTenantAuthenticationFilter;
     private final ApiKeyAuthFilter apiKeyAuthFilter;
+    private final JwtClaimsValidationFilter jwtClaimsValidationFilter;
     
     public SecurityConfig(
             JwtTenantAuthenticationFilter jwtTenantAuthenticationFilter,
-            ApiKeyAuthFilter apiKeyAuthFilter) {
+            ApiKeyAuthFilter apiKeyAuthFilter,
+            JwtClaimsValidationFilter jwtClaimsValidationFilter) {
         this.jwtTenantAuthenticationFilter = jwtTenantAuthenticationFilter;
         this.apiKeyAuthFilter = apiKeyAuthFilter;
+        this.jwtClaimsValidationFilter = jwtClaimsValidationFilter;
     }
     
     @Bean
@@ -63,6 +66,10 @@ public class SecurityConfig {
                 .requestMatchers("/swagger-ui/**").permitAll()
                 .requestMatchers("/swagger-ui.html").permitAll()
                 
+                // Authentication endpoints (must be public for login)
+                .requestMatchers("/v1/auth/**").permitAll()
+                .requestMatchers("/v1/public/**").permitAll()
+                
                 // All other endpoints require authentication
                 .anyRequest().authenticated()
             )
@@ -78,8 +85,11 @@ public class SecurityConfig {
             // This allows API Key auth to take precedence when X-Client-ID header is present
             .addFilterBefore(apiKeyAuthFilter, UsernamePasswordAuthenticationFilter.class)
             
-            // Add tenant extraction filter after OAuth2 JWT authentication
-            .addFilterAfter(jwtTenantAuthenticationFilter, org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter.class);
+            // Add JWT claims validation filter after OAuth2 JWT authentication
+            .addFilterAfter(jwtClaimsValidationFilter, org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter.class)
+            
+            // Add tenant extraction filter after JWT claims validation
+            .addFilterAfter(jwtTenantAuthenticationFilter, JwtClaimsValidationFilter.class);
         
         return http.build();
     }

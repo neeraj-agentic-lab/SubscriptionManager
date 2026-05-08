@@ -22,7 +22,12 @@ public class UserContext {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof Jwt) {
             Jwt jwt = (Jwt) authentication.getPrincipal();
-            String userId = jwt.getClaimAsString("user_id");
+            // Try 'sub' claim first (AuthController sets userId as subject)
+            String userId = jwt.getSubject();
+            if (userId == null || userId.isEmpty()) {
+                // Fall back to 'user_id' claim (snake_case format)
+                userId = jwt.getClaimAsString("user_id");
+            }
             return userId != null ? UUID.fromString(userId) : null;
         }
         return null;
