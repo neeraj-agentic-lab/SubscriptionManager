@@ -24,11 +24,17 @@ export default function UsersPage() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [userTenantMap, setUserTenantMap] = useState<Record<string, string>>({});
+  const [stats, setStats] = useState({ total: 0, active: 0, inactive: 0, tenantAdmins: 0 });
 
   // Fetch users from API
   useEffect(() => {
     fetchUsers();
   }, [currentPage, roleFilter, statusFilter, selectedTenant]);
+
+  // Fetch aggregate stats whenever tenant context changes
+  useEffect(() => {
+    fetchStats();
+  }, [selectedTenant]);
 
   const fetchUsers = async () => {
     try {
@@ -77,6 +83,40 @@ export default function UsersPage() {
     }
   };
 
+  const fetchStats = async () => {
+    try {
+      if (selectedTenant) {
+        // Tenant view: fetch all users for the tenant and aggregate locally
+        const tenantUsers = await userTenantsAPI.getTenantUsers(selectedTenant.id);
+        const userIds = tenantUsers.map(ut => ut.userId);
+        const usersData = await Promise.all(userIds.map(id => usersAPI.getById(id)));
+        setStats({
+          total: usersData.length,
+          active: usersData.filter(u => u.status === 'ACTIVE').length,
+          inactive: usersData.filter(u => u.status !== 'ACTIVE').length,
+          tenantAdmins: usersData.filter(u => u.role === 'TENANT_ADMIN').length,
+        });
+      } else {
+        // Platform view: three lightweight calls using totalCount
+        const [totalResp, activeResp, adminResp] = await Promise.all([
+          usersAPI.getAll(0, 1),
+          usersAPI.getAll(0, 1, 'ACTIVE'),
+          usersAPI.getAll(0, 1, undefined, 'TENANT_ADMIN'),
+        ]);
+        const total = totalResp.totalCount;
+        const active = activeResp.totalCount;
+        setStats({
+          total,
+          active,
+          inactive: total - active,
+          tenantAdmins: adminResp.totalCount,
+        });
+      }
+    } catch (err) {
+      console.error('Failed to load user stats:', err);
+    }
+  };
+
   const fetchUserTenants = async (userList: UserType[]) => {
     const tenantMap: Record<string, string> = {};
     
@@ -107,6 +147,7 @@ export default function UsersPage() {
       setShowDeleteModal(false);
       setSelectedUser(null);
       fetchUsers();
+      fetchStats();
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to delete user');
       console.error('Error deleting user:', err);
@@ -129,14 +170,6 @@ export default function UsersPage() {
     return matchesSearch;
   });
 
-  // Calculate stats
-  const stats = {
-    total: users.length,
-    active: users.filter(u => u.status === 'ACTIVE').length,
-    inactive: users.filter(u => u.status !== 'ACTIVE').length,
-    tenantAdmins: users.filter(u => u.role === 'TENANT_ADMIN').length,
-    tenantUsers: users.filter(u => u.role === 'TENANT_USER').length,
-  };
 
   const getRoleBadgeColor = (role: string) => {
     switch (role) {
@@ -551,6 +584,7 @@ export default function UsersPage() {
             setShowEditModal(false);
             setSelectedUser(null);
             fetchUsers();
+            fetchStats();
           }}
         />
       )}
@@ -562,6 +596,7 @@ export default function UsersPage() {
           onSuccess={() => {
             setShowCreateModal(false);
             fetchUsers();
+            fetchStats();
           }}
         />
       )}

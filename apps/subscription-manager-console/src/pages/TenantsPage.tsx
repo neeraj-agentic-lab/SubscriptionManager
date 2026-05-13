@@ -7,6 +7,7 @@ import LoadingOverlay from '../components/common/LoadingOverlay';
 export default function TenantsPage() {
   const navigate = useNavigate();
   const [tenants, setTenants] = useState<Tenant[]>([]);
+  const [stats, setStats] = useState({ total: 0, active: 0, suspended: 0 });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -25,6 +26,11 @@ export default function TenantsPage() {
     fetchTenants();
   }, [currentPage]);
 
+  // Fetch aggregate stats once on mount
+  useEffect(() => {
+    fetchStats();
+  }, []);
+
   const fetchTenants = async () => {
     try {
       setIsLoading(true);
@@ -40,6 +46,22 @@ export default function TenantsPage() {
     }
   };
 
+  const fetchStats = async () => {
+    try {
+      // Pull a large page to compute aggregates client-side
+      // (the /admin/tenants endpoint has no server-side status filter today)
+      const response = await tenantsAPI.getAll(0, 1000);
+      const all = response.content;
+      setStats({
+        total: response.totalElements,
+        active: all.filter(t => t.status === 'ACTIVE').length,
+        suspended: all.filter(t => t.status === 'SUSPENDED').length,
+      });
+    } catch (err) {
+      console.error('Failed to load tenant stats:', err);
+    }
+  };
+
   const handleDeleteTenant = async () => {
     if (!selectedTenant) return;
 
@@ -49,6 +71,7 @@ export default function TenantsPage() {
       setShowDeleteModal(false);
       setSelectedTenant(null);
       fetchTenants(); // Refresh the list
+      fetchStats();
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to delete tenant');
       console.error('Error deleting tenant:', err);
@@ -75,11 +98,6 @@ export default function TenantsPage() {
     return matchesSearch && matchesStatus;
   });
 
-  const stats = {
-    total: tenants.length,
-    active: tenants.filter(t => t.status === 'ACTIVE').length,
-    suspended: tenants.filter(t => t.status === 'SUSPENDED').length,
-  };
 
   return (
     <div className="p-8 space-y-6">
@@ -421,6 +439,7 @@ export default function TenantsPage() {
             setShowEditModal(false);
             setSelectedTenant(null);
             fetchTenants();
+            fetchStats();
           }}
         />
       )}
@@ -432,6 +451,7 @@ export default function TenantsPage() {
           onSuccess={() => {
             setShowCreateModal(false);
             fetchTenants();
+            fetchStats();
           }}
         />
       )}

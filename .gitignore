@@ -89,3 +89,8 @@ coverage/
 
 # Docker
 docker-compose.override.yml
+
+# Markdown files (kept locally, not committed) — except README files at any depth
+*.md
+!README.md
+!**/README.md

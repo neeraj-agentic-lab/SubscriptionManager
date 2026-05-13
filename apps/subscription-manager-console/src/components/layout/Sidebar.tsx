@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { 
   LayoutDashboard, 
   Building, 
@@ -15,6 +16,17 @@ import {
 import { useAuthStore } from '../../store/authStore';
 import { useTenantStore } from '../../store/tenantStore';
 import { Link, useLocation } from 'react-router-dom';
+import {
+  tenantsAPI,
+  usersAPI,
+  userTenantsAPI,
+  customersAPI,
+  plansAPI,
+  subscriptionsAPI,
+  deliveriesAPI,
+  webhooksAPI,
+  apiClientsAPI,
+} from '../../lib/api';
 
 interface NavItem {
   icon: React.ElementType;
@@ -30,12 +42,101 @@ export default function Sidebar() {
 
   const isSuperAdmin = user?.role === 'SUPER_ADMIN';
   const inTenantContext = isSuperAdmin && selectedTenant;
+  const inPlatformView = isSuperAdmin && !selectedTenant;
+
+  const [tenantCount, setTenantCount] = useState<number | undefined>(undefined);
+  const [userCount, setUserCount] = useState<number | undefined>(undefined);
+  const [tenantUserCount, setTenantUserCount] = useState<number | undefined>(undefined);
+  const [customerCount, setCustomerCount] = useState<number | undefined>(undefined);
+  const [planCount, setPlanCount] = useState<number | undefined>(undefined);
+  const [subscriptionCount, setSubscriptionCount] = useState<number | undefined>(undefined);
+  const [deliveryCount, setDeliveryCount] = useState<number | undefined>(undefined);
+  const [webhookCount, setWebhookCount] = useState<number | undefined>(undefined);
+  const [apiClientCount, setApiClientCount] = useState<number | undefined>(undefined);
+
+  useEffect(() => {
+    if (!inPlatformView) return;
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const [tenantsResp, usersResp] = await Promise.all([
+          tenantsAPI.getAll(0, 1),
+          usersAPI.getAll(0, 1),
+        ]);
+        if (cancelled) return;
+        setTenantCount(tenantsResp.totalElements);
+        setUserCount(usersResp.totalCount);
+      } catch (err) {
+        console.error('Failed to load sidebar counts:', err);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [inPlatformView]);
+
+  // Per-tenant counts when viewing a specific tenant
+  useEffect(() => {
+    if (!selectedTenant) {
+      setTenantUserCount(undefined);
+      setCustomerCount(undefined);
+      setPlanCount(undefined);
+      setSubscriptionCount(undefined);
+      setDeliveryCount(undefined);
+      setWebhookCount(undefined);
+      setApiClientCount(undefined);
+      return;
+    }
+    let cancelled = false;
+
+    const safe = <T,>(p: Promise<T>): Promise<T | null> =>
+      p.catch((err) => {
+        console.error('Sidebar count fetch failed:', err);
+        return null;
+      });
+
+    (async () => {
+      const [
+        tenantUsersRes,
+        customersRes,
+        plansRes,
+        subscriptionsRes,
+        deliveriesRes,
+        webhooksRes,
+        apiClientsRes,
+      ] = await Promise.all([
+        safe(userTenantsAPI.getTenantUsers(selectedTenant.id)),
+        safe(customersAPI.getAll()),
+        safe(plansAPI.getAll(0, 1)),
+        safe(subscriptionsAPI.getAll(0, 1)),
+        safe(deliveriesAPI.getAll(0, 1)),
+        safe(webhooksAPI.getAll()),
+        safe(apiClientsAPI.getAll()),
+      ]);
+
+      if (cancelled) return;
+
+      if (tenantUsersRes) setTenantUserCount(tenantUsersRes.length);
+      if (customersRes) setCustomerCount(customersRes.length);
+      if (plansRes) setPlanCount(plansRes.totalElements);
+      if (subscriptionsRes) setSubscriptionCount(subscriptionsRes.totalElements);
+      if (deliveriesRes) setDeliveryCount(deliveriesRes.totalElements);
+      if (webhooksRes) setWebhookCount(webhooksRes.length);
+      if (apiClientsRes) setApiClientCount(apiClientsRes.length);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedTenant]);
 
   // Platform View Navigation (Super Admin without tenant selected)
   const platformNav: NavItem[] = [
     { icon: LayoutDashboard, label: 'Platform Dashboard', path: '/' },
-    { icon: Building, label: 'Tenants', path: '/tenants', badge: 45 },
-    { icon: Users, label: 'Users (All)', path: '/users', badge: 234 },
+    { icon: Building, label: 'Tenants', path: '/tenants', badge: tenantCount },
+    { icon: Users, label: 'Users (All)', path: '/users', badge: userCount },
     { icon: Server, label: 'System', path: '/system' },
     { icon: BarChart, label: 'Analytics', path: '/' },
   ];
@@ -43,13 +144,13 @@ export default function Sidebar() {
   // Tenant Context Navigation (Super Admin with tenant OR Tenant Admin)
   const tenantNav: NavItem[] = [
     { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
-    { icon: Users, label: 'Users', path: '/users', badge: 12 },
-    { icon: UserCircle, label: 'Customers', path: '/customers', badge: 156 },
-    { icon: FileText, label: 'Plans', path: '/plans', badge: 8 },
-    { icon: Repeat, label: 'Subscriptions', path: '/subscriptions', badge: 89 },
-    { icon: Package, label: 'Deliveries', path: '/deliveries', badge: 23 },
-    { icon: Webhook, label: 'Webhooks', path: '/webhooks', badge: 5 },
-    { icon: Key, label: 'API Clients', path: '/api-clients', badge: 3 },
+    { icon: Users, label: 'Users', path: '/users', badge: tenantUserCount },
+    { icon: UserCircle, label: 'Customers', path: '/customers', badge: customerCount },
+    { icon: FileText, label: 'Plans', path: '/plans', badge: planCount },
+    { icon: Repeat, label: 'Subscriptions', path: '/subscriptions', badge: subscriptionCount },
+    { icon: Package, label: 'Deliveries', path: '/deliveries', badge: deliveryCount },
+    { icon: Webhook, label: 'Webhooks', path: '/webhooks', badge: webhookCount },
+    { icon: Key, label: 'API Clients', path: '/api-clients', badge: apiClientCount },
     { icon: BarChart, label: 'Reports', path: '/reports' },
   ];
 
